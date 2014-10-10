@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="horizontal" android:layout_width="match_parent"
+	android:layout_height="match_parent" android:gravity="center_vertical">
+	<!--<LinearLayout android:layout_width="0dip" android:layout_weight="1" android:layout_height="match_parent" android:orientation="vertical"
+		android:paddingRight="30dip" android:gravity="center_vertical">
+		<TextView android:id="@+id/txtTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="16sp" android:textColor="@color/black"
+			android:gravity="center_vertical|right" />
+		<TextView android:id="@+id/txtError" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="12sp" android:textColor="@color/gray"
+                  android:visibility="gone"
+			android:gravity="center_vertical|right" />
+	</LinearLayout>-->
+    <include android:layout_width="0dip" android:layout_weight="1" android:layout_height="match_parent" layout="@layout/structure_title" />
+	<View android:layout_width="3dip" android:layout_height="match_parent" android:background="@color/white" />
+    <HorizontalScrollView android:layout_width="0dip" android:layout_weight="3" android:layout_height="fill_parent">
+       <LinearLayout android:layout_height="fill_parent" android:layout_width="0dip" android:layout_weight="1" android:gravity="center_vertical"
+                     android:orientation="horizontal" android:id="@+id/boxcontainer"></LinearLayout>
+    </HorizontalScrollView>
+</LinearLayout>

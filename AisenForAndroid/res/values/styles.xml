@@ -1,0 +1,180 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<style name="UiBaseTheme.Light" parent="android:Theme.Holo.Light">
+		<!-- <item name="toppanel_divider_height">@dimen/custom_dialog_toppanel_divider</item> -->
+		<item name="style_top_panel">@style/CustomDialogTopPanel</item>
+		<item name="style_title">@style/CustomDialogTitle</item>
+		<item name="style_divider_toppanel">@style/CustomDialogTopPanelDivider</item>
+		<item name="style_txt_message">@style/CustomDialogMessage</item>
+		<item name="style_button_panel">@style/CustomDialogButtonPanel</item>
+		<item name="style_custom_dialog">@style/CustomDialog</item>
+		<item name="style_listview">@style/CustomDialogListView</item>
+		<item name="style_listview_item">@style/CustomDialogListViewItem</item>
+		<item name="bg_listview_item">@drawable/selector_customdialog_listitem</item>
+		<item name="style_input">@style/CustomDialogInput</item>
+		<item name="style_button">@style/CustomDialogButton</item>
+		<item name="bg_button_left">@drawable/selector_customdialog_button_left</item>
+		<item name="bg_button_right">@drawable/selector_customdialog_button_right</item>
+		<item name="bg_button_middle">@drawable/selector_customdialog_button_middle</item>
+		<item name="bg_button">@drawable/selector_customdialog_button</item>
+		<item name="link_color">@color/link_color</item>
+	</style>
+
+	<style name="UiBaseTheme.Dark" parent="android:Theme.Holo">
+		<!-- <item name="toppanel_divider_height">@dimen/custom_dialog_toppanel_divider</item> -->
+		<item name="style_top_panel">@style/CustomDialogTopPanel</item>
+		<item name="style_title">@style/CustomDialogTitle</item>
+		<item name="style_divider_toppanel">@style/CustomDialogTopPanelDivider</item>
+		<item name="style_txt_message">@style/CustomDialogMessage</item>
+		<item name="style_button_panel">@style/CustomDialogButtonPanel</item>
+		<item name="style_custom_dialog">@style/CustomDialog</item>
+		<item name="style_listview">@style/CustomDialogListView</item>
+		<item name="style_listview_item">@style/CustomDialogListViewItem</item>
+		<item name="bg_listview_item">@drawable/selector_customdialog_listitem</item>
+		<item name="style_input">@style/CustomDialogInput</item>
+		<item name="style_button">@style/CustomDialogButton</item>
+		<item name="bg_button_left">@drawable/selector_customdialog_button_left</item>
+		<item name="bg_button_right">@drawable/selector_customdialog_button_right</item>
+		<item name="bg_button_middle">@drawable/selector_customdialog_button_middle</item>
+		<item name="bg_button">@drawable/selector_customdialog_button</item>
+		<item name="link_color">@color/link_color</item>
+	</style>
+
+	<style name="UiBaseTheme.Light.Dialog" parent="android:style/Theme.Dialog">
+		<item name="style_top_panel">@style/CustomDialogTopPanel</item>
+		<item name="style_title">@style/CustomDialogTitle</item>
+		<item name="style_divider_toppanel">@style/CustomDialogTopPanelDivider</item>
+		<item name="style_txt_message">@style/CustomDialogMessage</item>
+		<item name="style_button_panel">@style/CustomDialogButtonPanel</item>
+		<item name="style_custom_dialog">@style/CustomDialog</item>
+		<item name="style_listview">@style/CustomDialogListView</item>
+		<item name="style_listview_item">@style/CustomDialogListViewItem</item>
+		<item name="bg_listview_item">@drawable/selector_customdialog_listitem</item>
+		<item name="style_input">@style/CustomDialogInput</item>
+		<item name="style_button">@style/CustomDialogButton</item>
+		<item name="bg_button_left">@drawable/selector_customdialog_button_left</item>
+		<item name="bg_button_right">@drawable/selector_customdialog_button_right</item>
+		<item name="bg_button_middle">@drawable/selector_customdialog_button_middle</item>
+		<item name="bg_button">@drawable/selector_customdialog_button</item>
+		<item name="link_color">@color/link_color</item>
+	</style>
+
+	<style name="progress_dialog" parent="@android:style/Theme.Dialog">
+		<item name="android:windowFrame">@null</item>
+		<item name="android:windowIsFloating">true</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
+		<item name="android:backgroundDimEnabled">true</item>
+		<item name="android:backgroundDimAmount">0.6</item>
+	</style>
+
+	<style name="progress_bar_default">
+		<item name="android:indeterminateDrawable">@anim/progress_dialog_drawable</item>
+	</style>
+
+	<style name="titlebar_progressbar">
+		<item name="android:layout_width">43.399994dip</item>
+		<item name="android:layout_height">43.399994dip</item>
+		<item name="android:indeterminate">false</item>
+		<item name="android:indeterminateDrawable">@drawable/titlebar_progressbar</item>
+	</style>
+
+	<style name="txtEmpty">
+		<item name="android:text">@string/hintEmpty</item>
+		<item name="android:textSize">@dimen/mediumTextSize</item>
+		<item name="android:padding">8dip</item>
+		<item name="android:textColor">@color/black</item>
+		<item name="android:layout_marginBottom">8dip</item>
+	</style>
+
+	<style name="txtReload">
+		<item name="android:text">@string/hintReload</item>
+		<item name="android:textSize">@dimen/mediumTextSize</item>
+		<item name="android:paddingLeft">15dip</item>
+		<item name="android:paddingRight">15dip</item>
+		<item name="android:paddingTop">8dip</item>
+		<item name="android:paddingBottom">8dip</item>
+		<item name="android:textColor">@color/black</item>
+		<item name="android:background">@drawable/selector_button</item>
+	</style>
+
+	<style name="Dialog">
+		<!-- 边框 -->
+		<item name="android:windowFrame">@null</item>
+		<!-- 是否浮现在activity之上 -->
+		<item name="android:windowIsFloating">true</item>
+		<!-- 半透明 -->
+		<item name="android:windowIsTranslucent">false</item>
+		<!-- 无标题 -->
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowFullscreen">?android:windowNoTitle</item>
+		<!-- 背景 -->
+		<item name="android:windowBackground">@color/transparent</item>
+		<!-- 模糊 -->
+		<item name="android:backgroundDimEnabled">true</item>
+	</style>
+
+	<!-- CustomDialog相关的样式 -->
+	<style name="Dialog.Customer">
+	</style>
+	<style name="CustomDialog">
+		<item name="android:background">@drawable/bg_alertdialog</item>
+	</style>
+	<style name="CustomDialogTopPanel">
+
+	</style>
+	<style name="CustomDialogTitle">
+		<item name="android:textSize">@dimen/mediumTextSize</item>
+		<item name="android:textColor">@color/black</item>
+		<item name="android:paddingLeft">10dip</item>
+	</style>
+	<style name="CustomDialogTopPanelDivider">
+		<item name="android:background">#ffc5c5c5</item>
+	</style>
+	<style name="CustomDialogMessage">
+		<item name="android:textSize">@dimen/mediumTextSize</item>
+		<item name="android:textColor">@color/black</item>
+		<item name="android:gravity">center</item>
+	</style>
+	<style name="CustomDialogButtonPanel">
+	</style>
+	<style name="CustomDialogButton">
+		<item name="android:textSize">@dimen/mediumTextSize</item>
+		<item name="android:textColor">@color/black</item>
+		<item name="android:background">@drawable/selector_customdialog_button</item>
+	</style>
+	<!-- <style name="CustomDialogButton.Left"> <item name="android:background">@drawable/selector_customdialog_button_left</item> </style> <style name="CustomDialogButton.Right"> 
+		<item name="android:background">@drawable/selector_customdialog_button_right</item> </style> <style name="CustomDialogButton.Middle"> <item name="android:background">@drawable/selector_customdialog_button_middle</item> 
+		</style> -->
+	<style name="CustomDialogListView" parent="android:Widget.ListView">
+		<item name="android:divider">#ffc5c5c5</item>
+		<item name="android:dividerHeight">0.5dip</item>
+		<item name="android:cacheColorHint">#00000000</item>
+		<item name="android:fadingEdge">none</item>
+		<item name="android:listSelector">@null</item>
+		<item name="android:headerDividersEnabled">false</item>
+	</style>
+	<style name="CustomDialogListViewItem">
+		<item name="android:textSize">@dimen/mediumTextSize</item>
+		<item name="android:textColor">@color/black</item>
+	</style>
+	<style name="CustomDialogInput" parent="android:Widget.EditText">
+		<item name="android:textSize">@dimen/mediumTextSize</item>
+		<item name="android:textColor">@color/black</item>
+		<item name="android:textColorHint">@color/gray</item>
+		<item name="android:background">@drawable/selector_customdialog_input</item>
+		<item name="android:minWidth">300dip</item>
+		<item name="android:layout_marginTop"> 20dip</item>
+		<item name="android:layout_marginBottom">15dip</item>
+		<item name="android:layout_marginLeft">15dip</item>
+		<item name="android:layout_marginRight">15dip</item>
+	</style>
+
+	<style name="centerFormTxt">
+		<item name="android:textSize">16sp</item>
+		<item name="android:textColor">@color/black</item>
+		<item name="android:gravity">center_vertical</item>
+	</style>
+
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+	<LinearLayout android:id="@id/layoutContent" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+		<RelativeLayout android:layout_width="match_parent" android:layout_height="40dip">
+			<com.astuetz.PagerSlidingTabStrip android:id="@+id/tabs" android:layout_width="match_parent" android:layout_height="match_parent" 
+		    	app:pstsIndicatorHeight="4.5dip" />
+		    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar android:id="@+id/progress" android:layout_width="match_parent" android:layout_height="4dip"
+		        android:visibility="gone" />
+		</RelativeLayout>
+		<android.support.v4.view.ViewPager android:id="@+id/pager" android:layout_width="match_parent" android:layout_height="0dip"
+	    	android:layout_weight="1" />
+	</LinearLayout>
+	<LinearLayout android:id="@id/layoutEmpty" android:layout_width="match_parent" android:layout_height="match_parent"
+	    android:gravity="center" android:orientation="vertical" android:visibility="gone">
+	    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="14sp"
+	        android:textColor="@color/gray" android:text="@string/hintEmpty"/>
+	</LinearLayout>
+</LinearLayout>

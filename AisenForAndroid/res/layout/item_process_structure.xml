@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent" android:paddingLeft="50dip" android:paddingRight="50dip" android:gravity="center_horizontal">
+	<TextView android:id="@+id/txtName" android:layout_width="wrap_content" android:layout_height="50dip" android:textSize="@dimen/mediumTextSize" android:gravity="center_vertical" />
+	<ImageView android:id="@+id/imgDot" android:layout_width="30dip" android:layout_height="30dip" android:clickable="true" />
+</LinearLayout>

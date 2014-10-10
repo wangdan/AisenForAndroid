@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="16sp"
+        android:textColor="@color/white" android:singleLine="true" android:id="@+id/txt_msg"
+        android:paddingLeft="32dip" android:paddingRight="32dip" android:paddingTop="4dip"
+        android:paddingBottom="4dip" android:background="@drawable/new_data_toast" android:gravity="center"
+        android:layout_marginLeft="16dip" android:layout_marginRight="16dip"/>
+    
+</LinearLayout>

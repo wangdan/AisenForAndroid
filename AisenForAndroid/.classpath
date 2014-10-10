@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="bitmaploader"/>
+	<classpathentry kind="src" path="smoothprogressbar"/>
+	<classpathentry kind="src" path="actionbarpulltorefresh"/>
+	<classpathentry kind="src" path="dragsortlistview"/>
+	<classpathentry kind="src" path="pagersidingtabstrip"/>
+	<classpathentry kind="src" path="refreshlistview"/>
+	<classpathentry kind="src" path="photoview"/>
+	<classpathentry kind="src" path="datetimepicker"/>
+	<classpathentry kind="src" path="changelog"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry kind="output" path="bin/classes"/>
+</classpath>

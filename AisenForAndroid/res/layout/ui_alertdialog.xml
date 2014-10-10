@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/parentPanel" android:layout_width="match_parent"
+	android:layout_height="wrap_content" android:orientation="vertical" style="?attr/style_custom_dialog" >
+
+	<LinearLayout android:id="@+id/topPanel" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"
+		style="?attr/style_top_panel" android:visibility="gone">
+		<LinearLayout android:id="@+id/title_template" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal"
+			android:gravity="center_vertical" android:minHeight="40dip">
+			<ImageView android:id="@+id/icon" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@null" />
+			<TextView android:id="@+id/txtTitle" style="?attr/style_title" android:singleLine="true" android:ellipsize="end" android:layout_width="match_parent"
+				android:layout_height="wrap_content" />
+		</LinearLayout>
+		<View android:id="@+id/dividerTopPanel" style="?attr/style_divider_toppanel" android:layout_width="match_parent" android:layout_height="0.5dip" />
+	</LinearLayout>
+
+	<LinearLayout android:id="@+id/messagePanel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1"
+		android:orientation="vertical" android:minHeight="64dp" android:visibility="gone">
+		<ScrollView android:id="@+id/scrollView" android:layout_width="match_parent" android:layout_height="wrap_content" android:clipToPadding="false">
+			<TextView android:id="@+id/txtMessage" style="?attr/style_txt_message" android:layout_width="match_parent" android:layout_height="wrap_content"
+				android:layout_marginLeft="15dip" android:layout_marginRight="15dip" android:layout_marginTop="25dip" android:layout_marginBottom="25dip" />
+		</ScrollView>
+	</LinearLayout>
+
+	<LinearLayout android:id="@+id/listPanel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1"
+		android:orientation="vertical" android:minHeight="64dip" android:visibility="gone">
+		<ListView android:id="@+id/listCustomDialog" android:layout_width="match_parent" android:layout_height="match_parent" style="?attr/style_listview"></ListView>
+	</LinearLayout>
+
+	<LinearLayout android:id="@+id/inputPanel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1"
+		android:orientation="vertical" android:minHeight="64dip" android:visibility="gone" android:paddingTop="10dip" android:paddingBottom="10dip">
+		<EditText android:id="@+id/editInput" android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingLeft="8dip" android:paddingRight="8dip"
+			android:gravity="center_vertical" android:minHeight="45dip" android:singleLine="true" style="?attr/style_input" />
+	</LinearLayout>
+
+	<FrameLayout android:id="@+id/customPanel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="1"
+		android:minHeight="64dp" android:visibility="gone" android:paddingTop="10dip" android:paddingBottom="10dip">
+		<FrameLayout android:id="@+id/customLayout" android:layout_width="match_parent" android:layout_height="wrap_content" />
+	</FrameLayout>
+
+	<LinearLayout android:id="@+id/buttonPanel" android:layout_width="match_parent" android:layout_height="48dip" android:minHeight="48dip" android:orientation="vertical"
+		style="?attr/style_button_panel" android:visibility="gone" android:layout_marginRight="1dip">
+		<View android:id="@+id/dividerTopPanel" style="?attr/style_divider_toppanel" android:layout_width="match_parent" android:layout_height="0.5dip" />
+		<LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal">
+			<Button android:id="@+id/button1" android:layout_width="0dip" android:layout_weight="1" android:maxLines="2" style="?attr/style_button" android:textSize="14sp"
+				android:layout_height="match_parent" android:visibility="gone" android:text="第一个" />
+			<View android:id="@+id/btnDivider01" android:layout_width="0.5dip" android:layout_height="match_parent" android:visibility="gone" android:background="#ffc5c5c5" />
+			<Button android:id="@+id/button2" android:layout_width="0dip" android:layout_weight="1" android:maxLines="2" style="?attr/style_button" android:textSize="14sp"
+				android:layout_height="match_parent" android:visibility="gone" android:text="第二个" />
+			<View android:id="@+id/btnDivider02" android:layout_width="0.5dip" android:layout_height="match_parent" android:visibility="gone" android:background="#ffc5c5c5" />
+			<Button android:id="@+id/button3" android:layout_width="0dip" android:layout_weight="1" android:maxLines="2" style="?attr/style_button" android:textSize="14sp"
+				android:layout_height="match_parent" android:visibility="gone" android:text="第三个" />
+		</LinearLayout>
+	</LinearLayout>
+</LinearLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="horizontal" android:layout_width="match_parent"
+	android:layout_height="match_parent" android:gravity="center_vertical">
+	<include android:layout_width="0dip" android:layout_weight="1" android:layout_height="match_parent" layout="@layout/structure_title" />
+	<View android:layout_width="3dip" android:layout_height="match_parent" android:background="@color/white" />
+	<EditText android:id="@+id/editValue" android:layout_width="0dip" android:layout_weight="3" android:layout_height="wrap_content" android:background="@color/transparent"
+		android:paddingLeft="30dip" />
+</LinearLayout>

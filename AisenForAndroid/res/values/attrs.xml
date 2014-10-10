@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="HorizontalListView">
+        <attr name="itemWidth" format="dimension"/>
+    </declare-styleable>
+    
+    <!-- AlertDialog相关的样式定义 -->
+    <attr name="style_custom_dialog" format="reference"></attr>
+    <attr name="style_top_panel" format="reference"></attr>
+    <attr name="style_title" format="reference"></attr>
+    <attr name="style_divider_toppanel" format="reference"></attr>
+    <attr name="style_txt_message" format="reference"></attr>
+    <attr name="style_button_panel" format="reference"></attr>
+    <attr name="style_button" format="reference"></attr>
+    <attr name="bg_button" format="reference"></attr>
+    <attr name="bg_button_left" format="reference"></attr>
+    <attr name="bg_button_right" format="reference"></attr>
+    <attr name="bg_button_middle" format="reference"></attr>
+<!--     <attr name="toppanel_divider_height" format="reference"></attr> -->
+    <attr name="style_listview" format="reference"></attr>
+    <attr name="style_listview_item" format="reference"></attr>
+    <attr name="bg_listview_item" format="reference"></attr>
+    <attr name="style_input" format="reference"></attr>
+    <attr name="link_color" format="reference"></attr>
+    
+    <declare-styleable name="JazzyViewPager">
+        <attr name="style">
+            <enum name="standard" value="0" />
+            <enum name="tablet" value="1" />
+            <enum name="cubein" value="2" />
+            <enum name="cubeout" value="3" />
+            <enum name="flipvertical" value="4" />
+            <enum name="fliphorizontal" value="5" />
+            <enum name="stack" value="6" />
+            <enum name="zoomin" value="7" />
+            <enum name="zoomout" value="8" />
+            <enum name="rotateup" value="9" />
+            <enum name="rotatedown" value="10" />
+            <enum name="accordion" value="11" />
+        </attr>
+        <attr name="jazzfadeEnabled" format="boolean" />
+        <attr name="outlineEnabled" format="boolean" />
+        <attr name="outlineColor" format="color|reference" />
+    </declare-styleable>
+    
+    <declare-styleable name="PagerSlidingTabStrip">
+        <attr name="pstsIndicatorColor" format="color" />
+        <attr name="pstsUnderlineColor" format="color" />
+        <attr name="pstsDividerColor" format="color" />
+        <attr name="pstsIndicatorHeight" format="dimension" />
+        <attr name="pstsUnderlineHeight" format="dimension" />
+        <attr name="pstsDividerPadding" format="dimension" />
+        <attr name="pstsTabPaddingLeftRight" format="dimension" />
+        <attr name="pstsScrollOffset" format="dimension" />
+        <attr name="pstsTabBackground" format="reference" />
+        <attr name="pstsShouldExpand" format="boolean" />
+        <attr name="pstsTextAllCaps" format="boolean" />
+    </declare-styleable>
+    
+    <declare-styleable name="ChangeLogListView">
+
+        <!-- Layout resource id for changelog item rows. -->
+        <attr name="rowLayoutId" format="reference" />
+
+        <!-- Layout resource id for changelog item header rows. -->
+        <attr name="rowHeaderLayoutId" format="reference" />
+
+        <!-- Resource id for changelog.xml file. -->
+        <attr name="changeLogFileResourceId" format="reference" />
+
+        <!-- Resource url for changelog.xml file. -->
+        <attr name="changeLogFileResourceUrl" format="string" />
+
+    </declare-styleable>
+</resources>

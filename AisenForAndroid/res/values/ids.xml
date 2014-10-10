@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- 点击这个视图，重新加载数据 -->
+	<item name="layoutReload" type="id"></item>
+	<!-- 点击这个视图，刷新数据 -->
+	<item name="layoutRefresh" type="id"></item>
+	<!-- 加载数据时，显示这个ProcessBar视图 -->
+	<item name="layoutProcessing" type="id"></item>
+	<!-- 加载数据时，悬浮状态显示Loading视图 -->
+	<item name="layoutLoading" type="id"></item>
+	<!-- 加载数据失败时，显示这个视图 -->
+	<item name="layoutLoadFailed" type="id"></item>
+	<!-- 加载数据为空时，显示这个视图 -->
+	<item name="layoutEmpty" type="id"></item>
+	<!-- 加载数据成功且不为空，显示这个视图 -->
+	<item name="layoutContent" type="id"></item>
+	<!-- 加载数据异常，会在这个TextView打印错误信息 -->
+	<item name="txtLoadFailed" type="id"></item>
+	<!-- 如果存在分页，会在这个视图中添加分页Dot视图 -->
+	<item name="dotLayout" type="id"></item>
+	<!-- MyScrollView的属性 -->
+	<item name="content" type="id"></item>
+	<item name="topView" type="id"></item>
+	<item name="remainView" type="id"></item>
+
+	<item name="listView" type="id"></item>
+	<item name="refreshListView" type="id"></item>
+	<item name="refreshGridView" type="id"></item>
+	<item name="slideTabContainerView" type="id"></item>
+	<item name="slideTabRootView" type="id"></item>
+	<item name="drag_handle" type="id"></item>
+	<item name="click_remove" type="id"></item>
+</resources>

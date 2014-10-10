@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="cannotRequestRefresh">没有更多数据了</string>
+	<string name="cannotRequestUpdate">没有更多数据了</string>
+
+	<string name="hintLoadCanceled">取消加载</string>
+	<string name="hintLoadIsNull">加载失败</string>
+	<string name="msgLoadSuccessed">加载成功</string>
+	<string name="hintEmpty">没有数据</string>
+	<string name="hintReload">重新加载</string>
+	<string name="msgLoadEmpty">加载0条数据</string>
+	<string name="msgLoadNotEmpty">加载%d条数据</string>
+	
+	<string name="hintLoadMore">加载更多</string>
+	<string name="hintLoading">正在加载</string>
+
+	<string name="menu_save">保存</string>
+	<string name="have_copied">已经复制 %s</string>
+	
+	<string name="sharedata">sharedata</string>
+	
+	<string-array name="jazzy_effects">
+        <item>Standard</item>
+        <item>Tablet</item>
+        <item>CubeIn</item>
+        <item>CubeOut</item>
+        <item>FlipVertical</item>
+        <item>FlipHorizontal</item>
+        <item>Stack</item>
+        <item>ZoomIn</item>
+        <item>ZoomOut</item>
+        <item>RotateUp</item>
+        <item>RotateDown</item>
+        <item>Accordion</item>
+    </string-array>
+    
+	<string-array name="pListViewAnim">
+	    <item>无</item>
+	    <item>渐变</item>
+	    <item>从左</item>
+	    <item>从右</item>
+	    <item>从下</item>
+	</string-array>
+	
+	<string-array name="prefValues">
+	    <item>0</item>
+	    <item>1</item>
+	    <item>2</item>
+	    <item>3</item>
+	    <item>4</item>
+	    <item>5</item>
+	    <item>6</item>
+	    <item>7</item>
+	</string-array>
+    
+	<!-- Error messages -->
+    <string name="changelog_internal_error_parsing">Error while parsing file</string>
+
+    <string name="changelog_internal_error_internet_connection">No internet connection to fetch the changelog</string>
+
+    <!-- String for Version Header.
+         You can customize it in your strings.xml.
+         Use string with quotes if you want a space -->
+    <string name="changelog_header_version">"Version "</string>
+
+    <!-- BulletPoint
+        You can customize it in your strings.xml
+        If you don't want a bulletpoint you can specify it in your changelog.xml-->
+    <string name="changelog_row_bulletpoint">\u2022"</string>
+
+    <!-- Prefix for Bug type change log -->
+    <string name="changelog_row_prefix_bug">[b]Bug:[/b]</string>
+
+    <!-- Prefix for Improvement type change log -->
+    <string name="changelog_row_prefix_improvement">[b]New:[/b]</string>
+</resources>

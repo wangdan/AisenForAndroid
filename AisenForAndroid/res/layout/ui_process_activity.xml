@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent" android:gravity="center_horizontal">
+	<HorizontalScrollView android:layout_width="wrap_content" android:layout_height="100dip">
+		<FrameLayout android:layout_width="wrap_content" android:layout_height="match_parent">
+			<com.m.ui.views.ProcessBar android:id="@+id/processBar" android:layout_width="match_parent" android:layout_height="match_parent" />
+			<LinearLayout android:id="@+id/structureContainer" android:layout_width="wrap_content" android:layout_height="match_parent" android:orientation="horizontal" />
+		</FrameLayout>
+	</HorizontalScrollView>
+	<View android:layout_width="match_parent" android:layout_height="1.5dip" android:background="@color/gray" />
+	<RelativeLayout android:layout_width="match_parent" android:layout_height="0dip" android:layout_weight="1">
+		<ImageView android:id="@+id/btnPrevious" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="上一步" android:visibility="gone"
+			android:layout_centerVertical="true" android:src="@drawable/foryou_close" />
+		<LinearLayout android:id="@+id/structureFragment" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical"
+			android:paddingLeft="45dip" android:paddingRight="45dip" />
+		<ImageView android:id="@+id/btnNext" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="下一步" android:visibility="gone"
+			android:layout_centerVertical="true" android:layout_alignParentRight="true" android:src="@drawable/foryou_open" />
+	</RelativeLayout>
+</LinearLayout>

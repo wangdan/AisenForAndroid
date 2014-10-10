@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="white">#FFffffff</color>
+	<color name="black">#FF000000</color>
+	<color name="gray">#FF888888</color>
+	<color name="blue">#FF52A0DB</color>
+	<color name="red">#FFFF0000</color>
+	<color name="transparent">#00000000</color>
+	<color name="bg_pressed">#33888888</color>
+	<color name="bg_gray_oddnumber">#fff6f6f6</color>
+	<!-- 链接 -->
+	<color name="link_color">#c8067bb1</color>
+	<!-- JazzyViewPager -->
+	<color name="holo_blue">#FF33E5B5</color>
+	
+	<color name="background_tab_pressed">#6633B5E5</color>
+	
+	<color name="chglib_background_default_divider_color">#DADADC</color>
+</resources>

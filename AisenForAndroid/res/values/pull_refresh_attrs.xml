@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<declare-styleable name="PullToRefresh">
+
+		<!-- A drawable to use as the background of the Refreshable View -->
+		<attr name="ptrRefreshableViewBackground" format="reference|color" />
+
+		<!-- A drawable to use as the background of the Header and Footer Loading Views -->
+		<attr name="ptrHeaderBackground" format="reference|color" />
+
+		<!-- Text Color of the Header and Footer Loading Views -->
+		<attr name="ptrHeaderTextColor" format="reference|color" />
+
+		<!-- Text Color of the Header and Footer Loading Views Sub Header -->
+		<attr name="ptrHeaderSubTextColor" format="reference|color" />
+
+		<!-- Mode of Pull-to-Refresh that should be used -->
+		<attr name="ptrMode">
+			<flag name="disabled" value="0x0" />
+			<flag name="pullFromStart" value="0x1" />
+			<flag name="pullFromEnd" value="0x2" />
+			<flag name="both" value="0x3" />
+			<flag name="manualOnly" value="0x4" />
+
+			<!-- These last two are depreacted -->
+			<flag name="pullDownFromTop" value="0x1" />
+			<flag name="pullUpFromBottom" value="0x2" />
+		</attr>
+
+		<!-- Whether the Indicator overlay(s) should be used -->
+		<attr name="ptrShowIndicator" format="reference|boolean" />
+
+		<!-- Drawable to use as Loading Indicator. Changes both Header and Footer. -->
+		<attr name="ptrDrawable" format="reference" />
+
+		<!-- Drawable to use as Loading Indicator in the Header View. Overrides value set in ptrDrawable. -->
+		<attr name="ptrDrawableStart" format="reference" />
+
+		<!-- Drawable to use as Loading Indicator in the Footer View. Overrides value set in ptrDrawable. -->
+		<attr name="ptrDrawableEnd" format="reference" />
+
+		<!-- Whether Android's built-in Over Scroll should be utilised for Pull-to-Refresh. -->
+		<attr name="ptrOverScroll" format="reference|boolean" />
+
+		<!-- Base text color, typeface, size, and style for Header and Footer Loading Views -->
+		<attr name="ptrHeaderTextAppearance" format="reference" />
+
+		<!-- Base text color, typeface, size, and style for Header and Footer Loading Views Sub Header -->
+		<attr name="ptrSubHeaderTextAppearance" format="reference" />
+
+		<!-- Style of Animation should be used displayed when pulling. -->
+		<attr name="ptrAnimationStyle">
+			<flag name="rotate" value="0x0" />
+			<flag name="flip" value="0x1" />
+		</attr>
+
+		<!-- Whether the user can scroll while the View is Refreshing -->
+		<attr name="ptrScrollingWhileRefreshingEnabled" format="reference|boolean" />
+
+		<!-- Whether PullToRefreshListView has it's extras enabled. This allows the user to be able to scroll while refreshing, and behaves better. It acheives this by adding Header 
+			and/or Footer Views to the ListView. -->
+		<attr name="ptrListViewExtrasEnabled" format="reference|boolean" />
+
+		<!-- Whether the Drawable should be continually rotated as you pull. This only takes effect when using the 'Rotate' Animation Style. -->
+		<attr name="ptrRotateDrawableWhilePulling" format="reference|boolean" />
+
+		<!-- BELOW HERE ARE DEPRECEATED. DO NOT USE. -->
+		<attr name="ptrAdapterViewBackground" format="reference|color" />
+		<attr name="ptrDrawableTop" format="reference" />
+		<attr name="ptrDrawableBottom" format="reference" />
+	</declare-styleable>
+	
+	
+	
+	
+	
+	<declare-styleable name="PullToRefreshView">
+
+        <!-- The class to use as a View's View Delegate. Can be relative path from app's package name -->
+        <attr name="ptrViewDelegateClass" format="reference|string" />
+
+    </declare-styleable>
+
+    <!-- The attribute to set in your Application/Activity theme to reference your custom theme -->
+    <attr name="ptrHeaderStyle" format="reference" />
+
+    <declare-styleable name="PullToRefreshHeader">
+
+        <!-- A drawable to use as the background of the Header View -->
+        <attr name="ptrHeaderBackground_uk" format="reference|color" />
+
+        <!-- The height of the Header View -->
+        <attr name="ptrHeaderHeight" format="reference|dimension" />
+
+        <!-- The Text Appearance of the Header View's Title text -->
+        <attr name="ptrHeaderTitleTextAppearance" format="reference" />
+
+        <!-- The color that the Progress Bar should be tinted with -->
+        <attr name="ptrProgressBarColor" format="reference|color" />
+
+        <!-- The style of the Progress Bar -->
+        <attr name="ptrProgressBarStyle">
+            <flag name="inside" value="0x0" />
+            <flag name="outside" value="0x1" />
+        </attr>
+
+	    <!-- The height of the Progress Bar -->
+	    <attr name="ptrProgressBarHeight" format="reference|dimension" />
+
+        <!-- Text to show to prompt the user is pull (or keep pulling) -->
+        <attr name="ptrPullText" format="reference|string" />
+
+        <!-- Text to show to tell the user that a refresh is currently in progress -->
+        <attr name="ptrRefreshingText" format="reference|string" />
+
+        <!-- Text to show to tell the user has scrolled enough to refresh -->
+        <attr name="ptrReleaseText" format="reference|string" />
+
+        <!--indeterminate progressbar style-->
+        <attr name="ptrSmoothProgressBarStyle" format="reference"/>
+
+    </declare-styleable>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<LinearLayout android:id="@id/layoutContent" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical">
+		<com.handmark.pulltorefresh.library.PullToRefreshGridView xmlns:ptr="http://schemas.android.com/apk/res-auto"
+			android:id="@id/refreshGridView" android:layout_height="fill_parent" android:layout_width="fill_parent" android:verticalSpacing="3dip" android:numColumns="3"
+			android:horizontalSpacing="3dip" android:stretchMode="columnWidth" android:gravity="fill" ptr:ptrMode="both" />
+	</LinearLayout>
+
+	<include android:id="@id/layoutLoading" layout="@layout/layout_loading" android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:visibility="gone" />
+	<include android:id="@id/layoutLoadFailed" layout="@layout/layout_loadfailed" android:layout_width="match_parent" android:layout_height="match_parent"
+		android:visibility="gone" />
+</RelativeLayout>

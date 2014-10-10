@@ -1,0 +1,14 @@
+<resources>
+
+	<dimen name="microTextSize">12sp</dimen>
+	<dimen name="smallTextSize">14sp</dimen>
+	<dimen name="mediumTextSize">16sp</dimen>
+	<dimen name="largeTextSize">18sp</dimen>
+	
+	<dimen name="custom_dialog_toppanel_divider">1.0dip</dimen>
+
+    <dimen name="um_options_window_diff_x">100dip</dimen>
+    <dimen name="um_options_window_diff_y">20dip</dimen>
+	
+    <dimen name="listPreferredItemHeightSmall">48dp</dimen>
+</resources>

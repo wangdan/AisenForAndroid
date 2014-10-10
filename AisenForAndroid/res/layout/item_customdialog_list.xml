@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<TextView android:id="@+id/txtTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="45dip" style="?attr/style_listview_item"
+		android:singleLine="true" android:ellipsize="end" android:paddingLeft="15dip" android:paddingRight="15dip" android:gravity="center_vertical" android:background="?attr/bg_listview_item"
+		android:duplicateParentState="true" />
+</LinearLayout>

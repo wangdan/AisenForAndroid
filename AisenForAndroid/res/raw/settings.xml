@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<app-settings>
+
+	<setting-array type="root_path" index="0">
+		<des>应用程序相对sdcard的相对路径目录，所有的文件都存储在这个文件夹中</des>
+		<setting>
+			<value>support</value>
+		</setting>
+	</setting-array>
+
+	<setting type="com_m_common_json">
+		<des>业务数据sdcard缓存路径，相对root_path路径</des>
+		<value>json</value>
+	</setting>
+
+	<setting type="com_m_common_image">
+		<des>图片数据sdcard缓存路径，相对root_path路径</des>
+		<value>image</value>
+	</setting>
+
+	<setting-array type="cache_utility" index="1">
+		<des>缓存模式设置</des>
+		<setting>
+			<des>DB数据缓存</des>
+			<value>com.m.support.cache.DBCacheUtility</value>
+		</setting>
+		<setting>
+			<des>文件数据缓存</des>
+			<value>com.m.support.cache.FileCacheUtility</value>
+		</setting>
+	</setting-array>
+
+	<setting type="memory_cache_validity">
+		<des>内存缓存数据有效期，等于0为不保持内存数据，单位(s)</des>
+		<value>300</value>
+	</setting>
+
+	<setting type="cache_validtime">
+		<des>缓存数据的有效期，max_date为永久有效，单位(s)</des>
+		<value>max_date</value>
+	</setting>
+
+	<setting type="debug">
+		<des>APP是否是DEBUG模式</des>
+		<value>true</value>
+	</setting>
+
+	<setting type="cache_enable">
+		<des>缓存开关，在这里设置无效，需要在action.xml中覆盖这个设置</des>
+		<value>true</value>
+	</setting>
+
+	<setting type="page_count">
+		<des>分页大小</des>
+		<value>5</value>
+	</setting>
+	
+	<setting type="double_click_refresh">
+		<des>双击操作栏自动刷新程序</des>
+		<value>false</value>
+	</setting>
+
+	<setting type="fragment_lifecycle">
+		<des>FragmentLifecycle基类注入</des>
+		<value>com.sysweal.marketing.component.MarketingLifecycle</value>
+	</setting>
+
+</app-settings>

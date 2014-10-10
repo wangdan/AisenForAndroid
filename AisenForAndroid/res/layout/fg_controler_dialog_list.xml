@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/dialog_list"
+        android:layout_width="120dip"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_weibobuilder"
+        android:cacheColorHint="#00000000"
+        android:dividerHeight="0dip"
+        android:fadingEdge="none"
+        android:headerDividersEnabled="false"
+        android:listSelector="@null"
+        android:padding="7dip" />
+
+    <LinearLayout
+        android:id="@+id/dialog_list_arrow"
+        android:layout_width="15dip"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/dialog_list" >
+
+        <ImageView
+            android:layout_width="15dip"
+            android:layout_height="17.4dip"
+            android:scaleType="fitCenter"
+            android:src="@drawable/arrow_weibobuilder" />
+    </LinearLayout>
+
+</RelativeLayout>
