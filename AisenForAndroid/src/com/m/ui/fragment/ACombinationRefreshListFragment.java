@@ -76,22 +76,19 @@ public abstract class ACombinationRefreshListFragment<T extends Serializable, Ts
 	void _layoutInit(LayoutInflater inflater, Bundle savedInstanceState) {
 		listType = configListType();
 
-		super._layoutInit(inflater, savedInstanceState);
-		
 		mFooterView = View.inflate(getActivity(), R.layout.layout_footerview, null);
+		SmoothProgressBar mHeaderProgressBar = (SmoothProgressBar) mFooterView.findViewById(R.id.progress);
+		mHeaderProgressBar.setIndeterminate(true);
 		layLoading = mFooterView.findViewById(R.id.layLoading);
 		txtLoadingHint = (TextView) mFooterView.findViewById(R.id.txtLoadingHint);
 		btnLoadMore = (TextView) mFooterView.findViewById(R.id.btnLoadMore);
 
+		super._layoutInit(inflater, savedInstanceState);
 
+		setRefreshList();
 		getListView().addFooterView(mFooterView);
 
-		SmoothProgressBar mHeaderProgressBar = (SmoothProgressBar) mFooterView.findViewById(R.id.progress);
-		mHeaderProgressBar.setIndeterminate(true);
-
 		resetRefreshView(getConfig());
-		
-		setRefreshList();
 		
 		if (savedInstanceState == null) {
 			setFooterRefreshing();
