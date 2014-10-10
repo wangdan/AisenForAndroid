@@ -1,8 +1,8 @@
-# AisenFotAndroid
+# AisenForAndroid
 
 
 ## 说明
-AisenFotAndroid是一个android快速开发框架，有了我，你可以快速搭建一个android项目，用最少的代码，最更多的事。
+AisenForAndroid是一个android快速开发框架，有了我，你可以快速搭建一个android项目，用最少的代码，最更多的事。
 
 ## 文档
 待续
