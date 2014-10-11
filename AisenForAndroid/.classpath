@@ -18,5 +18,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/commons-httpclient-3.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/commons-logging.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/fastjson.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
