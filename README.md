@@ -44,7 +44,7 @@ public class TimelineItemView extends AbstractItemView<StatusContent>
 
 请使用这一行代码加载图片
 ```java
-public void display(BitmapOwner owner, String url, ImageView imageView, ImageConfig ImageConfig)
+BitmapLoader.display(BitmapOwner owner, String url, ImageView imageView, ImageConfig ImageConfig)
 ```
 
 ## 依赖工程
