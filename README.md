@@ -26,8 +26,7 @@ public class TimelineItemView extends AbstractItemView<StatusContent>
 }
 ```
 
-## 文档
-待续
+目前只支持click事件，我是个很实在的人，确实还没有遇到其他例如OnLongClick事件需要绑定就没有添加支持。
 
 ## 依赖工程
  * [SmoothProgressBar](https://github.com/castorflex/SmoothProgressBar)
