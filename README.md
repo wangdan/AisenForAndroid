@@ -28,6 +28,14 @@ public class TimelineItemView extends AbstractItemView<StatusContent>
 
 目前只支持click事件，我是个很实在的人，确实还没有遇到其他例如OnLongClick事件需要绑定就没有添加支持。
 
+## BitmapLoader
+这个是我的最爱，当初因为Aisen微博加载大量的图片导致OOM让我头疼不已，如今可以使用BitmapLoader加载网络url、sdcard、assets、drawable、ContentProvider等资源。
+
+ * 特点
+  * 配置Downloader
+  * 配置Displayer
+  * 配置
+
 ## 依赖工程
  * [SmoothProgressBar](https://github.com/castorflex/SmoothProgressBar)
  * [PhotoView](https://github.com/chrisbanes/PhotoView)
