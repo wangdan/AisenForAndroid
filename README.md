@@ -47,7 +47,7 @@ LRU算法管理内存资源，不存在OOM，ARefreshFragment中自动释放图�
 BitmapLoader.display(BitmapOwner owner, String url, ImageView imageView, ImageConfig ImageConfig)
 ```
 
-更多详细请查看BitmapLoader
+更多详细请查看[BitmapLoader](https://github.com/wangdan/AisenForAndroid/wiki/附、BitmapLoader "BitmapLoader")
 
 ## 依赖工程
  * [SmoothProgressBar](https://github.com/castorflex/SmoothProgressBar)
