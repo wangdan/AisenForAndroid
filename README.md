@@ -31,10 +31,16 @@ public class TimelineItemView extends AbstractItemView<StatusContent>
 ## BitmapLoader
 这个是我的最爱，当初因为Aisen微博加载大量的图片导致OOM让我头疼不已，如今可以使用BitmapLoader加载网络url、sdcard、assets、drawable、ContentProvider等资源。
 
- * 特点
-  * 配置Downloader
-  * 配置Displayer
-  * 配置
+ * 二级缓存
+  * originate：原始图片
+  * compression：压缩图片，包括配置了id、尺寸、裁剪等操作后的压缩尺寸
+ * LRU算法管理
+ * 配置Downloader
+  * web、sdcard、assets、drawable、contentprovider或者自定义
+ * Displayer
+ * DownloadProcess
+ * BitmapCompress
+  * 尺寸配置，可以自行针对加载的图片进行压缩 
 
 ## 依赖工程
  * [SmoothProgressBar](https://github.com/castorflex/SmoothProgressBar)
