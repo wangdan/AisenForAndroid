@@ -7,6 +7,25 @@ AisenForAndroid是一个android快速开发框架，内置的orm、ioc、bitmapl
 ## ORM(SqliteUtility)
 假设你已经熟悉sqlite操作，那么，SqliteUtility的相关api方法就不需要再说太多。同样面向对象，一行代码对数据库进行增删改查操作，但是剔除了一对一或者一对多这些操作，更多的示例代码请查看[SqliteUtility](https://github.com/wangdan/AisenForAndroid/wiki/附、SqliteUtility "SqliteUtility") 。
 
+## IOC(ViewInject)
+继承BaseActivity、ABaseFragment等均可以使用ViewInject对属性自动装配，可以给view设置点击事件，像这样
+```java
+@ViewInject(idStr = "layoutLoadFailed", click = "reload")
+View loadFailureLayout;// 加载失败视图
+```
+
+或者像ItemView，也可以自动绑定，像这样
+```java
+public class TimelineItemView extends AbstractItemView<StatusContent> 
+											implements OnClickListener {
+	@ViewInject(id = R.id.imgPhoto)
+	ImageView imgPhoto;
+	@ViewInject(id = R.id.txtName)
+	TextView txtName;
+  ...
+}
+```
+
 ## 文档
 待续
 
