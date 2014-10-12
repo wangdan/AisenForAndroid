@@ -29,7 +29,7 @@ public class TimelineItemView extends AbstractItemView<StatusContent>
 目前只支持click事件，我是个很实在的人，确实还没有遇到其他例如OnLongClick事件需要绑定就没有添加支持。
 
 ## BitmapLoader
-这个是我的最爱，当初因为Aisen微博加载大量的图片导致OOM让我头疼不已，如今可以使用BitmapLoader加载网络url、sdcard、assets、drawable、ContentProvider等资源。
+LRU算法管理内存资源，不存在OOM，ARefreshFragment中自动释放图片和刷新界面。具体特征如下：
 
  * 二级缓存
   * originate：原始图片
@@ -46,6 +46,8 @@ public class TimelineItemView extends AbstractItemView<StatusContent>
 ```java
 BitmapLoader.display(BitmapOwner owner, String url, ImageView imageView, ImageConfig ImageConfig)
 ```
+
+更多详细请查看BitmapLoader
 
 ## 依赖工程
  * [SmoothProgressBar](https://github.com/castorflex/SmoothProgressBar)
