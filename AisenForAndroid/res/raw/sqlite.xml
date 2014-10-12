@@ -14,7 +14,7 @@
 	</setting-array>
     
     <setting type="path">
-		<des>图片数据sdcard缓存路径，相对root_path路径</des>
+		<des>sdcard的db路径，相对root_path路径</des>
 		<value>db</value>
 	</setting>
 	

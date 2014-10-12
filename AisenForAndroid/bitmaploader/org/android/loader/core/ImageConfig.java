@@ -1,6 +1,5 @@
 package org.android.loader.core;
 
-import org.android.loader.display.DefaultDisplayer;
 import org.android.loader.display.Displayer;
 import org.android.loader.display.FadeInDisplayer;
 import org.android.loader.download.DownloadProcess;
