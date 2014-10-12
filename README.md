@@ -42,6 +42,11 @@ public class TimelineItemView extends AbstractItemView<StatusContent>
  * BitmapCompress
   * 尺寸配置，可以自行针对加载的图片进行压缩 
 
+请使用这一行代码加载图片
+```java
+public void display(BitmapOwner owner, String url, ImageView imageView, ImageConfig ImageConfig)
+```
+
 ## 依赖工程
  * [SmoothProgressBar](https://github.com/castorflex/SmoothProgressBar)
  * [PhotoView](https://github.com/chrisbanes/PhotoView)
