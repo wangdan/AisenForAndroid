@@ -29,18 +29,6 @@ public class TimelineItemView extends AbstractItemView<StatusContent>
 目前只支持click事件，我是个很实在的人，确实还没有遇到其他例如OnLongClick事件需要绑定就没有添加支持。
 
 ## BitmapLoader
-LRU算法管理内存资源，不存在OOM，ARefreshFragment中自动释放图片和刷新界面。具体特征如下：
-
- * 二级缓存
-  * originate：原始图片
-  * compression：压缩图片，包括配置了id、尺寸、裁剪等操作后的压缩尺寸
- * LRU算法管理
- * 配置Downloader
-  * web、sdcard、assets、drawable、contentprovider或者自定义
- * Displayer
- * DownloadProcess
- * BitmapCompress
-  * 尺寸配置，可以自行针对加载的图片进行压缩 
 
 请使用这一行代码加载图片
 ```java
