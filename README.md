@@ -4,6 +4,24 @@
 ## 说明
 AisenForAndroid是一个android快速开发框架，内置的orm、ioc、bitmaploader均修改自afinal1.0版本。不同于其他，Aisen专注如何使用这些组件来更快速更健壮的开发app。四层结构：UI层、业务接口层、持久层、网络通讯层。面向敏捷、AOP编程，基于Aisen，让你的工作更倾向于具体的业务逻辑开发。
 
+## 我能做什么
+
+ * 使用ViewInject绑定view
+  * fragment可以
+  * activity可以
+  * adapter的itemview可以
+  * 任何地方
+ * BitmapLoader，一行代码加载图片
+  * 可以加载web、sdcard、assets、drawable、contentprovider、任何地方
+  * 可以裁剪图片、圆角、压缩、任意处理
+  * 二级缓存
+  * 下载进度回调，开始、错误、进度、结束等事件
+  * 其他配置：Displayer、LRU算法
+ * ORM
+  * 一行代码针对object的sqlite增删改查操作
+ * 规范SDK业务接口定义
+  * 你看这里[SinaSDK](https://github.com/wangdan/AisenWeiBo/blob/master/AisenWeiBo/sdk/org/sina/android/SinaSDK.java)
+
 ## ORM(SqliteUtility)
 假设你已经熟悉sqlite操作，那么，SqliteUtility的相关api方法就不需要再说太多。同样面向对象，一行代码对数据库进行增删改查操作，但是剔除了一对一或者一对多这些操作，更多的示例代码请查看[SqliteUtility](https://github.com/wangdan/AisenForAndroid/wiki/附、SqliteUtility "SqliteUtility") 。
 
