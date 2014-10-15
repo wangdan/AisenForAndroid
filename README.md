@@ -30,7 +30,7 @@ AisenForAndroid是一个android快速开发框架，内置的orm、ioc、bitmapl
   * 将接口数据保存为文件
   * 将接口数据保存到db
   * 将接口数据保存到任何你想保存的地方
- * 异步线程：[WorkTask](https://github.com/wangdan/AisenForAndroid/blob/master/AisenForAndroid/src/com/m/support/task/WorkTask.java)
+ * 异步线程：[WorkTask](https://github.com/wangdan/AisenForAndroid/wiki/附、WorkTask)
 
 ## 我还能做什么
 
@@ -50,12 +50,12 @@ AisenForAndroid是一个android快速开发框架，内置的orm、ioc、bitmapl
  * app运行时切换网络通讯协议
   * 某些项目，根据网络环境切换网络通讯协议，网段内实现p2p的wifi socket协议通讯，网段外与云服务器的http+soap+https协议通讯，或者与硬件交互的bluetooth socket协议通讯等。不管什么协议之间的切换，只需要一行代码动态配置即可
  * 事件传递机制
-  * 没有任何耦合，任何异常信息以Exception的形式上报至UI层。UI层只处理异常信息的UI反馈，业务接口层上报业务异常信息(登录失败、表单错误等业务相关)，网络通讯层上报通讯异常信息(无网络、连接超时等)。
-  * 4层结构，层与层之间低耦合，恪守单一职责原则，面向AOP
-   * UI层，处理ui上的特效、事件、基本的业务逻辑处理
-   * SDK层(业务接口层)，规范所有与服务端通讯的接口定义，包括定义方法的入参、出参、异常
-   * HttpUtility层(网络通讯层)，实现app所支持的网络通讯协议
-   * CacheUtility层(持久层)，针对业务接口的数据持久管理
+  * 没有任何耦合，任何异常信息以Exception的形式上报至UI层。UI层只处理异常信息的UI反馈，业务接口层上报业务异常信息(登录失败、表单错误等业务相关)，网络通讯层上报通讯异常信息(无网络、连接超时等)
+ * 4层结构，层与层之间低耦合，恪守单一职责原则，面向AOP
+  * UI层，处理ui上的特效、事件、基本的业务逻辑处理
+  * SDK层(业务接口层)，规范所有与服务端通讯的接口定义，包括定义方法的入参、出参、异常
+  * HttpUtility层(网络通讯层)，实现app所支持的网络通讯协议
+  * CacheUtility层(持久层)，针对业务接口的数据持久管理
 
 
 ## ORM(SqliteUtility)
