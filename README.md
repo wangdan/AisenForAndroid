@@ -20,7 +20,7 @@ AisenForAndroid是一个android快速开发框架，内置的orm、ioc、bitmapl
  * ORM
   * 一行代码针对object的sqlite增删改查操作
  * 规范SDK业务接口定义
-  * 你看这里[SinaSDK](https://github.com/wangdan/AisenWeiBo/blob/master/AisenWeiBo/sdk/org/sina/android/SinaSDK.java)
+  * 你看这里[SinaSDK](https://github.com/wangdan/AisenWeiBo/blob/master/AisenWeiBo/sdk/org/sina/android/SinaSDK.java)，在看这里[OSCSdk](https://github.com/wangdan/AisenForOSC/blob/master/AisenForOSC/sdk/org/aisen/osc/sdk/OSCSdk.java)
 
 ## ORM(SqliteUtility)
 假设你已经熟悉sqlite操作，那么，SqliteUtility的相关api方法就不需要再说太多。同样面向对象，一行代码对数据库进行增删改查操作，但是剔除了一对一或者一对多这些操作，更多的示例代码请查看[SqliteUtility](https://github.com/wangdan/AisenForAndroid/wiki/附、SqliteUtility "SqliteUtility") 。
