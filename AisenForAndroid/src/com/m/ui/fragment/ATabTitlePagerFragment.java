@@ -152,11 +152,14 @@ public abstract class ATabTitlePagerFragment<T extends TabTitlePagerBean> extend
 					}
 					
 					mViewPagerAdapter = new MyViewPagerAdapter(getFragmentManager());
+					viewPager.setOffscreenPageLimit(mViewPagerAdapter.getCount());
 					viewPager.setAdapter(mViewPagerAdapter);
 					if (selectedIndex >= mViewPagerAdapter.getCount())
 						selectedIndex = 0;
 					viewPager.setCurrentItem(selectedIndex);
 					pagerTabs.setViewPager(viewPager);
+					if (mViewPagerAdapter.getCount() <= 3)
+						pagerTabs.setShouldExpand(true);
 					pagerTabs.setOnPageChangeListener(ATabTitlePagerFragment.this);
 				
 					lastChanneTime = System.currentTimeMillis();
@@ -193,6 +196,10 @@ public abstract class ATabTitlePagerFragment<T extends TabTitlePagerBean> extend
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public PagerSlidingTabStrip getTabStrip() { 
+		return pagerTabs;
 	}
 	
 	private void destoryFragments() {

@@ -337,5 +337,9 @@ public abstract class ACombinationRefreshListFragment<T extends Serializable, Ts
 			return RefreshListType.actionbarPulltorefresh;
 		}
 	}
-
+	
+	protected View getFooterView() {
+		return mFooterView;
+	}
+	
 }

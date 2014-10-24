@@ -21,13 +21,7 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
 	void _layoutInit(LayoutInflater inflater, Bundle savedInstanceState) {
 		super._layoutInit(inflater, savedInstanceState);
 
-		View headView = addHeadView();
-		if (headView != null)
-			listView.addHeaderView(headView);
-
-		View footerView = addFooterView();
-		if (footerView != null)
-			listView.addFooterView(footerView);
+		addHeadView(listView);
 
 		listView.setRecyclerListener(this);
 		listView.setAdapter(getAdapter());
@@ -39,12 +33,8 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
 		return listView;
 	}
 
-	public View addHeadView() {
-		return null;
-	}
-
-	public View addFooterView() {
-		return null;
+	public void addHeadView(ListView listView) {
+		
 	}
 
 	@Override

@@ -40,7 +40,6 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import fr.castorflex.android.smoothprogressbar.SmoothProgressBar;
 import uk.co.senab.actionbarpulltorefresh.library.sdk.Compat;
 

@@ -70,6 +70,9 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
 
 		if (activity instanceof BaseActivity)
 			((BaseActivity) activity).addFragment(toString(), this);
+		
+		if (fragmentHelper != null)
+			fragmentHelper.onAttach(activity);
 	}
 
 	@Override
@@ -78,6 +81,9 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
 		taskManager = new TaskManager();
 		if (savedInstanceState != null)
 			taskManager.restore(savedInstanceState);
+		
+		if (fragmentHelper != null)
+			fragmentHelper.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -116,6 +122,9 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
 
 		if (savedInstanceState == null)
 			requestData();
+		
+		if (fragmentHelper != null)
+			fragmentHelper.onActivityCreated(savedInstanceState);
 	}
 
 	@Override
@@ -124,6 +133,14 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
 
 		if (getActivity() != null && getActivity() instanceof BaseActivity)
 			((BaseActivity) getActivity()).removeFragment(this.toString());
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		if (fragmentHelper != null)
+			fragmentHelper.onResume();
 	}
 
 	/**
@@ -455,6 +472,10 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
 	@Override
 	public boolean canDisplay() {
 		return true;
+	}
+	
+	public AFragmentHelper getFragmentHelper() {
+		return fragmentHelper;
 	}
 
 }

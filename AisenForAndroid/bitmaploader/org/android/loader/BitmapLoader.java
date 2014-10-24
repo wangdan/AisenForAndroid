@@ -508,6 +508,7 @@ public class BitmapLoader {
 			bitmapBytes = config.getDownloaderClass().newInstance().downloadBitmap(imageUrl, config);
 			if (bitmapBytes != null) {
 				Logger.v(TAG, "load the data through the network, url = " + imageUrl);
+				Logger.v(TAG, "downloader = " + config.getDownloaderClass().getSimpleName());
 				flag = flag | 0x04;
 			}
 

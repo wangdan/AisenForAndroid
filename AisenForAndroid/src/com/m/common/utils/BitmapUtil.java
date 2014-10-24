@@ -130,7 +130,7 @@ public class BitmapUtil {
 							result.getHeight()));
 		} catch (Exception e) {
 		}
-		source.recycle();
+//		source.recycle();
 		return result;
 	}
 	

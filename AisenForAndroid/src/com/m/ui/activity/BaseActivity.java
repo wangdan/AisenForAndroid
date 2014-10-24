@@ -32,7 +32,9 @@ import android.view.ViewGroup.LayoutParams;
 import com.m.common.context.GlobalContext;
 import com.m.common.settings.SettingUtility;
 import com.m.common.utils.ActivityHelper;
+import com.m.common.utils.CommSettings;
 import com.m.common.utils.Logger;
+import com.m.common.utils.SystemBarTintManager;
 import com.m.common.utils.SystemUtility;
 import com.m.support.Inject.InjectUtility;
 import com.m.support.task.ITaskManager;
@@ -56,18 +58,22 @@ public class BaseActivity extends Activity implements ITaskManager, BitmapOwner 
 	// 当有Fragment Attach到这个Activity的时候，就会保存
 	private Map<String, WeakReference<ABaseFragment>> fragmentRefs;
 
-	private static Activity runningActivity;
+	private static BaseActivity runningActivity;
 
 	private AActivityHelper activityHelper;
+	
+	private SystemBarTintManager systemBarTintManager;
+	
+	private View rootView;
 
-	public static Activity getRunningActivity() {
+	public static BaseActivity getRunningActivity() {
 		return runningActivity;
 	}
 
-	public static void setRunningActivity(Activity activity) {
+	public static void setRunningActivity(BaseActivity activity) {
 		runningActivity = activity;
 	}
-
+	
 	public BaseActivity() {
 		try {
 			if (SettingUtility.getSetting("activity_lifecycle") != null) {
@@ -79,18 +85,19 @@ public class BaseActivity extends Activity implements ITaskManager, BitmapOwner 
 			e.printStackTrace();
 		}
 	}
+	
+	protected int configTheme() {
+		return CommSettings.getAppTheme();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		if (activityHelper != null)
-			activityHelper.onCreate(savedInstanceState);
-
 //		Logger.w(Locale.getDefault().getLanguage() + "()" + Locale.getDefault().getCountry());
 		
 		fragmentRefs = new HashMap<String, WeakReference<ABaseFragment>>();
 
 		if (savedInstanceState == null) {
-			theme = SettingUtility.getPermanentSettingAsInt("theme");
+			theme = configTheme();
 			
 			language = new Locale(SettingUtility.getPermanentSettingAsStr("language", Locale.getDefault().getLanguage()),
 											SettingUtility.getPermanentSettingAsStr("language-country", Locale.getDefault().getCountry()));
@@ -100,7 +107,8 @@ public class BaseActivity extends Activity implements ITaskManager, BitmapOwner 
 			language = new Locale(savedInstanceState.getString("language"), savedInstanceState.getString("language-country"));
 		}
 		// 设置主题
-		setTheme(theme);
+		if (theme > 0)
+			setTheme(theme);
 		// 设置语言
 		setLanguage(language);
 
@@ -128,17 +136,25 @@ public class BaseActivity extends Activity implements ITaskManager, BitmapOwner 
 			}
 		}
 		
+		if (activityHelper != null)
+			activityHelper.onCreate(savedInstanceState);
+		
 		super.onCreate(savedInstanceState);
+		
 	}
 
 	@Override
 	public void setContentView(int layoutResID) {
+		ViewGroup contentView = null;
+		
 		boolean set = false;
 		if (activityHelper != null) {
-			ViewGroup rootView = activityHelper.setContentView(layoutResID);
-			if (rootView != null) {
+			contentView = activityHelper.setContentView(layoutResID);
+			if (contentView != null) {
+				rootView = contentView;
+				
 				set = true;
-				super.setContentView(rootView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+				super.setContentView(contentView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 			}
 		}
 
@@ -147,10 +163,16 @@ public class BaseActivity extends Activity implements ITaskManager, BitmapOwner 
 
 		InjectUtility.initInjectedView(this);
 	}
+	
+	public View getRootView() {
+		return rootView;
+	}
 
 	@Override
 	public void setContentView(View view, LayoutParams params) {
 		super.setContentView(view, params);
+		
+		rootView = view;
 
 		InjectUtility.initInjectedView(this);
 	}
@@ -158,6 +180,9 @@ public class BaseActivity extends Activity implements ITaskManager, BitmapOwner 
 	@Override
 	public void setContentView(View view) {
 		super.setContentView(view);
+		
+		rootView = view;
+		
 		InjectUtility.initInjectedView(this);
 	}
 
@@ -189,7 +214,7 @@ public class BaseActivity extends Activity implements ITaskManager, BitmapOwner 
 
 		runningActivity = this;
 
-		if (theme == SettingUtility.getPermanentSettingAsInt("theme")) {
+		if (theme == configTheme()) {
 
 		} else {
 			Logger.i("theme changed, reload()");
@@ -239,7 +264,7 @@ public class BaseActivity extends Activity implements ITaskManager, BitmapOwner 
 		Intent intent = getIntent();
 		overridePendingTransition(0, 0);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 		finish();
 
 		overridePendingTransition(0, 0);
@@ -456,6 +481,18 @@ public class BaseActivity extends Activity implements ITaskManager, BitmapOwner 
 	@Override
 	public boolean canDisplay() {
 		return true;
+	}
+	
+	public AActivityHelper getActivityHelper() {
+		return activityHelper;
+	}
+	
+	public void setSystemBarTintManager(SystemBarTintManager systemBarTintManager) {
+		this.systemBarTintManager = systemBarTintManager;
+	}
+	
+	public SystemBarTintManager getSystemBarTintManager() {
+		return systemBarTintManager;
 	}
 	
 	/********************

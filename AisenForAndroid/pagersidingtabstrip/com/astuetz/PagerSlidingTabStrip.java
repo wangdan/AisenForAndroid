@@ -16,6 +16,8 @@
 
 package com.astuetz;
 
+import java.util.Locale;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -38,8 +40,6 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.util.Locale;
 
 import com.m.R;
 
@@ -176,6 +176,8 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 		if (pager.getAdapter() == null) {
 			throw new IllegalStateException("ViewPager does not have adapter instance.");
 		}
+		
+		checkedTabWidths = false;
 
 		pager.setOnPageChangeListener(pageListener);
 
@@ -572,6 +574,33 @@ public class PagerSlidingTabStrip extends HorizontalScrollView {
 				return new SavedState[size];
 			}
 		};
+	}
+	
+	private boolean checkedTabWidths = false;
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+
+		if (!shouldExpand || MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED) {
+			return;
+		}
+
+		int myWidth = getMeasuredWidth();
+		int childWidth = 0;
+		for (int i = 0; i < tabCount; i++) {
+			childWidth += tabsContainer.getChildAt(i).getMeasuredWidth();
+		}
+
+		if (!checkedTabWidths && childWidth > 0 && myWidth > 0) {
+
+			if (childWidth <= myWidth) {
+				for (int i = 0; i < tabCount; i++) {
+					tabsContainer.getChildAt(i).setLayoutParams(expandedTabLayoutParams);
+				}
+			}
+
+			checkedTabWidths = true;
+		}
 	}
 
 }

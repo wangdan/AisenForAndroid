@@ -156,7 +156,13 @@ public abstract class ABaseBizlogic implements HttpUtility {
 						putToCache(actionSetting, params, result, memoryCacheUtility);
 					// 刷新持久缓存
 					if (cacheUtility != null) {
-						putToCache(actionSetting, params, result, cacheUtility);
+						// 如果数据来自缓存，则不刷新
+						if (result instanceof IResult && ((IResult) result).isCache()) {
+							Logger.w(ABaseBizlogic.TAG, "数据来自缓存，不刷新");
+						}
+						else {
+							putToCache(actionSetting, params, result, cacheUtility);
+						}
 					}
 
 					Logger.d(TAG, String.format("load data from webservice, action = %s --->%s", actionSetting.getValue(), Logger.toJson(result)));

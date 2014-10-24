@@ -25,7 +25,7 @@ public abstract class AFragmentHelper {
         return baseFragment;
     }
 
-    public Activity getBaseActivity() {
+    public Activity getActivity() {
         return baseActivity;
     }
 
