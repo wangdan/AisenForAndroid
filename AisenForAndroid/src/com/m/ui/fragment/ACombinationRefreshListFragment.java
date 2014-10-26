@@ -85,6 +85,7 @@ public abstract class ACombinationRefreshListFragment<T extends Serializable, Ts
 
 		super._layoutInit(inflater, savedInstanceState);
 
+		initRefreshList(savedInstanceState);
 		setRefreshList();
 		getListView().addFooterView(mFooterView);
 
@@ -93,6 +94,10 @@ public abstract class ACombinationRefreshListFragment<T extends Serializable, Ts
 		if (savedInstanceState == null) {
 			setFooterRefreshing();
 		}
+	}
+	
+	protected void initRefreshList(Bundle savedInstanceState) {
+		
 	}
 	
 	private void setRefreshList() {

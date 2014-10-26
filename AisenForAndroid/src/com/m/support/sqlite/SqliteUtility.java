@@ -237,8 +237,8 @@ public class SqliteUtility {
 				if (flag > 0)
 					Logger.d(TAG, String.format(" 更新 , id = %s, key = %s", extra.getId(), extra.getKey() + ""));
 			} else {
-				Object existObj = getRd().query(ClassUtils.getTableName(entity.getClass()), null, selection, selectionArgs, null, null, null);
-				if (existObj != null) {
+				Cursor cursor = getRd().query(ClassUtils.getTableName(entity.getClass()), null, selection, selectionArgs, null, null, null);
+				if (cursor.moveToFirst()) {
 					flag = 1;
 					Logger.d(TAG, String.format(" 已存在，不更新  , id = %s, key = %s", extra.getId(), extra.getKey()));					
 				}
@@ -313,8 +313,8 @@ public class SqliteUtility {
 								if (flag > 0)
 									Logger.v(TAG, String.format(" 更新已存在, id = %s, key = %s", extra.getId(), extra.getKey() + ""));
 							} else {
-								Object existObj = getRd().query(ClassUtils.getTableName(entity.getClass()), null, selection, selectionArgs, null, null, null);
-								if (existObj != null) {
+								Cursor cursor = getRd().query(ClassUtils.getTableName(entity.getClass()), null, selection, selectionArgs, null, null, null);
+								if (cursor.moveToFirst()) {
 									flag = 1;
 									Logger.v(TAG, String.format(" 已存在，不更新, id = %s, key = %s", extra.getId(), extra.getKey() + ""));								
 								}
