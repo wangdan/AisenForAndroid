@@ -51,7 +51,8 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
 		setViewVisiable(emptyLayout, View.GONE);
 		setViewVisiable(loadFailureLayout, View.GONE);
 		setViewVisiable(contentLayout, View.VISIBLE);
-		getAdapter().setDatasAndRefresh(items);
+		setAdapterItems(items);
+		notifyDataSetChanged();
 		getListView().setSelectionFromTop(0, 0);
 	}
 

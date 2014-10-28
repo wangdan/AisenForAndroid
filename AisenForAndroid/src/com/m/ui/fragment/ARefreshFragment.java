@@ -17,14 +17,18 @@ import com.m.support.paging.IPaging;
 import com.m.support.paging.PagingProxy;
 import com.m.support.task.TaskException;
 import com.m.ui.activity.BaseActivity.IAcUnusedDoubleClickedHandler;
+import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
@@ -43,6 +47,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	PagingProxy mPagingProxy;
 
 	private ABaseAdapter<T> mAdapter;
+	
+	private SwingBottomInAnimationAdapter swingAnimAdapter;
 	
 	@SuppressWarnings("rawtypes")
 	private PagingTask pagingTask;
@@ -82,6 +88,20 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 
 		refreshConfig = savedInstanceState == null ? new RefreshConfig() 
 												   : (RefreshConfig) savedInstanceState.getSerializable("refreshConfig");
+		
+		if (refreshConfig.animEnable) {
+			swingAnimAdapter = new SwingBottomInAnimationAdapter(mAdapter) {
+				
+				@Override
+				protected Animator getAnimator(ViewGroup parent, View view) {
+					if (refreshConfig != null && !refreshConfig.animEnable)
+						return null;
+					
+					return super.getAnimator(parent, view);
+				}
+				
+			};
+		}
 	}
 	
 	Handler mHandler = new Handler() {
@@ -99,6 +119,9 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		
 		if (refreshConfig == null)
 			refreshConfig = new RefreshConfig();
+		
+		if (swingAnimAdapter != null)
+			swingAnimAdapter.setAbsListView(getRefreshView());
 		
 		if (!refreshConfig.canLoadMore)
 			resetRefreshView(refreshConfig);
@@ -150,7 +173,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			else if (scrollState == SCROLL_STATE_IDLE) {
 				isScrolling = false;
 				
-				getAdapter().notifyDataSetChanged();
+				notifyDataSetChanged();
 				
 				if (!TextUtils.isEmpty(getLastReadKey()) && getRefreshView() != null) {
 					putLastReadPosition(getRefreshView().getFirstVisiblePosition());
@@ -190,8 +213,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	 */
 	protected void saveRefreshListState(Bundle outState) {
 		// 将数据保存起来
-		if (getAdapter() != null && getAdapter().getDatas().size() != 0)
-			outState.putSerializable(SAVED_ADAPTER_DATAS, getAdapter().getDatas());
+		if (getAdapterItems() != null && getAdapterItems().size() != 0)
+			outState.putSerializable(SAVED_ADAPTER_DATAS, getAdapterItems());
 	}
 
 	@Override
@@ -199,7 +222,14 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		requestData(RefreshMode.reset);
 	}
 
-	public ABaseAdapter<T> getAdapter() {
+	protected BaseAdapter getAdapter() {
+		if (swingAnimAdapter != null)
+			return swingAnimAdapter;
+		
+		return mAdapter;
+	}
+	
+	ABaseAdapter<T> getABaseAdapter() {
 		return mAdapter;
 	}
 
@@ -213,7 +243,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	
 	@Override
 	public boolean isContentEmpty() {
-		return getAdapter() == null || getAdapter().getCount() == 0;
+		return getAdapterItems() == null || getAdapterItems().size() == 0;
 	}
 
 	/**
@@ -271,19 +301,21 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			// 如果子类没有处理新获取的数据刷新UI，默认替换所有数据
 			if (!handleResult(mode, resultList))
 				if (mode == RefreshMode.reset)
-					getAdapter().setDatas(new ArrayList<T>());
+					setAdapterItems(new ArrayList<T>());
 
 			// append数据
 			if (mode == RefreshMode.reset || mode == RefreshMode.refresh)
-				getAdapter().addItemsAtFrontAndRefresh(resultList);
+				addItemsAtFront(resultList);
 			else if (mode == RefreshMode.update)
-				getAdapter().addItemsAndRefresh(resultList);
+				addItems(resultList);
+			
+			notifyDataSetChanged();
 
 			// 处理分页数据
 			if (mPagingProxy != null) {
-				if (getAdapter() != null && getAdapter().getDatas().size() != 0)
-					mPagingProxy.processData(result, getAdapter().getDatas().get(0),
-							getAdapter().getDatas().get(getAdapter().getCount() - 1));
+				if (getAdapterItems() != null && getAdapterItems().size() != 0)
+					mPagingProxy.processData(result, getAdapterItems().get(0),
+							getAdapterItems().get(getAdapterItems().size() - 1));
 				else
 					mPagingProxy.processData(result, null, null);
 			}
@@ -460,8 +492,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 
 	public void refreshUI() {
-		if (getAdapter() != null)
-			getAdapter().notifyDataSetChanged();
+		notifyDataSetChanged();
 
 		_refreshUI();
 	}
@@ -543,6 +574,40 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		return true;
 	}
 	
+	public void notifyDataSetChanged() {
+		if (swingAnimAdapter != null)
+			swingAnimAdapter.notifyDataSetChanged();
+		else
+			mAdapter.notifyDataSetChanged();
+	}
+	
+	public ArrayList<T> getAdapterItems() {
+		return mAdapter.getDatas();
+	}
+	
+	public int getAdapterCount() {
+		if (swingAnimAdapter != null)
+			return swingAnimAdapter.getCount();
+		
+		return mAdapter.getCount();
+	}
+	
+	public void setAdapterSelected(int position) {
+		mAdapter.setSelected(position);
+	}
+	
+	public void setAdapterItems(ArrayList<T> items) {
+		mAdapter.setDatas(items);
+	}
+	
+	public void addItemsAtFront(List<T> items) {
+		mAdapter.addItemsAtFront(items);
+	}
+	
+	public void addItems(List<T> items) {
+		mAdapter.addItems(items);
+	}
+	
 	/**
 	 * Adapter的ItemView
 	 * 
@@ -609,6 +674,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		public String emptyLabel;// 加载空显示文本
 		
 		public int minResultSize = 10;// 当加载的数据少于这个值时，默认没有更多加载
+		
+		public boolean animEnable = true;// 是否启用加载动画
 		
 	}
 	

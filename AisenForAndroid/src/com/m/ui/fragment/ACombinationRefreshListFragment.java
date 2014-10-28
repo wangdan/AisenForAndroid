@@ -86,8 +86,9 @@ public abstract class ACombinationRefreshListFragment<T extends Serializable, Ts
 		super._layoutInit(inflater, savedInstanceState);
 
 		initRefreshList(savedInstanceState);
-		setRefreshList();
 		getListView().addFooterView(mFooterView);
+
+		setRefreshList();
 
 		resetRefreshView(getConfig());
 		
@@ -345,6 +346,10 @@ public abstract class ACombinationRefreshListFragment<T extends Serializable, Ts
 	
 	protected View getFooterView() {
 		return mFooterView;
+	}
+	
+	protected PullToRefreshLayout getPullToRefreshLayout() {
+		return mPullToRefreshLayout;
 	}
 	
 }

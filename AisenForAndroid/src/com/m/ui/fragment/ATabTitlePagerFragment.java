@@ -152,7 +152,8 @@ public abstract class ATabTitlePagerFragment<T extends TabTitlePagerBean> extend
 					}
 					
 					mViewPagerAdapter = new MyViewPagerAdapter(getFragmentManager());
-					viewPager.setOffscreenPageLimit(mViewPagerAdapter.getCount());
+//					viewPager.setOffscreenPageLimit(mViewPagerAdapter.getCount());
+					viewPager.setOffscreenPageLimit(3);
 					viewPager.setAdapter(mViewPagerAdapter);
 					if (selectedIndex >= mViewPagerAdapter.getCount())
 						selectedIndex = 0;

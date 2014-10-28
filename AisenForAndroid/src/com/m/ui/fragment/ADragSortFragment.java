@@ -68,7 +68,8 @@ public abstract class ADragSortFragment<T extends Serializable, Ts extends Seria
 		setViewVisiable(emptyLayout, View.GONE);
 		setViewVisiable(loadFailureLayout, View.GONE);
 		setViewVisiable(contentLayout, View.VISIBLE);
-		getAdapter().setDatasAndRefresh(items);
+		setAdapterItems(items);
+		notifyDataSetChanged();
 		getListView().setSelectionFromTop(0, 0);
 	}
 
@@ -102,8 +103,9 @@ public abstract class ADragSortFragment<T extends Serializable, Ts extends Seria
 	 */
 	protected void onItemDroped(int from, int to) {
 		T moveItemT = (T) getAdapter().getItem(from);
-		getAdapter().removeItem(from);
-		getAdapter().addItemsAndRefresh(moveItemT, to);
+		getABaseAdapter().removeItem(from);
+		getABaseAdapter().getDatas().add(to, moveItemT);
+		notifyDataSetChanged();
 	}
 
 	private DropListener onDropListener = new DropListener() {

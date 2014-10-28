@@ -19,5 +19,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/commons-logging.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/fastjson.jar"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="src" path="listviewanimations"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

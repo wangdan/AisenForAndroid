@@ -172,7 +172,8 @@ public class FileUtility {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			in.close();
+			if (in != null)
+				in.close();
 		}
 		
 		return null;
