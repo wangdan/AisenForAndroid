@@ -182,7 +182,7 @@ public abstract class ATabTitlePagerFragment<T extends TabTitlePagerBean> extend
 //				}, 250);
 			}
 			
-		}, 250);
+		}, 270);
 	}
 	
 	@Override

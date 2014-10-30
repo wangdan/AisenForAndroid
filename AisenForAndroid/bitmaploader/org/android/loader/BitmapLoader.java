@@ -157,8 +157,8 @@ public class BitmapLoader {
 						e.printStackTrace();
 					}
 					
-//				newTask.executrOnImageExecutor();
-					newTask.execute();
+				newTask.executrOnImageExecutor();
+//					newTask.execute();
 					
 					// 添加到fragment当中，当fragment在Destory的时候，清除task列表
 					if (owner != null)

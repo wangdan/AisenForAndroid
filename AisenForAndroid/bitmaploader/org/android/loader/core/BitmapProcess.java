@@ -29,10 +29,9 @@ import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
 import com.m.common.utils.BitmapUtil;
-import com.m.common.utils.FileUtility;
-import com.m.common.utils.Logger;
 import com.m.common.utils.BitmapUtil.BitmapType;
 import com.m.common.utils.KeyGenerator;
+import com.m.common.utils.Logger;
 
 public class BitmapProcess {
 	private static final String TAG = "BitmapCache";
@@ -106,9 +105,25 @@ public class BitmapProcess {
 		while ((len = in.read(buffer)) != -1)
 			out.write(buffer, 0, len);
 
+		out.flush();
 		in.close();
 		out.close();
 		origFileDisk.renameFile(url, key);
+	}
+	
+	public void writeBytesToCompressDisk(String url, String key, byte[] bytes) throws Exception {
+		OutputStream out = compFielDisk.getOutputStream(url, key);
+
+		ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+		byte[] buffer = new byte[8 * 1024];
+		int len = -1;
+		while ((len = in.read(buffer)) != -1)
+			out.write(buffer, 0, len);
+
+		out.flush();
+		in.close();
+		out.close();
+		compFielDisk.renameFile(url, key);
 	}
 
 	/**
@@ -191,18 +206,17 @@ public class BitmapProcess {
 		if (writeToComp) {
 			String key = KeyGenerator.generateMD5(BitmapLoader.getKeyByConfig(url, config));
 
-			OutputStream comOut = compFielDisk.getOutputStream(url, key);
 			// PNG以外其他格式，都压缩成JPG格式
-			bitmap.compress(BitmapType.png == bitmapType ? CompressFormat.PNG : CompressFormat.JPEG, 100, comOut);
-			comOut.flush();
-			comOut.close();
-			compFielDisk.renameFile(url, key);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			bitmap.compress(BitmapType.png == bitmapType ? CompressFormat.PNG : CompressFormat.JPEG, 100, out);
+			byte[] bytes = out.toByteArray();
+			writeBytesToCompressDisk(url, key, bytes);
 
 			// 如果是GIF图片，无论如何，返回压缩格式图片
 			if (bitmapType == BitmapType.gif) {
 				Logger.v(TAG, String.format("parse gif image[url=%s,key=%s]", url, key));
 				bitmap.recycle();
-				bitmap = BitmapDecoder.decodeSampledBitmapFromByte(FileUtility.readFileToBytes(compFielDisk.getFile(url, key)));
+				bitmap = BitmapDecoder.decodeSampledBitmapFromByte(bytes);
 			}
 		}
 

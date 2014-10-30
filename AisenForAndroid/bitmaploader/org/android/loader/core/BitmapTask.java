@@ -22,10 +22,10 @@ import android.os.Message;
 import com.m.common.utils.Logger;
 
 public abstract class BitmapTask<Params, Progress, Result> {
-	static final String TAG = "AisenTask";
+	static final String TAG = "BitmapTask";
 
 	/**
-	 * 加载图片默认是10个线程
+	 * 加载图片默认是16个线程
 	 */
 	private static final int CORE_IMAGE_POOL_SIZE = 10;
 
@@ -135,7 +135,17 @@ public abstract class BitmapTask<Params, Progress, Result> {
 		sDefaultExecutor = exec;
 	}
 
+	static int count = 0;
+	
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		count--;
+	}
+	
 	public BitmapTask() {
+		count++;
+		Logger.d(TAG, count + "");
 		mWorker = new WorkerRunnable<Params, Result>() {
 			public Result call() throws Exception {
 				mTaskInvoked.set(true);
@@ -263,6 +273,8 @@ public abstract class BitmapTask<Params, Progress, Result> {
 
 	protected void onCancelled(Result result) {
 		onCancelled();
+		
+		Logger.d(TAG, "onCanceled()");
 	}
 
 	protected void onCancelled() {
