@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+	<item name="toolbar" type="id" />
 	<!-- 点击这个视图，重新加载数据 -->
 	<item name="layoutReload" type="id"></item>
 	<!-- 点击这个视图，刷新数据 -->
@@ -16,18 +17,5 @@
 	<item name="layoutContent" type="id"></item>
 	<!-- 加载数据异常，会在这个TextView打印错误信息 -->
 	<item name="txtLoadFailed" type="id"></item>
-	<!-- 如果存在分页，会在这个视图中添加分页Dot视图 -->
-	<item name="dotLayout" type="id"></item>
-	<!-- MyScrollView的属性 -->
-	<item name="content" type="id"></item>
-	<item name="topView" type="id"></item>
-	<item name="remainView" type="id"></item>
-
-	<item name="listView" type="id"></item>
-	<item name="refreshListView" type="id"></item>
-	<item name="refreshGridView" type="id"></item>
-	<item name="slideTabContainerView" type="id"></item>
-	<item name="slideTabRootView" type="id"></item>
-	<item name="drag_handle" type="id"></item>
-	<item name="click_remove" type="id"></item>
+    <item name="listView" type="id"></item>
 </resources>

@@ -9,7 +9,7 @@ public interface IPaging<T extends Serializable, Ts extends Serializable> extend
 	 * 
 	 * @return
 	 */
-	public IPaging<T, Ts> newInstance();
+    public IPaging<T, Ts> newInstance();
 
 	/**
 	 * 处理数据
@@ -21,26 +21,26 @@ public interface IPaging<T extends Serializable, Ts extends Serializable> extend
 	 * @param lastData
 	 *            adapter数据集中的最后一条数据
 	 */
-	public void processData(Ts newDatas, T firstData, T lastData);
+    public void processData(Ts newDatas, T firstData, T lastData);
 
-	public String getPreviousPage();
-	
-	public String getNextPage();
-	
-	public void setPage(String previousPage, String nextPage);
+    public String getPreviousPage();
+
+    public String getNextPage();
+
+    public void setPage(String previousPage, String nextPage);
 
 	/**
 	 * 是否还能刷新最新
 	 * 
 	 * @return
 	 */
-	public boolean canRefresh();
+    public boolean canRefresh();
 
 	/**
 	 * 是否还能拉取更多
 	 * 
 	 * @return
 	 */
-	public boolean canUpdate();
+    public boolean canUpdate();
 
 }

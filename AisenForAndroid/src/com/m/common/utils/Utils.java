@@ -6,8 +6,6 @@ import java.util.List;
 import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
-import org.android.loader.BitmapLoader;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,6 +19,7 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 
 import com.m.common.context.GlobalContext;
+import com.m.component.bitmaploader.BitmapLoader;
 
 public class Utils {
 

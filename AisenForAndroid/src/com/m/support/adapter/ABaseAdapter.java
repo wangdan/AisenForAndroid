@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.m.support.Inject.InjectUtility;
+import com.m.support.inject.InjectUtility;
 
 public abstract class ABaseAdapter<T extends Serializable> extends BaseAdapter {
 
@@ -187,7 +187,7 @@ public abstract class ABaseAdapter<T extends Serializable> extends BaseAdapter {
     protected void itemIsEmpty() {
     }
 
-    public abstract static class BaseAdapterHelper<T> implements Serializable {
+    private abstract static class BaseAdapterHelper<T> implements Serializable {
 
         private static final long serialVersionUID = 8411760659150853673L;
 
@@ -195,7 +195,7 @@ public abstract class ABaseAdapter<T extends Serializable> extends BaseAdapter {
 
         abstract public T getItem(int position, List<T> datas);
 
-        public boolean isReusing(View convertView) {
+        private boolean isReusing(View convertView) {
             return true;
         }
 
@@ -233,7 +233,7 @@ public abstract class ABaseAdapter<T extends Serializable> extends BaseAdapter {
          *
          * @param data
          * @param convertView
-         * @param selectedPosition 参照{@link ABaseAdapter#setSelected(int)}
+         * @param selectedPosition 参照{@link com.tcl.library.ui.adapter.ABaseAdapter#setSelected(int)}
          */
         public void updateConvertView(T data, View convertView, int selectedPosition) {
 

@@ -22,7 +22,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Parcelable;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.View;
@@ -32,7 +31,7 @@ import com.m.ui.fragment.ARefreshFragment;
 
 /**
  * Implementation of {@link android.support.v4.view.PagerAdapter} that
- * represents each page as a {@link Fragment} that is persistently kept in the
+ * represents each page as a {@link android.app.Fragment} that is persistently kept in the
  * fragment manager as long as the user can return to the page.
  * 
  * <p>
@@ -42,7 +41,7 @@ import com.m.ui.fragment.ARefreshFragment;
  * view hierarchy may be destroyed when not visible. This can result in using a
  * significant amount of memory since fragment instances can hold on to an
  * arbitrary amount of state. For larger sets of pages, consider
- * {@link FragmentStatePagerAdapter}.
+ * {@link android.support.v4.app.FragmentStatePagerAdapter}.
  * 
  * <p>
  * When using FragmentPagerAdapter the host ViewPager must have a valid ID set.

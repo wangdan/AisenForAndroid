@@ -4,21 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.android.loader.BitmapLoader;
-
-import com.m.R;
-import com.m.common.settings.SettingUtility;
-import com.m.common.utils.ActivityHelper;
-import com.m.common.utils.Logger;
-import com.m.support.adapter.*;
-import com.m.support.adapter.ABaseAdapter.AbstractItemView;
-import com.m.support.iclass.IResult;
-import com.m.support.paging.IPaging;
-import com.m.support.paging.PagingProxy;
-import com.m.support.task.TaskException;
-import com.m.ui.activity.BaseActivity.IAcUnusedDoubleClickedHandler;
-import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
-
 import android.animation.Animator;
 import android.app.Activity;
 import android.os.Bundle;
@@ -28,23 +13,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AbsListView.RecyclerListener;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.ImageView;
-import android.widget.AbsListView.RecyclerListener;
 
-public abstract class ARefreshFragment<T extends Serializable, Ts extends Serializable, V extends View> extends ABaseFragment 
-									implements RecyclerListener, OnScrollListener, IAcUnusedDoubleClickedHandler {
+import com.m.R;
+import com.m.common.context.GlobalContext;
+import com.m.common.setting.SettingUtility;
+import com.m.common.utils.ActivityHelper;
+import com.m.common.utils.Logger;
+import com.m.component.bitmaploader.BitmapLoader;
+import com.m.network.biz.IResult;
+import com.m.network.task.TaskException;
+import com.m.support.adapter.ABaseAdapter;
+import com.m.support.paging.IPaging;
+import com.m.support.paging.PagingProxy;
+import com.m.ui.widget.AsToolbar;
+import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
-	public static final String TAG = "ARefresh";
+public abstract class ARefreshFragment<T extends Serializable, Ts extends Serializable, V extends View> extends ABaseFragment
+									implements RecyclerListener, OnScrollListener, AsToolbar.OnToolbarDoubleClick, AdapterView.OnItemClickListener {
+
+	private static final String TAG = "ARefresh";
 	
 	private static final String SAVED_ADAPTER_DATAS = "com.m.ui.SAVED_ADAPTER_DATAS";
 	private static final String SAVED_PAGINGPROCESSORPROXY = "com.m.ui.SAVED_PAGINGPROCESSORPROXY";
 
 	@SuppressWarnings("rawtypes")
-	PagingProxy mPagingProxy;
+    PagingProxy mPagingProxy;
 
 	private ABaseAdapter<T> mAdapter;
 	
@@ -91,15 +91,15 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		
 		if (refreshConfig.animEnable) {
 			swingAnimAdapter = new SwingBottomInAnimationAdapter(mAdapter) {
-				
+
 				@Override
 				protected Animator getAnimator(ViewGroup parent, View view) {
 					if (refreshConfig != null && !refreshConfig.animEnable)
 						return null;
-					
+
 					return super.getAnimator(parent, view);
 				}
-				
+
 			};
 		}
 	}
@@ -115,6 +115,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		if (getRefreshView() != null) {
 			getRefreshView().setOnScrollListener(this);
 			getRefreshView().setRecyclerListener(this);
+            getRefreshView().setOnItemClickListener(this);
 		}
 		
 		if (refreshConfig == null)
@@ -164,6 +165,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	@Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		if (!ignoreScroll) {
+			mHandler.removeCallbacks(refreshRunnable);
+			
 			if (scrollState == SCROLL_STATE_FLING) {
 				isScrolling = true;
 			}
@@ -172,8 +175,9 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			}
 			else if (scrollState == SCROLL_STATE_IDLE) {
 				isScrolling = false;
-				
+//				mHandler.postDelayed(refreshRunnable, 400);
 				notifyDataSetChanged();
+				
 				
 				if (!TextUtils.isEmpty(getLastReadKey()) && getRefreshView() != null) {
 					putLastReadPosition(getRefreshView().getFirstVisiblePosition());
@@ -183,6 +187,15 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			}
 		}
 	}
+	
+	Runnable refreshRunnable = new Runnable() {
+		
+		@Override
+		public void run() {
+			Logger.w(TAG, "刷新视图");
+			notifyDataSetChanged();
+		}
+	};
 	
 	@Override
 	public boolean canDisplay() {
@@ -218,11 +231,11 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 
 	@Override
-	public void requestData() {
+    public void requestData() {
 		requestData(RefreshMode.reset);
 	}
 
-	protected BaseAdapter getAdapter() {
+	public BaseAdapter getAdapter() {
 		if (swingAnimAdapter != null)
 			return swingAnimAdapter;
 		
@@ -233,16 +246,17 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		return mAdapter;
 	}
 
-	public void onPullDownToRefresh() {
+    public void onPullDownToRefresh() {
 		requestData(RefreshMode.refresh);
 	}
 
-	public void onPullUpToRefresh() {
-		requestData(RefreshMode.update);
+    public void onPullUpToRefresh() {
+		if (!isRefreshing())
+			requestData(RefreshMode.update);
 	}
 	
 	@Override
-	public boolean isContentEmpty() {
+    public boolean isContentEmpty() {
 		return getAdapterItems() == null || getAdapterItems().size() == 0;
 	}
 
@@ -259,7 +273,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 
 		final protected RefreshMode mode;
 
-		public PagingTask(String taskId, RefreshMode mode) {
+        public PagingTask(String taskId, RefreshMode mode) {
 			super(taskId);
 			this.mode = mode;
 			pagingTask = this;
@@ -288,6 +302,9 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 				super.onSuccess(result);
 				return;
 			}
+
+            if (getRefreshView().getAdapter() == null)
+                getRefreshView().setAdapter(getAdapter());
 			
 			List<T> resultList;
 			if (result instanceof List)
@@ -354,13 +371,28 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 				else {
 					refreshConfig.canLoadMore = resultList.size() >= refreshConfig.minResultSize;
 				}
+
+//                if (getRefreshView() instanceof ListView) {
+//                    ListView listView = (ListView) getRefreshView();
+//                    if (iResult.noMore()) {
+//                        View[] footerViews = getFooterViews();
+//                        for (View view : footerViews)
+//                            listView.removeFooterView(view);
+//                    }
+//                    // 只有在kitkat之后，才可随时调用addfooterview
+//                    else if (SystemUtility.getVersionCode(GlobalContext.getInstance()) >= Build.VERSION_CODES.KITKAT) {
+//                        View[] footerViews = getFooterViews();
+//                        for (View view : footerViews)
+//                            listView.addFooterView(view);
+//                    }
+//                }
 			}
 			
 			// 状态发生改变，重置刷新控件
-			if (oldCanLoadMore != refreshConfig.canLoadMore) {
+			if (oldCanLoadMore != refreshConfig.canLoadMore || mode == RefreshMode.reset) {
 				resetRefreshView(refreshConfig);
 			}
-			
+
 			super.onSuccess(result);
 		}
 		
@@ -381,7 +413,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		 *            当次拉取数据的类型
 		 * @param datas
 		 *            当次拉取的数据
-		 * @return <tt>false</tt> 如果mode={@link RefreshMode#reset}
+		 * @return <tt>false</tt> 如果mode={@link com.m.ui.fragment.ARefreshFragment.RefreshMode#reset}
 		 *         默认清空adapter中的数据
 		 */
 		protected boolean handleResult(RefreshMode mode, List<T> datas) {
@@ -397,20 +429,21 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		 */
 		abstract protected List<T> parseResult(Result result);
 
-		/**
-		 * 异步执行方法，传入一个由
-		 * {@link PagingProxy#generateHttpParams(RefreshMode)}构造的参数列表<br/>
-		 * 子类可在{@link #onPreParams(HttpParams)}中添加额外的参数
-		 * 
-		 * @param params
-		 * @return
-		 * @throws AisenException
-		 */
+        /**
+         * 异步执行方法
+         *
+         * @param mode 刷新模式
+         * @param previousPage 上一页页码
+         * @param nextPage 下一页页码
+         * @param params task参数
+         * @return
+         * @throws TaskException
+         */
 		abstract protected Result workInBackground(RefreshMode mode, String previousPage, String nextPage, Params... params) throws TaskException;
 
 	}
-	
-	public void requestDataDelay(int delay) {
+
+    public void requestDataDelay(int delay) {
 		mHandler.removeCallbacks(refreshDelay);
 		mHandler.postDelayed(refreshDelay, delay);
 	}
@@ -419,8 +452,10 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		
 		@Override
 		public void run() {
-			if (getRefreshView() instanceof ListView)
-				((ListView) getRefreshView()).setSelectionFromTop(0, 0);
+			if (getRefreshView() instanceof ListView) {
+				ListView listView = (ListView) getRefreshView();
+				listView.setSelectionFromTop(0, 0);
+			}
 			
 			putLastReadPosition(0);
 			putLastReadTop(0);
@@ -433,7 +468,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 
 	class MyBaseAdapter extends ABaseAdapter<T> {
 
-		public MyBaseAdapter(ArrayList<T> datas, Activity context) {
+        public MyBaseAdapter(ArrayList<T> datas, Activity context) {
 			super(datas, context);
 		}
 
@@ -445,10 +480,10 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 	
 	@Override
-	public void onMovedToScrapHeap(View view) {
+    public void onMovedToScrapHeap(View view) {
 		Logger.v(ARefreshFragment.class.getSimpleName(), "onMovedToScrapHeap");
 		
-		releaseView(view);
+//		releaseView(view);
 	}
 
 	/**
@@ -476,22 +511,26 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 
 	@Override
-	public void onStop() {
+    public void onStop() {
 		super.onStop();
+		
+		mHandler.removeCallbacks(releaseRunnable);
 
 		releaseBitmap();
 	}
 	
 	@Override
-	public void onResume() {
+    public void onResume() {
 		super.onResume();
 
-		ignoreScroll = ActivityHelper.getInstance().getBooleanShareData("com.m.IGNORE_SCROLL", false);
+		ignoreScroll = ActivityHelper.getBooleanShareData("com.m.IGNORE_SCROLL", false);
+		
+		mHandler.removeCallbacks(releaseRunnable);
 		
 		refreshUI();
 	}
 
-	public void refreshUI() {
+    public void refreshUI() {
 		notifyDataSetChanged();
 
 		_refreshUI();
@@ -500,8 +539,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	void _refreshUI() {
 
 	}
-	
-	public void releaseBitmap() {
+
+    public void releaseBitmap() {
 		if (getRefreshView() != null) {
 			int childSize = getRefreshView().getChildCount();
 			for (int i = 0; i < childSize; i++) {
@@ -524,7 +563,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	 * 
 	 * @return
 	 */
-	public String getLastReadKey() {
+    public String getLastReadKey() {
 		return null;
 	}
 	
@@ -536,56 +575,50 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			
 			@Override
 			public void run() {
-				if (getRefreshView() instanceof ListView) 
-					((ListView) getRefreshView()).setSelectionFromTop(getLastReadPosition(), getLastReadTop());
+				if (getRefreshView() instanceof ListView) {
+					ListView listView = (ListView) getRefreshView();
+					listView.setSelectionFromTop(getLastReadPosition(), getLastReadTop() + listView.getPaddingTop());
+				}
 			}
 		});
 	}
 	
 	protected int getLastReadPosition() {
-		return ActivityHelper.getInstance().getIntShareData(getLastReadKey() + "Position", 0);
+		return ActivityHelper.getIntShareData(getLastReadKey() + "Position", 0);
 	}
 	
 	protected void putLastReadPosition(int position) {
 		if (refreshConfig.savePosition)
-			ActivityHelper.getInstance().putIntShareData(getLastReadKey() + "Position", position);
+			ActivityHelper.putIntShareData(getLastReadKey() + "Position", position);
 	}
 	
 	private int getLastReadTop() {
-		return ActivityHelper.getInstance().getIntShareData(getLastReadKey() + "Top", 0);
+		return ActivityHelper.getIntShareData(getLastReadKey() + "Top", 0);
 	}
 	
 	protected void putLastReadTop(int top) {
 		if (refreshConfig.savePosition)
-			ActivityHelper.getInstance().putIntShareData(getLastReadKey() + "Top", top);
-	}
-	
-	@Override
-	public boolean onAcUnusedDoubleClicked() {
-		// 置顶
-		if (getRefreshView() != null && getRefreshView() instanceof ListView)
-			((ListView) getRefreshView()).setSelectionFromTop(0, 0);
-		
-		// 刷新
-		if (!isRefreshing() &&
-				SettingUtility.getPermanentSettingAsBool("com.m.ON_DOUBLE_CLICK_AC_TO_REFRESH", SettingUtility.getBooleanSetting("double_click_refresh")))
-			requestDataDelay(200);
-		
-		return true;
+			ActivityHelper.putIntShareData(getLastReadKey() + "Top", top);
 	}
 	
 	public void notifyDataSetChanged() {
-		if (swingAnimAdapter != null)
+		if (swingAnimAdapter != null) {
+			// 刷新的时候，不显示动画
+			boolean anim = refreshConfig.animEnable;
+			refreshConfig.animEnable = false;
 			swingAnimAdapter.notifyDataSetChanged();
-		else
+			refreshConfig.animEnable = anim;
+		}
+		else {
 			mAdapter.notifyDataSetChanged();
+		}
 	}
 	
 	public ArrayList<T> getAdapterItems() {
 		return mAdapter.getDatas();
 	}
 	
-	public int getAdapterCount() {
+	private int getAdapterCount() {
 		if (swingAnimAdapter != null)
 			return swingAnimAdapter.getCount();
 		
@@ -607,13 +640,18 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	public void addItems(List<T> items) {
 		mAdapter.addItems(items);
 	}
-	
-	/**
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    /**
 	 * Adapter的ItemView
 	 * 
 	 * @return
 	 */
-	abstract protected AbstractItemView<T> newItemView();
+	abstract protected ABaseAdapter.AbstractItemView<T> newItemView();
 
 	/**
 	 * 根据RefreshMode拉取数据
@@ -637,19 +675,10 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	abstract public boolean setRefreshing();
 	
 	/**
-	 * 设置列表FooterView显示Loading状态
-	 * 
-	 * @return
-	 */
-	public boolean setFooterRefreshing() {
-		return false;
-	}
-	
-	/**
 	 * 设置列表控件没有更多了
 	 */
 	abstract public void resetRefreshView(RefreshConfig config);
-	
+
 	/**
 	 * 设置列表控件状态为刷新结束
 	 */
@@ -659,23 +688,50 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		return pagingTask != null;
 	}
 	
-	public static class RefreshConfig implements Serializable {
+	@Override
+	public void onPause() {
+		super.onPause();
 		
-		private static final long serialVersionUID = -963125420415611042L;
+		mHandler.postDelayed(releaseRunnable, delayRlease());
+	}
+	
+	protected int delayRlease() {
+		return 15 * 1000;
+	}
+	
+	Runnable releaseRunnable = new Runnable() {
+		
+		@Override
+		public void run() {
+			releaseBitmap();
+			Logger.w("释放图片");
+		}
+		
+	};
+	
+	public static class RefreshConfig implements Serializable {
+
+        public static final long serialVersionUID = -963125420415611042L;
 
 		public boolean canLoadMore = true;// 是否可以加载更多
 		
-		public boolean soundPlay = false;// 控件操作是否播放声音
-		
 		public boolean savePosition = false;// 是否保存最后阅读位置
+		
+		public int minResultSize = 10;// 当加载的数据少于这个值时，默认没有更多加载
+		
+		public boolean animEnable = false;// 是否启用加载动画
+		
+		public boolean hasFooterView = true;
 		
 		public String faildLabel;// 加载失败显示文本
 		
 		public String emptyLabel;// 加载空显示文本
 		
-		public int minResultSize = 10;// 当加载的数据少于这个值时，默认没有更多加载
+		public String loadMoreLabel = GlobalContext.getInstance().getResources().getString(R.string.comm_request_more);// 加载更多
 		
-		public boolean animEnable = true;// 是否启用加载动画
+		public String loadingLabel = GlobalContext.getInstance().getResources().getString(R.string.comm_request_loading);// 加载中
+		
+		public String loadDisableLabel = GlobalContext.getInstance().getResources().getString(R.string.comm_request_disable);// 不能加载更多了
 		
 	}
 	

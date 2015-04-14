@@ -1,6 +1,6 @@
 package com.m.common.utils;
 
-import com.m.common.settings.SettingUtility;
+import com.m.common.setting.SettingUtility;
 
 public class CommSettings {
 

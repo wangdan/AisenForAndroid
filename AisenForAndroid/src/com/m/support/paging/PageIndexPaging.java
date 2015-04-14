@@ -3,9 +3,9 @@ package com.m.support.paging;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
-import com.m.support.iclass.IResult;
-
 import android.text.TextUtils;
+
+import com.m.network.biz.IResult;
 
 /**
  * 始终自增，但是有最大分页页码，根据配置的属性获取
@@ -31,12 +31,12 @@ public class PageIndexPaging<T extends Serializable, Ts extends Serializable> im
 	}
 
 	@Override
-	public IPaging<T, Ts> newInstance() {
+    public IPaging<T, Ts> newInstance() {
 		return new PageIndexPaging<T, Ts>(pageTotalField);
 	}
 
 	@Override
-	public void processData(Ts newDatas, T firstData, T lastData) {
+    public void processData(Ts newDatas, T firstData, T lastData) {
 		pageIndex++;
 		if (newDatas instanceof IResult) {
 			IResult iResult = (IResult) newDatas;
@@ -60,27 +60,27 @@ public class PageIndexPaging<T extends Serializable, Ts extends Serializable> im
 	}
 
 	@Override
-	public boolean canRefresh() {
+    public boolean canRefresh() {
 		return true;
 	}
 
 	@Override
-	public boolean canUpdate() {
+    public boolean canUpdate() {
 		return pageTotal == -1 ? true : (pageIndex < pageTotal + 1);
 	}
 
 	@Override
-	public String getPreviousPage() {
+    public String getPreviousPage() {
 		return String.valueOf(pageIndex - 1);
 	}
 
 	@Override
-	public String getNextPage() {
+    public String getNextPage() {
 		return String.valueOf(pageIndex);
 	}
 
 	@Override
-	public void setPage(String previousPage, String nextPage) {
+    public void setPage(String previousPage, String nextPage) {
 		this.pageIndex = Integer.parseInt(nextPage);
 	}
 

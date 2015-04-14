@@ -1,13 +1,10 @@
 package com.m.common.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -21,6 +18,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import com.m.common.context.GlobalContext;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 public class BitmapUtil {
 
@@ -133,6 +134,16 @@ public class BitmapUtil {
 //		source.recycle();
 		return result;
 	}
+
+    public static Bitmap decodeRegion(byte[] bytes, int width, int height) {
+        try {
+            BitmapRegionDecoder bitmapDecoder = BitmapRegionDecoder.newInstance(bytes, 0, bytes.length, true);
+            Rect rect = new Rect(0, 0, width, height);
+            return bitmapDecoder.decodeRegion(rect, null).copy(Bitmap.Config.ARGB_8888, true);
+        } catch (Exception e) {
+        }
+        return null;
+    }
 	
 	public static Bitmap rotateBitmap(Bitmap source, int degrees) {
 		Matrix matrix = new Matrix();
@@ -207,6 +218,7 @@ public class BitmapUtil {
 	public static byte[] InputStream2Bytes(InputStream is) {
 		String str = "";
 		byte[] readByte = new byte[1024];
+		@SuppressWarnings("unused")
 		int readCount = -1;
 		try {
 			while ((readCount = is.read(readByte, 0, 1024)) != -1) {
@@ -291,7 +303,7 @@ public class BitmapUtil {
 
 	// Bitmap转换成Drawable
 	public static Drawable bitmap2Drawable(Bitmap bitmap) {
-		BitmapDrawable bd = new BitmapDrawable(bitmap);
+		BitmapDrawable bd = new BitmapDrawable(GlobalContext.getInstance().getResources(), bitmap);
 		Drawable d = (Drawable) bd;
 		return d;
 	}
