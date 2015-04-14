@@ -40,6 +40,8 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
 
     static final String TAG = "Activity-Base";
 
+    private BaseActivityHelper mHelper;
+
     private int theme = 0;// 当前界面设置的主题
 
     private Locale language = null;// 当前界面的语言
@@ -66,11 +68,31 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
     }
 
     protected int configTheme() {
+        if (mHelper != null) {
+            int theme = mHelper.configTheme();
+            if (theme > 0)
+                return theme;
+        }
+
         return CommSettings.getAppTheme();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (mHelper == null) {
+            try {
+                if (SettingUtility.getStringSetting("activity_helper") != null) {
+                    mHelper = (BaseActivityHelper) Class.forName(SettingUtility.getStringSetting("activity_helper")).newInstance();
+                    mHelper.bindActivity(this);
+                }
+            } catch (Exception e) {
+
+            }
+        }
+
+        if (mHelper != null)
+            mHelper.onCreate(savedInstanceState);
+
         fragmentRefs = new HashMap<String, WeakReference<ABaseFragment>>();
 
         if (savedInstanceState == null) {
@@ -103,6 +125,22 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         }
 
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        if (mHelper != null)
+            mHelper.onStart();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if (mHelper != null)
+            mHelper.onRestart();
     }
 
     public Toolbar getToolbar() {
@@ -144,6 +182,9 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        if (mHelper != null)
+            mHelper.onSaveInstanceState(outState);
+
         outState.putInt("theme", theme);
         outState.putString("language", language.getLanguage());
         outState.putString("language-country", language.getCountry());
@@ -160,6 +201,9 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (mHelper != null)
+            mHelper.onResume();
 
         runningActivity = this;
 
@@ -185,12 +229,28 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (mHelper != null)
+            mHelper.onPause();
+    }
+
     public void setLanguage(Locale locale) {
         Resources resources = getResources();//获得res资源对象
         Configuration config = resources.getConfiguration();//获得设置对象
         config.locale = locale;
         DisplayMetrics dm = resources.getDisplayMetrics();//获得屏幕参数：主要是分辨率，像素等。
         resources.updateConfiguration(config, dm);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (mHelper != null)
+            mHelper.onStop();
     }
 
     public void reload() {
@@ -215,10 +275,19 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         	BitmapLoader.getInstance().cancelPotentialTask(this);
 
         super.onDestroy();
+
+        if (mHelper != null)
+            mHelper.onDestroy();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (mHelper != null) {
+            boolean handle = mHelper.onOptionsItemSelected(item);
+            if (handle)
+                return true;
+        }
+
         switch (item.getItemId()) {
             case android.R.id.home:
                 if (onHomeClick())
@@ -232,11 +301,23 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
     }
 
     protected boolean onHomeClick() {
+        if (mHelper != null) {
+            boolean handle = mHelper.onHomeClick();
+            if (handle)
+                return true;
+        }
+
         return onBackClick();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (mHelper != null) {
+            boolean handle = mHelper.onKeyDown(keyCode, event);
+            if (handle)
+                return true;
+        }
+
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
             if (onBackClick())
                 return true;
@@ -245,6 +326,12 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
     }
 
     public boolean onBackClick() {
+        if (mHelper != null) {
+            boolean handle = mHelper.onBackClick();
+            if (handle)
+                return true;
+        }
+
         Set<String> keys = fragmentRefs.keySet();
         for (String key : keys) {
             WeakReference<ABaseFragment> fragmentRef = fragmentRefs.get(key);
@@ -300,6 +387,10 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         setMDestory(true);
 
         super.finish();
+
+        if (mHelper != null) {
+            mHelper.finish();
+        }
     }
 
     public boolean mIsDestoryed() {
@@ -315,4 +406,12 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         return true;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (mHelper != null) {
+            mHelper.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 }
