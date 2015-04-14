@@ -708,8 +708,13 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		}
 		
 	};
-	
-	public static class RefreshConfig implements Serializable {
+
+    @Override
+    public boolean onToolbarDoubleClick() {
+        return false;
+    }
+
+    public static class RefreshConfig implements Serializable {
 
         public static final long serialVersionUID = -963125420415611042L;
 

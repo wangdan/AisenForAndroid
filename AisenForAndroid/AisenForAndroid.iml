@@ -17,10 +17,11 @@
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="android-support-v7-appcompat" exported="" />
+    <orderEntry type="library" exported="" name="libs" level="project" />
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/fastjson.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/android-support-v4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -29,7 +30,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/libs/android-support-v4.jar!/" />
+          <root url="jar://$MODULE_DIR$/libs/fastjson.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

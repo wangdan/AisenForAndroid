@@ -7,14 +7,18 @@ import javax.microedition.khronos.opengles.GL10;
 import javax.microedition.khronos.opengles.GL11;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.opengl.GLES10;
 import android.provider.MediaStore;
+import android.support.annotation.AttrRes;
 import android.text.TextUtils;
 import android.util.TypedValue;
 
@@ -134,5 +138,30 @@ public class Utils {
 		}
 		return null;
 	}
+
+    public static Drawable resolveDrawable(Context context, @AttrRes int attr) {
+        return resolveDrawable(context, attr, null);
+    }
+
+    public static Drawable resolveDrawable(Context context, @AttrRes int attr, @SuppressWarnings("SameParameterValue") Drawable fallback) {
+        TypedArray a = context.getTheme().obtainStyledAttributes(new int[]{attr});
+        try {
+            Drawable d = a.getDrawable(0);
+            if (d == null && fallback != null)
+                d = fallback;
+            return d;
+        } finally {
+            a.recycle();
+        }
+    }
+
+    public static int resolveColor(Context context, @AttrRes int attr, int fallback) {
+        TypedArray a = context.getTheme().obtainStyledAttributes(new int[]{attr});
+        try {
+            return a.getColor(0, fallback);
+        } finally {
+            a.recycle();
+        }
+    }
 
 }
