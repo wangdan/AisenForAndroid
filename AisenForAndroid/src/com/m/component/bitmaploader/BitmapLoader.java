@@ -128,7 +128,7 @@ public class BitmapLoader {
 				if (!canLoad) {
 					Logger.d(TAG, "视图在滚动，显示默认图片");
 					
-					setImageLoading(imageView, url, imageConfig);
+					setImageLoading(imageView, null, imageConfig);
 				}
 				else {
 					// 开启新的线程加载图片

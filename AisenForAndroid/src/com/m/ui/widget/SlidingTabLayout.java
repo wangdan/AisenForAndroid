@@ -41,7 +41,7 @@ import android.widget.TextView;
  * <p>
  * The colors can be customized in two ways. The first and simplest is to provide an array of colors
  * via {@link #setSelectedIndicatorColors(int...)}. The
- * alternative is via the {@link com.tcl.library.ui.widget.SlidingTabLayout.TabColorizer} interface which provides you complete control over
+ * alternative is via the {@link com.m.ui.widget.SlidingTabLayout.TabColorizer} interface which provides you complete control over
  * which color is used for any individual position.
  * <p>
  * The views used as tabs can be customized by calling {@link #setCustomTabView(int, int)},
@@ -50,7 +50,7 @@ import android.widget.TextView;
 public class SlidingTabLayout extends HorizontalScrollView {
     /**
      * Allows complete control over the colors drawn in the tab layout. Set with
-     * {@link #setCustomTabColorizer(com.tcl.library.ui.widget.SlidingTabLayout.TabColorizer)}.
+     * {@link #setCustomTabColorizer(com.m.ui.widget.SlidingTabLayout.TabColorizer)}.
      */
     public interface TabColorizer {
 
@@ -61,7 +61,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     }
 
-    private static final int TITLE_OFFSET_DIPS = 24;
+    private static final int TITLE_OFFSET_DIPS = 75;// 这里是选中的tab间隔左侧的值
     private static final int TAB_VIEW_PADDING_DIPS = 16;
     private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
 
@@ -100,7 +100,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     }
 
     /**
-     * Set the custom {@link com.tcl.library.ui.widget.SlidingTabLayout.TabColorizer} to be used.
+     * Set the custom {@link com.m.ui.widget.SlidingTabLayout.TabColorizer} to be used.
      *
      * If you only require simple custmisation then you can use
      * {@link #setSelectedIndicatorColors(int...)} to achieve
@@ -123,7 +123,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     }
 
     /**
-     * Set the {@link android.support.v4.view.ViewPager.OnPageChangeListener}. When using {@link com.tcl.library.ui.widget.SlidingTabLayout} you are
+     * Set the {@link android.support.v4.view.ViewPager.OnPageChangeListener}. When using {@link com.m.ui.widget.SlidingTabLayout} you are
      * required to set any {@link android.support.v4.view.ViewPager.OnPageChangeListener} through this method. This is so
      * that the layout can update it's scroll position correctly.
      *
@@ -234,7 +234,29 @@ public class SlidingTabLayout extends HorizontalScrollView {
         super.onAttachedToWindow();
 
         if (mViewPager != null) {
+            setCurrent(mViewPager.getCurrentItem());
+        }
+    }
+
+    public void setCurrent(int tabIndex) {
+        final int tabStripChildCount = mTabStrip.getChildCount();
+        if (tabStripChildCount == 0 || tabIndex < 0 || tabIndex >= tabStripChildCount) {
+            return;
+        }
+
+        View selectedChild = mTabStrip.getChildAt(tabIndex);
+        if (selectedChild.getWidth() != 0) {
             scrollToTab(mViewPager.getCurrentItem(), 0);
+        }
+        else {
+            mViewPager.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    setCurrent(mViewPager.getCurrentItem());
+                }
+
+            }, 200);
         }
     }
 

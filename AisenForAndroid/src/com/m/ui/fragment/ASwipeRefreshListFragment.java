@@ -1,7 +1,5 @@
 package com.m.ui.fragment;
 
-import java.io.Serializable;
-
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -13,6 +11,8 @@ import android.widget.TextView;
 
 import com.m.R;
 import com.m.support.inject.ViewInject;
+
+import java.io.Serializable;
 
 /**
  * Created by wangdan on 15-1-19.
@@ -61,10 +61,6 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
     @Override
     public AbsListView getRefreshView() {
         return mListView;
-    }
-
-    public int refreshLayoutInfo() {
-        return R.id.layoutContent;
     }
 
     @Override

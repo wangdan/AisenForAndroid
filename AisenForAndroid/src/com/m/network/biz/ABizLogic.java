@@ -20,9 +20,9 @@ import com.m.network.http.ParamsUtil;
 import com.m.network.task.TaskException;
 import com.m.network.task.WorkTask;
 
-public abstract class ABaseBizlogic implements IHttpUtility {
+public abstract class ABizLogic implements IHttpUtility {
 
-	public static final String TAG = "ABaseBizlogic";
+	public static final String TAG = "ABizlogic";
 
 	public enum CacheMode {
 		/**
@@ -50,13 +50,13 @@ public abstract class ABaseBizlogic implements IHttpUtility {
 
 	private CacheMode mCacheMode;
 
-	public ABaseBizlogic() {
+	public ABizLogic() {
 		mHttpUtility = configHttpUtility();
 
 		mCacheMode = SettingUtility.getBooleanSetting("debug") ? CacheMode.auto : CacheMode.disable;
 	}
 
-	public ABaseBizlogic(CacheMode cacheMode) {
+	public ABizLogic(CacheMode cacheMode) {
 		this();
 		this.mCacheMode = cacheMode;
 	}
@@ -153,7 +153,7 @@ public abstract class ABaseBizlogic implements IHttpUtility {
 					if (cacheUtility != null) {
 						// 如果数据来自缓存，则不刷新
 						if (result instanceof IResult && ((IResult) result).isCache()) {
-							Logger.w(ABaseBizlogic.TAG, "数据来自缓存，不刷新");
+							Logger.w(ABizLogic.TAG, "数据来自缓存，不刷新");
 						}
 						else {
 							putToCache(actionSetting, params, result, cacheUtility);

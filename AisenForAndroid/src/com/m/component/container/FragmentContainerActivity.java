@@ -1,7 +1,5 @@
 package com.m.component.container;
 
-import java.lang.reflect.Method;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -11,12 +9,16 @@ import android.text.TextUtils;
 import com.m.R;
 import com.m.ui.activity.basic.BaseActivity;
 
+import java.lang.reflect.Method;
+
 /**
  * Created by wangdan on 15-1-17.
  */
 public class FragmentContainerActivity extends BaseActivity {
 
     private int overrideTheme = -1;
+
+    public static final String FRAGMENT_TAG = "FRAGMENT_CONTAINER";
 
     /**
      * 启动一个界面
@@ -106,7 +108,7 @@ public class FragmentContainerActivity extends BaseActivity {
 //        BizFragment.getBizFragment(this);
 
         if (fragment != null) {
-            getFragmentManager().beginTransaction().add(R.id.fragmentContainer, fragment, className).commit();
+            getFragmentManager().beginTransaction().add(R.id.fragmentContainer, fragment, FRAGMENT_TAG).commit();
         }
 
         if (getSupportActionBar() != null)

@@ -1,24 +1,26 @@
 package com.m.ui.fragment;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 
 import com.m.R;
+import com.m.common.utils.ActivityHelper;
 import com.m.support.adapter.FragmentPagerAdapter;
 import com.m.support.inject.ViewInject;
 import com.m.ui.activity.basic.BaseActivity;
 import com.m.ui.widget.SlidingTabLayout;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by wangdan on 15-1-20.
@@ -34,9 +36,9 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
     ViewPager viewPager;
     MyViewPagerAdapter mViewPagerAdapter;
 
-    private ArrayList<T> mChanneList;
+    private ArrayList<T> mItems;
     private Map<String, Fragment> fragments;
-    private int selectedIndex = 0;
+    private int mCurrentPosition = 0;
 
     @Override
     protected int inflateContentView() {
@@ -47,9 +49,9 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        selectedIndex = viewPager.getCurrentItem();
-        outState.putSerializable("channes", mChanneList);
-        outState.putInt("selectedIndex", selectedIndex);
+        mCurrentPosition = viewPager.getCurrentItem();
+        outState.putSerializable("items", mItems);
+        outState.putInt("current", mCurrentPosition);
     }
 
     @Override
@@ -67,36 +69,45 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
             return;
 
         if (savedInstanceSate == null) {
-            mChanneList = generateTabs();
+            mItems = generateTabs();
 
-            selectedIndex = 0;
+            mCurrentPosition = 0;
+            if (configSaveLastPosition()) {
+                // 记录了最后阅读的标签
+                String type = ActivityHelper.getShareData("PagerLastPosition" + getClass().getSimpleName(), "");
+                if (!TextUtils.isEmpty(type)) {
+                    for (int i = 0; i < mItems.size(); i++) {
+                        StripTabItem item = mItems.get(i);
+                        if (item.getType().equals(type)) {
+                            mCurrentPosition = i;
+                            break;
+                        }
+                    }
+                }
+            }
         } else {
-            mChanneList = (ArrayList<T>) savedInstanceSate.getSerializable("channes");
-            selectedIndex = savedInstanceSate.getInt("selectedIndex");
+            mItems = (ArrayList<T>) savedInstanceSate.getSerializable("items");
+            mCurrentPosition = savedInstanceSate.getInt("current");
         }
 
         fragments = new HashMap<String, Fragment>();
 
-        if (mChanneList == null)
+        if (mItems == null)
             return;
 
-        for (int i = 0; i < mChanneList.size(); i++) {
-            Fragment fragment = (Fragment) getActivity().getFragmentManager()
-                    .findFragmentByTag(mChanneList.get(i).getTitle() + setFragmentTitle());
+        for (int i = 0; i < mItems.size(); i++) {
+            Fragment fragment = getActivity().getFragmentManager().findFragmentByTag(makeFragmentName(i));
             if (fragment != null)
-                fragments.put(mChanneList.get(i).getTitle() + setFragmentTitle(), fragment);
+                fragments.put(makeFragmentName(i), fragment);
         }
 
         mViewPagerAdapter = new MyViewPagerAdapter(getFragmentManager());
 //					viewPager.setOffscreenPageLimit(mViewPagerAdapter.getCount());
         viewPager.setOffscreenPageLimit(3);
         viewPager.setAdapter(mViewPagerAdapter);
-        if (selectedIndex >= mViewPagerAdapter.getCount())
-            selectedIndex = 0;
-        viewPager.setCurrentItem(selectedIndex);
-//        pagerTabs.setViewPager(viewPager);
-//        pagerTabs.setShouldExpand(true);
-//        pagerTabs.setOnPageChangeListener(AStripTabsFragment.this);
+        if (mCurrentPosition >= mViewPagerAdapter.getCount())
+            mCurrentPosition = 0;
+        viewPager.setCurrentItem(mCurrentPosition);
 
         slidingTabs.setCustomTabView(R.layout.comm_lay_tab_indicator, android.R.id.text1);
         Resources res = getResources();
@@ -135,7 +146,18 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
     @Override
     public void onPageSelected(int position) {
-        selectedIndex = position;
+        mCurrentPosition = position;
+
+        if (configSaveLastPosition()) {
+            ActivityHelper.putShareData("PagerLastPosition" + getClass().getSimpleName(),
+                    mItems.get(position).getType());
+        }
+
+        // 查看是否需要拉取数据
+        Fragment fragment = getCurrentFragment();
+        if (fragment instanceof IStripTabInitData) {
+            ((IStripTabInitData) fragment).onStripTabRequestData();
+        }
     }
 
     @Override
@@ -143,9 +165,16 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
     }
 
-    abstract protected ArrayList<T> generateTabs();
+    protected String makeFragmentName(int position) {
+        return mItems.get(position).getTitle();
+    }
 
-    abstract protected String setFragmentTitle();
+    // 是否保留最后阅读的标签
+    protected boolean configSaveLastPosition() {
+        return false;
+    }
+
+    abstract protected ArrayList<T> generateTabs();
 
     abstract protected Fragment newFragment(T bean);
 
@@ -158,6 +187,65 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public Fragment getCurrentFragment() {
+        if (mViewPagerAdapter == null || mViewPagerAdapter.getCount() < mCurrentPosition)
+            return null;
+
+        return fragments.get(makeFragmentName(mCurrentPosition));
+    }
+
+    public Fragment getFragment(String tabTitle) {
+        if (fragments == null || TextUtils.isEmpty(tabTitle))
+            return null;
+
+        for (int i = 0; i < mItems.size(); i++) {
+            if (tabTitle.equals(mItems.get(i).getTitle())) {
+                return fragments.get(makeFragmentName(i));
+            }
+        }
+
+        return null;
+    }
+
+    class MyViewPagerAdapter extends FragmentPagerAdapter {
+
+        public MyViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Fragment fragment = fragments.get(makeFragmentName(position));
+            if (fragment == null) {
+                fragment = newFragment(mItems.get(position));
+
+                fragments.put(makeFragmentName(position), fragment);
+            }
+
+            return fragment;
+        }
+
+        @Override
+        protected void freshUI(Fragment fragment) {
+        }
+
+        @Override
+        public int getCount() {
+            return mItems.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mItems.get(position).getTitle();
+        }
+
+        @Override
+        protected String makeFragmentName(int position) {
+            return AStripTabsFragment.this.makeFragmentName(position);
+        }
+
     }
 
     public static class StripTabItem implements Serializable {
@@ -186,42 +274,11 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
     }
 
-    class MyViewPagerAdapter extends FragmentPagerAdapter {
+    // 这个接口用于多页面时，只有当前的页面才加载数据，其他不显示的页面暂缓加载
+    // 当每次onPagerSelected的时候，再调用这个接口初始化数据
+    public interface IStripTabInitData {
 
-        public MyViewPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment fragment = fragments.get(makeFragmentName(position));
-            if (fragment == null) {
-                fragment = newFragment(mChanneList.get(position));
-
-                fragments.put(makeFragmentName(position), fragment);
-            }
-
-            return fragment;
-        }
-
-        @Override
-        protected void freshUI(Fragment fragment) {
-        }
-
-        @Override
-        public int getCount() {
-            return mChanneList.size();
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mChanneList.get(position).getTitle();
-        }
-
-        @Override
-        protected String makeFragmentName(int position) {
-            return mChanneList.get(position).getTitle() + setFragmentTitle();
-        }
+        public void onStripTabRequestData();
 
     }
 

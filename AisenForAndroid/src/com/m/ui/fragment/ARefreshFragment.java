@@ -177,8 +177,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 				isScrolling = false;
 //				mHandler.postDelayed(refreshRunnable, 400);
 				notifyDataSetChanged();
-				
-				
+
 				if (!TextUtils.isEmpty(getLastReadKey()) && getRefreshView() != null) {
 					putLastReadPosition(getRefreshView().getFirstVisiblePosition());
 					
@@ -269,7 +268,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	 * @param <Progress>
 	 * @param <Result>
 	 */
-	protected abstract class PagingTask<Params, Progress, Result extends Serializable> extends ABaseTask<Params, Progress, Result> {
+    public abstract class PagingTask<Params, Progress, Result extends Serializable> extends ABaseTask<Params, Progress, Result> {
 
 		final protected RefreshMode mode;
 
@@ -602,7 +601,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 	
 	public void notifyDataSetChanged() {
-		if (swingAnimAdapter != null) {
+		if (swingAnimAdapter != null && refreshConfig.animEnable) {
 			// 刷新的时候，不显示动画
 			boolean anim = refreshConfig.animEnable;
 			refreshConfig.animEnable = false;

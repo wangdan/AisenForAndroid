@@ -14,7 +14,7 @@ import com.m.R;
 import com.m.common.utils.ViewUtils;
 import com.m.component.bitmaploader.BitmapLoader;
 import com.m.component.bitmaploader.core.BitmapOwner;
-import com.m.network.biz.ABaseBizlogic.CacheMode;
+import com.m.network.biz.ABizLogic.CacheMode;
 import com.m.network.task.ITaskManager;
 import com.m.network.task.TaskException;
 import com.m.network.task.TaskManager;

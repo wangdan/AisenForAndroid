@@ -233,7 +233,7 @@ public abstract class ABaseAdapter<T extends Serializable> extends BaseAdapter {
          *
          * @param data
          * @param convertView
-         * @param selectedPosition 参照{@link com.tcl.library.ui.adapter.ABaseAdapter#setSelected(int)}
+         * @param selectedPosition 参照{@link com.m.component.adapter.ABaseAdapter#setSelected(int)}
          */
         public void updateConvertView(T data, View convertView, int selectedPosition) {
 

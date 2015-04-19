@@ -7,6 +7,7 @@
     <string name="comm_hint_exit">再按一次退出</string>
     <string name="comm_reload_hint">刷新看看</string>
     <string name="comm_dialog_hint">提示</string>
+    <string name="comm_hint_copied">已经复制 %s</string>
 
     <string-array name="prefValues">
         <item>0</item>
