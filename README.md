@@ -4,10 +4,16 @@
 实验性项目，现在重构中，旧代码备份至backup目录，重构完成后，这里会去掉
 
 ## 说明
-Aisen一个免费开源、面向AOP、遵循Apache3开源协议发布的Android轻量级快速开发框架。包括UI、SDK、Cache、Network等业务层。包括SqliteUtility、IOC注解、Bitmaploader等开发组件。
+Aisen一个免费开源、面向AOP、遵循Apache3开源协议发布的Android轻量级快速开发框架。包括UI、SDK、Cache、Network等业务层。包括SqliteUtility、IOC注解、Bitmaploader等开发组件。申明，部分源码修改自Afinal1.0。
+
 解决互联网应用过程中常见的问题，例如：
-1>图片加载框架，一行代码完成图片的加载绑定，优化OOM、错位、压缩、网络开销等问题；Sqlite的ORM操作框架，完成面向对象的一行代码CRUD操作；IOC注解方式完成UI组件的绑定，一般性事件设置；定义
-AisenForAndroid是一个android快速开发框架，内置的orm、ioc、bitmaploader均修改自afinal1.0版本。不同于其他，Aisen专注如何使用这些组件来更快速更健壮的开发app。四层结构：UI层、业务接口层、持久层、网络通讯层。面向敏捷、AOP编程，基于Aisen，让你的工作更倾向于具体的业务逻辑、UI特效开发。
+## 图片加载框架
+		一行代码完成图片的加载绑定，优化OOM、错位、压缩、网络开销等问题；S
+## qlite的ORM操作框架
+		面向对象的一行代码CRUD操作；
+## IOC注解
+		UI组件的绑定，一般性事件设置；
+定义AisenForAndroid是一个android快速开发框架，内置的orm、ioc、bitmaploader均修改自afinal1.0版本。不同于其他，Aisen专注如何使用这些组件来更快速更健壮的开发app。四层结构：UI层、业务接口层、持久层、网络通讯层。面向敏捷、AOP编程，基于Aisen，让你的工作更倾向于具体的业务逻辑、UI特效开发。
 
 ## 我能做什么
 
