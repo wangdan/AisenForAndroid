@@ -17,5 +17,6 @@
 	<item name="layoutContent" type="id"></item>
 	<!-- 加载数据异常，会在这个TextView打印错误信息 -->
 	<item name="txtLoadFailed" type="id"></item>
+    <item name="txtLoadEmpty" type="id"></item>
     <item name="listView" type="id"></item>
 </resources>

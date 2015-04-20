@@ -32,11 +32,12 @@ import com.m.network.task.TaskManager;
 import com.m.network.task.WorkTask;
 import com.m.support.inject.InjectUtility;
 import com.m.ui.fragment.ABaseFragment;
+import com.m.ui.widget.AsToolbar;
 
 /**
  * Created by wangdan on 15-1-16.
  */
-public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITaskManager {
+public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITaskManager, AsToolbar.OnToolbarDoubleClick {
 
     static final String TAG = "Activity-Base";
 
@@ -205,7 +206,7 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         if (mHelper != null)
             mHelper.onResume();
 
-        runningActivity = this;
+        setRunningActivity(this);
 
         if (theme == configTheme()) {
 
@@ -413,5 +414,20 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         if (mHelper != null) {
             mHelper.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public boolean onToolbarDoubleClick() {
+        Set<String> keys = fragmentRefs.keySet();
+        for (String key : keys) {
+            WeakReference<ABaseFragment> fragmentRef = fragmentRefs.get(key);
+            ABaseFragment fragment = fragmentRef.get();
+            if (fragment != null && fragment instanceof AsToolbar.OnToolbarDoubleClick) {
+                if (((AsToolbar.OnToolbarDoubleClick) fragment).onToolbarDoubleClick())
+                    return true;
+            }
+        }
+
+        return false;
     }
 }

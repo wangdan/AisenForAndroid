@@ -1,9 +1,5 @@
 package com.m.ui.fragment;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import android.animation.Animator;
 import android.app.Activity;
 import android.os.Bundle;
@@ -19,13 +15,12 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.m.R;
-import com.m.common.context.GlobalContext;
 import com.m.common.setting.SettingUtility;
 import com.m.common.utils.ActivityHelper;
 import com.m.common.utils.Logger;
+import com.m.common.utils.ViewUtils;
 import com.m.component.bitmaploader.BitmapLoader;
 import com.m.network.biz.IResult;
 import com.m.network.task.TaskException;
@@ -34,6 +29,10 @@ import com.m.support.paging.IPaging;
 import com.m.support.paging.PagingProxy;
 import com.m.ui.widget.AsToolbar;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ARefreshFragment<T extends Serializable, Ts extends Serializable, V extends View> extends ABaseFragment
 									implements RecyclerListener, OnScrollListener, AsToolbar.OnToolbarDoubleClick, AdapterView.OnItemClickListener {
@@ -85,23 +84,6 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			if (paging != null)
 				mPagingProxy = new PagingProxy<T, Ts>(paging);
 		}
-
-		refreshConfig = savedInstanceState == null ? new RefreshConfig() 
-												   : (RefreshConfig) savedInstanceState.getSerializable("refreshConfig");
-		
-		if (refreshConfig.animEnable) {
-			swingAnimAdapter = new SwingBottomInAnimationAdapter(mAdapter) {
-
-				@Override
-				protected Animator getAnimator(ViewGroup parent, View view) {
-					if (refreshConfig != null && !refreshConfig.animEnable)
-						return null;
-
-					return super.getAnimator(parent, view);
-				}
-
-			};
-		}
 	}
 	
 	Handler mHandler = new Handler() {
@@ -117,28 +99,26 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			getRefreshView().setRecyclerListener(this);
             getRefreshView().setOnItemClickListener(this);
 		}
-		
-		if (refreshConfig == null)
-			refreshConfig = new RefreshConfig();
-		
-		if (swingAnimAdapter != null)
-			swingAnimAdapter.setAbsListView(getRefreshView());
+
+        refreshConfig = savedInstanceSate == null ? new RefreshConfig()
+                                                  : (RefreshConfig) savedInstanceSate.getSerializable("refreshConfig");
+
+        config(refreshConfig);
+
+        if (refreshConfig.animEnable) {
+            swingAnimAdapter = new SwingBottomInAnimationAdapter(mAdapter) {
+
+                @Override
+                protected Animator getAnimator(ViewGroup parent, View view) {
+                    return super.getAnimator(parent, view);
+                }
+
+            };
+            swingAnimAdapter.setAbsListView(getRefreshView());
+        }
 		
 		if (!refreshConfig.canLoadMore)
 			resetRefreshView(refreshConfig);
-		
-		config(refreshConfig);
-		
-		if (emptyLayout != null) {
-			TextView txtView = (TextView) emptyLayout.findViewById(R.id.txtLoadFailed);
-			if (txtView != null)
-				txtView.setText(refreshConfig.emptyLabel);
-		}
-		if (loadFailureLayout != null) {
-			TextView txtView = (TextView) loadFailureLayout.findViewById(R.id.txtLoadFailed);
-			if (txtView != null)
-				txtView.setText(refreshConfig.faildLabel);
-		}
 	}
 	
 	/**
@@ -178,7 +158,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 //				mHandler.postDelayed(refreshRunnable, 400);
 				notifyDataSetChanged();
 
-				if (!TextUtils.isEmpty(getLastReadKey()) && getRefreshView() != null) {
+				if (!TextUtils.isEmpty(refreshConfig.saveLastPositionKey) && getRefreshView() != null) {
 					putLastReadPosition(getRefreshView().getFirstVisiblePosition());
 					
 					putLastReadTop(getRefreshView().getChildAt(0).getTop());
@@ -360,31 +340,14 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 				refreshConfig.canLoadMore = true;
 			boolean oldCanLoadMore = refreshConfig.canLoadMore;
 			
-			// 没有更多数据了
-			if (result instanceof IResult && mode != RefreshMode.refresh) {
+            // 如果数据少于这个值，默认加载完了
+            refreshConfig.canLoadMore = resultList.size() >= refreshConfig.minResultSize;
+            // 没有更多数据了
+			if (refreshConfig.canLoadMore && result instanceof IResult && mode != RefreshMode.refresh) {
 				IResult iResult = (IResult) result;
 				if (iResult.noMore()) {
 					refreshConfig.canLoadMore = false;
 				}
-				// 如果数据少于这个值，默认加载完了
-				else {
-					refreshConfig.canLoadMore = resultList.size() >= refreshConfig.minResultSize;
-				}
-
-//                if (getRefreshView() instanceof ListView) {
-//                    ListView listView = (ListView) getRefreshView();
-//                    if (iResult.noMore()) {
-//                        View[] footerViews = getFooterViews();
-//                        for (View view : footerViews)
-//                            listView.removeFooterView(view);
-//                    }
-//                    // 只有在kitkat之后，才可随时调用addfooterview
-//                    else if (SystemUtility.getVersionCode(GlobalContext.getInstance()) >= Build.VERSION_CODES.KITKAT) {
-//                        View[] footerViews = getFooterViews();
-//                        for (View view : footerViews)
-//                            listView.addFooterView(view);
-//                    }
-//                }
 			}
 			
 			// 状态发生改变，重置刷新控件
@@ -557,15 +520,6 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		return null;
 	}
 	
-	/**
-	 * 返回为null，不记录阅读状态
-	 * 
-	 * @return
-	 */
-    public String getLastReadKey() {
-		return null;
-	}
-	
 	protected void toLastReadPosition() {
 		if (getRefreshView() == null)
 			return;
@@ -583,21 +537,21 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 	
 	protected int getLastReadPosition() {
-		return ActivityHelper.getIntShareData(getLastReadKey() + "Position", 0);
+		return ActivityHelper.getIntShareData(refreshConfig.saveLastPositionKey + "Position", 0);
 	}
 	
 	protected void putLastReadPosition(int position) {
-		if (refreshConfig.savePosition)
-			ActivityHelper.putIntShareData(getLastReadKey() + "Position", position);
+		if (!TextUtils.isEmpty(refreshConfig.saveLastPositionKey))
+			ActivityHelper.putIntShareData(refreshConfig.saveLastPositionKey + "Position", position);
 	}
 	
 	private int getLastReadTop() {
-		return ActivityHelper.getIntShareData(getLastReadKey() + "Top", 0);
+		return ActivityHelper.getIntShareData(refreshConfig.saveLastPositionKey + "Top", 0);
 	}
 	
 	protected void putLastReadTop(int top) {
-		if (refreshConfig.savePosition)
-			ActivityHelper.putIntShareData(getLastReadKey() + "Top", top);
+		if (!TextUtils.isEmpty(refreshConfig.saveLastPositionKey))
+			ActivityHelper.putIntShareData(refreshConfig.saveLastPositionKey + "Top", top);
 	}
 	
 	public void notifyDataSetChanged() {
@@ -713,29 +667,37 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
         return false;
     }
 
+    @Override
+    protected void taskStateChanged(ABaseTaskState state, Serializable tag) {
+        super.taskStateChanged(state, tag);
+
+        if (state == ABaseTaskState.success) {
+            if (isContentEmpty()) {
+                if (emptyLayout != null && !TextUtils.isEmpty(refreshConfig.emptyLabel))
+                    ViewUtils.setTextViewValue(emptyLayout, R.id.txtLoadEmpty, refreshConfig.emptyLabel);
+            }
+        }
+        else if (state == ABaseTaskState.falid) {
+            if (isContentEmpty()) {
+                if (loadFailureLayout != null && !TextUtils.isEmpty(tag + ""))
+                    ViewUtils.setTextViewValue(loadFailureLayout, R.id.txtLoadFailed, tag + "");
+            }
+        }
+    }
+
     public static class RefreshConfig implements Serializable {
 
         public static final long serialVersionUID = -963125420415611042L;
 
 		public boolean canLoadMore = true;// 是否可以加载更多
 		
-		public boolean savePosition = false;// 是否保存最后阅读位置
+		public String saveLastPositionKey = null;// 最后阅读坐标的Key，null-不保存，针对缓存数据有效
 		
 		public int minResultSize = 10;// 当加载的数据少于这个值时，默认没有更多加载
 		
 		public boolean animEnable = false;// 是否启用加载动画
 		
-		public boolean hasFooterView = true;
-		
-		public String faildLabel;// 加载失败显示文本
-		
 		public String emptyLabel;// 加载空显示文本
-		
-		public String loadMoreLabel = GlobalContext.getInstance().getResources().getString(R.string.comm_request_more);// 加载更多
-		
-		public String loadingLabel = GlobalContext.getInstance().getResources().getString(R.string.comm_request_loading);// 加载中
-		
-		public String loadDisableLabel = GlobalContext.getInstance().getResources().getString(R.string.comm_request_disable);// 不能加载更多了
 		
 	}
 	

@@ -65,13 +65,6 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
         }
 	}
 
-	@Override
-	public boolean onToolbarDoubleClick() {
-		getListView().setSelectionFromTop(0, 0);
-		
-		return true;
-	}
-
     @Override
 	public boolean setRefreshing() {
 		return false;

@@ -43,7 +43,7 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
     }
 
     protected void initRefreshList(Bundle savedInstanceState) {
-    	if (getConfig().hasFooterView)
+    	if (canFooterAutoLoadMore())
     		getListView().addFooterView(mFooterView);
     }
 
@@ -83,7 +83,7 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
 
         if (scrollState == SCROLL_STATE_FLING) {
         } else if (scrollState == SCROLL_STATE_IDLE) {
-        	if (getConfig().hasFooterView) {
+        	if (canFooterAutoLoadMore()) {
         		for (int i = 0; i < getListView().getFooterViewsCount(); i++) {
                     if (getListView().getChildAt(getListView().getChildCount() - i - 1) == mFooterView) {
                         if (getConfig().canLoadMore) {
@@ -130,7 +130,7 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
         if (state == ABaseTaskState.finished) {
         	setRefreshViewComplete();
 
-        	if (getConfig().hasFooterView) {
+        	if (canFooterAutoLoadMore()) {
         		final View layLoading = mFooterView.findViewById(R.id.layLoading);
                 final TextView btnLoadMore = (TextView) mFooterView.findViewById(R.id.btnLoadMore);
                 layLoading.setVisibility(View.GONE);
@@ -146,16 +146,16 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
 
     @Override
     public void resetRefreshView(RefreshConfig config) {
-        if (getConfig().hasFooterView) {
+        if (canFooterAutoLoadMore()) {
         	final View layLoading = mFooterView.findViewById(R.id.layLoading);
         	TextView txtLoadingHint = (TextView) mFooterView.findViewById(R.id.txtLoadingHint);
         	final TextView btnLoadMore = (TextView) mFooterView.findViewById(R.id.btnLoadMore);
             
             if (config.canLoadMore) {
                 layLoading.setVisibility(View.GONE);
-                btnLoadMore.setText(getConfig().loadMoreLabel);
+                btnLoadMore.setText(loadMoreBtnLabel());
                 if (TextUtils.isEmpty(txtLoadingHint.getText()))
-                    txtLoadingHint.setText(getConfig().loadingLabel);
+                    txtLoadingHint.setText(loadingLabel());
                 btnLoadMore.setOnClickListener(new View.OnClickListener() {
 
                     @Override
@@ -169,7 +169,7 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
             } else {
                 layLoading.setVisibility(View.GONE);
                 btnLoadMore.setVisibility(View.VISIBLE);
-                btnLoadMore.setText(getConfig().loadDisableLabel);
+                btnLoadMore.setText(loadDisabledLabel());
                 btnLoadMore.setOnClickListener(null);
             }
         }
@@ -177,6 +177,22 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
 
     protected View getFooterView() {
         return mFooterView;
+    }
+
+    protected boolean canFooterAutoLoadMore() {
+        return true;
+    }
+
+    protected String loadMoreBtnLabel() {
+        return getString(R.string.comm_request_more);// 加载更多
+    }
+
+    protected String loadingLabel() {
+        return getString(R.string.comm_request_loading);// 加载中
+    }
+
+    protected String loadDisabledLabel() {
+        return getString(R.string.comm_request_disable);// 不能加载更多了
     }
 
 }

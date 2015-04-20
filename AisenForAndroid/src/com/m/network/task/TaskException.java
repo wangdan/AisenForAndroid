@@ -34,7 +34,7 @@ public class TaskException extends Exception {
 	private static IExceptionDeclare exceptionDeclare;
 	
 	public TaskException(String code) {
-		this.code = msg;
+		this.code = code;
 	}
 
     public TaskException(String code, String msg) {
