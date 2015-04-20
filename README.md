@@ -7,8 +7,8 @@
 Aisen一个免费开源、面向AOP、遵循Apache2开源协议发布的Android轻量级快速开发框架。声明，部分源码修改自Afinal1.0。
 
 ## UI层
-	定义Loading、Failure、Empty、Empty、Content5个基本视图。根据异步线程执行的业务方法状态，自动的维护这5个视图之间的状态切换。
-	效果
+定义Loading、Failure、Empty、Empty、Content5个基本视图。根据异步线程执行的业务方法状态，自动的维护这5个视图之间的状态切换。
+效果
 	
 
 解决互联网应用过程中常见的问题，例如：
