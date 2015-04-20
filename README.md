@@ -4,23 +4,22 @@
 实验性项目，现在重构中，旧代码备份至backup目录，重构完成后，这里会去掉
 
 ## 说明
-Aisen一个免费开源、面向AOP、遵循Apache3开源协议发布的Android轻量级快速开发框架。包括UI、SDK、Cache、Network等业务层。包括SqliteUtility、IOC注解、Bitmaploader等开发组件。申明，部分源码修改自Afinal1.0。
+Aisen一个免费开源、面向AOP、遵循Apache2开源协议发布的Android轻量级快速开发框架。声明，部分源码修改自Afinal1.0。
+
+## UI层
+	定义Loading、Failure、Empty、Empty、Content5个基本视图。根据异步线程执行的业务方法状态，自动的维护这5个视图之间的状态切换。
+	效果
+	
 
 解决互联网应用过程中常见的问题，例如：
-
   * UI层，定义、管理基本视图的状态切换，封装列表视图的状态控制；
   * SDK层，申明客户端所有接口方法，定义入参和出参以及业务异常；
   * Cache层，定义缓存接口，自由配置每个接口的缓存方式；
-  * Network层，
+  * Network层，定义网络接口，
   * 图片加载框架，一行代码完成图片的加载绑定，优化OOM、错位、压缩、网络开销等问题；
   * Sqlite的ORM操作组件，基于GreenDAO框架，面向对象的一行代码CRUD操作；
   * IOC注解，UI组件的绑定，一般性事件设置；
 
-	Loading视图、Failure视图、Empty视图、Empty视图、Content视图这5中基本视图的切换管理，你什么java代码都不需要写，只需要在layout的xml文件中按照自己的需求绘制5种视图的ui部分，就能
-  * 加载数据时显示Loading界面
-  * 加载失败显示Failure界面，将faild的提示信息绑定到ui显示，如果有ReloadBtn点击自动刷新
-  * 加载空数据显示Empty界面，将empty的提示信息绑定到ui显示，如果有ReloadBtn点击自动刷新
-  * 加载成功后显示Content界面
 
 ## 我能做什么
 
