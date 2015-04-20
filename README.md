@@ -7,13 +7,18 @@
 Aisen一个免费开源、面向AOP、遵循Apache3开源协议发布的Android轻量级快速开发框架。包括UI、SDK、Cache、Network等业务层。包括SqliteUtility、IOC注解、Bitmaploader等开发组件。申明，部分源码修改自Afinal1.0。
 
 解决互联网应用过程中常见的问题，例如：
-## 图片加载框架
-		一行代码完成图片的加载绑定，优化OOM、错位、压缩、网络开销等问题；S
-## qlite的ORM操作框架
-		面向对象的一行代码CRUD操作；
-## IOC注解
+### 图片加载框架
+		一行代码完成图片的加载绑定，优化OOM、错位、压缩、网络开销等问题；
+### Sqlite的ORM操作组件
+		基于GreenDAO框架，面向对象的一行代码CRUD操作；
+### IOC注解
 		UI组件的绑定，一般性事件设置；
-定义AisenForAndroid是一个android快速开发框架，内置的orm、ioc、bitmaploader均修改自afinal1.0版本。不同于其他，Aisen专注如何使用这些组件来更快速更健壮的开发app。四层结构：UI层、业务接口层、持久层、网络通讯层。面向敏捷、AOP编程，基于Aisen，让你的工作更倾向于具体的业务逻辑、UI特效开发。
+### UI层
+	Loading视图、Failure视图、Empty视图、Empty视图、Content视图这5中基本视图的切换管理，你什么java代码都不需要写，只需要在layout的xml文件中按照自己的需求绘制5种视图的ui部分，就能
+  * 加载数据时显示Loading界面
+  * 加载失败显示Failure界面，将faild的提示信息绑定到ui显示，如果有ReloadBtn点击自动刷新
+  * 加载空数据显示Empty界面，将empty的提示信息绑定到ui显示，如果有ReloadBtn点击自动刷新
+  * 加载成功后显示Content界面
 
 ## 我能做什么
 
