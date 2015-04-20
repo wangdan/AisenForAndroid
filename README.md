@@ -1,7 +1,7 @@
 # AisenForAndroid
 
 # 看这里
-项目重构中，文档同步跟新
+实验性项目，现在重构中，旧代码备份至backup目录，重构完成后，这里会去掉
 
 ## 说明
 Aisen一个免费开源、面向AOP、遵循Apache3开源协议发布的Android轻量级快速开发框架。包括UI、SDK、Cache、Network等业务层。包括SqliteUtility、IOC注解、Bitmaploader等开发组件。
