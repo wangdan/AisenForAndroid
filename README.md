@@ -10,6 +10,7 @@ Aisen一个免费开源、面向AOP、遵循Apache2开源协议发布的Android�
 Aisen微博是个人实验性项目，依赖AisenForAndroid开发，UI遵循Material Design，也会在部分功能实现上依赖Github上其他优秀的开源组件或者框架，作为范例让感兴趣的同志更加了解AisenForAndroid或者其他项目的使用。
 
 **UI层**
+
 - ABaseFragment
 - ARefreshFragment
   - ASwipeRefreshListFragment
@@ -18,7 +19,20 @@ Aisen微博是个人实验性项目，依赖AisenForAndroid开发，UI遵循Mate
   - AAutoReleaseStripTabsFragment
 - 
 
+**SDK接口层**
+>将分页、缓存、线程等都归纳在这里
+- ABizLogic
+- Cache
+- Paging
+  - PageIndexPaging
+- WorkTask
+  - TaskException
 
+**网络协议层**
+
+- IHttpUtility
+  - HttpConfig
+  - Params
 
 ## UI层
 定义Loading、Failure、Empty、Empty、Content5个基本视图。根据异步线程执行的业务方法状态，自动的维护这5个视图之间的状态切换。
