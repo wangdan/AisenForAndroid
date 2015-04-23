@@ -21,6 +21,7 @@ Aisen微博是个人实验性项目，依赖AisenForAndroid开发，UI遵循Mate
 
 **SDK接口层**
 >将分页、缓存、线程等都归纳在这里
+
 - ABizLogic
 - Cache
 - Paging
@@ -33,6 +34,11 @@ Aisen微博是个人实验性项目，依赖AisenForAndroid开发，UI遵循Mate
 - IHttpUtility
   - HttpConfig
   - Params
+
+**开发组件**
+
+- BitmapLoader
+- SqliteUtility
 
 ## UI层
 定义Loading、Failure、Empty、Empty、Content5个基本视图。根据异步线程执行的业务方法状态，自动的维护这5个视图之间的状态切换。
