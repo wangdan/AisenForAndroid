@@ -36,6 +36,15 @@ Aisen微博是个人实验性项目，依赖AisenForAndroid开发，UI遵循Mate
 - BitmapLoader
 - SqliteUtility
 
+# 导入
+
+**1、依赖关系**
+
+AisenForAndroid依赖android-support-v7-appcompat
+AisenSample依赖AisenForAndroid
+>如果这两句描述不清楚，也不要问我
+
+# 老的内容，稍后删
 ## UI层
 定义Loading、Failure、Empty、Empty、Content5个基本视图。根据异步线程执行的业务方法状态，自动的维护这5个视图之间的状态切换。
 效果
