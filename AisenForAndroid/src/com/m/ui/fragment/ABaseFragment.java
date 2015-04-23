@@ -46,7 +46,7 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
     View emptyLayout;// 空视图
 
     // 标志是否ContentView是否为空
-    private boolean contentEmpty = false;
+    private boolean contentEmpty = true;
 
     @Override
     public void onAttach(Activity activity) {

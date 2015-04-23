@@ -44,6 +44,7 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
             setViewVisiable(contentLayout, View.GONE);
         }
         else {
+            setViewVisiable(emptyLayout, View.GONE);
             setViewVisiable(contentLayout, View.VISIBLE);
         }
         setAdapterItems(items);
