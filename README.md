@@ -40,12 +40,13 @@ Aisen微博是个人实验性项目，依赖AisenForAndroid开发，UI遵循Mate
 
 **1、依赖关系**
 >我只能用这两句话描述了
+
 AisenForAndroid依赖android-support-v7-appcompat<br/>
 AisenSample依赖AisenForAndroid
 
 **2、继承GlobalContext**
 
-你的项目Application必须继承自[GlobalContext](https://github.com/wangdan/AisenForAndroid/blob/master/AisenForAndroid/com/m/common/context/GlobalContext.java)
+你的项目Application必须继承自[GlobalContext](https://github.com/wangdan/AisenForAndroid/blob/master/AisenForAndroid/src/com/m/common/context/GlobalContext.java)
 
 
 # 老的内容，稍后删
