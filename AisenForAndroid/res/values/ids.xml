@@ -7,13 +7,13 @@
 	<item name="layoutRefresh" type="id"></item>
 	<!-- 加载数据时，显示这个ProcessBar视图 -->
 	<item name="layoutProcessing" type="id"></item>
-	<!-- 加载数据时，悬浮状态显示Loading视图 -->
+	<!-- 加载时 -->
 	<item name="layoutLoading" type="id"></item>
-	<!-- 加载数据失败时，显示这个视图 -->
+	<!-- 加载失败时 -->
 	<item name="layoutLoadFailed" type="id"></item>
-	<!-- 加载数据为空时，显示这个视图 -->
+	<!-- 加载为空时 -->
 	<item name="layoutEmpty" type="id"></item>
-	<!-- 加载数据成功且不为空，显示这个视图 -->
+	<!-- 加载成功时 -->
 	<item name="layoutContent" type="id"></item>
 	<!-- 加载数据异常，会在这个TextView打印错误信息 -->
 	<item name="txtLoadFailed" type="id"></item>
