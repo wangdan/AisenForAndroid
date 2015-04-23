@@ -1,7 +1,5 @@
 package com.m.ui.fragment;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
@@ -21,13 +19,6 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
 	@ViewInject(idStr = "listView")
 	ListView listView;
 
-	@Override
-	void _layoutInit(LayoutInflater inflater, Bundle savedInstanceState) {
-		super._layoutInit(inflater, savedInstanceState);
-
-		listView.setRecyclerListener(this);
-	}
-	
 	@Override
 	public AbsListView getRefreshView() {
 		return listView;
@@ -71,11 +62,11 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
 	}
 
 	@Override
-	public void setRefreshViewComplete() {
+	public void onRefreshViewComplete() {
 	}
 
 	@Override
-	public void resetRefreshView(RefreshConfig config) {
+	public void onChangedByConfig(RefreshConfig config) {
 	}
 
 }

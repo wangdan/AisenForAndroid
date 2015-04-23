@@ -30,15 +30,17 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
     static final String TAG = AStripTabsFragment.class.getSimpleName();
 
+    public static final String SET_INDEX = "com.m.ui.SET_INDEX";// 默认选择第几个
+
     @ViewInject(idStr = "slidingTabs")
     SlidingTabLayout slidingTabs;
     @ViewInject(idStr = "pager")
     ViewPager viewPager;
     MyViewPagerAdapter mViewPagerAdapter;
 
-    private ArrayList<T> mItems;
-    private Map<String, Fragment> fragments;
-    private int mCurrentPosition = 0;
+    ArrayList<T> mItems;
+    Map<String, Fragment> fragments;
+    int mCurrentPosition = 0;
 
     @Override
     protected int inflateContentView() {
@@ -72,15 +74,20 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
             mItems = generateTabs();
 
             mCurrentPosition = 0;
-            if (configSaveLastPosition()) {
-                // 记录了最后阅读的标签
-                String type = ActivityHelper.getShareData("PagerLastPosition" + getClass().getSimpleName(), "");
-                if (!TextUtils.isEmpty(type)) {
-                    for (int i = 0; i < mItems.size(); i++) {
-                        StripTabItem item = mItems.get(i);
-                        if (item.getType().equals(type)) {
-                            mCurrentPosition = i;
-                            break;
+            if (getArguments() != null && getArguments().containsKey(SET_INDEX)) {
+                mCurrentPosition = getArguments().getInt(SET_INDEX);
+            }
+            else {
+                if (configLastPositionKey() != null) {
+                    // 记录了最后阅读的标签
+                    String type = ActivityHelper.getShareData("PagerLastPosition" + configLastPositionKey(), "");
+                    if (!TextUtils.isEmpty(type)) {
+                        for (int i = 0; i < mItems.size(); i++) {
+                            StripTabItem item = mItems.get(i);
+                            if (item.getType().equals(type)) {
+                                mCurrentPosition = i;
+                                break;
+                            }
                         }
                     }
                 }
@@ -148,9 +155,8 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
     public void onPageSelected(int position) {
         mCurrentPosition = position;
 
-        if (configSaveLastPosition()) {
-            ActivityHelper.putShareData("PagerLastPosition" + getClass().getSimpleName(),
-                    mItems.get(position).getType());
+        if (configLastPositionKey() != null) {
+            ActivityHelper.putShareData("PagerLastPosition" + configLastPositionKey(), mItems.get(position).getType());
         }
 
         // 查看是否需要拉取数据
@@ -170,8 +176,8 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
     }
 
     // 是否保留最后阅读的标签
-    protected boolean configSaveLastPosition() {
-        return false;
+    protected String configLastPositionKey() {
+        return null;
     }
 
     abstract protected ArrayList<T> generateTabs();
@@ -256,6 +262,17 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
         private String title;
 
+        private Serializable tag;
+
+        public StripTabItem() {
+
+        }
+
+        public StripTabItem(String type, String title) {
+            this.type = type;
+            this.title = title;
+        }
+
         public String getType() {
             return type;
         }
@@ -272,6 +289,13 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
             this.title = title;
         }
 
+        public Serializable getTag() {
+            return tag;
+        }
+
+        public void setTag(Serializable tag) {
+            this.tag = tag;
+        }
     }
 
     // 这个接口用于多页面时，只有当前的页面才加载数据，其他不显示的页面暂缓加载

@@ -31,24 +31,13 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
 
     @Override
     void _layoutInit(LayoutInflater inflater, Bundle savedInstanceState) {
-        mFooterView = View.inflate(getActivity(), R.layout.comm_lay_footerview, null);
-
         super._layoutInit(inflater, savedInstanceState);
 
-        initRefreshList(savedInstanceState);
+        if (canFooterAutoLoadMore()) {
+            mFooterView = View.inflate(getActivity(), R.layout.comm_lay_footerview, null);
+            getListView().addFooterView(mFooterView);
+        }
 
-        setRefreshList();
-
-        resetRefreshView(getConfig());
-    }
-
-    protected void initRefreshList(Bundle savedInstanceState) {
-    	if (canFooterAutoLoadMore())
-    		getListView().addFooterView(mFooterView);
-    }
-
-    protected void setRefreshList() {
-        getListView().setAdapter(getAdapter());
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -56,6 +45,14 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
                 android.R.color.holo_red_light);
 
         swipeRefreshLayout.setVisibility(View.VISIBLE);
+
+        setInitRefreshList(getListView(), swipeRefreshLayout, savedInstanceState);
+
+        onChangedByConfig(getRefreshConfig());
+    }
+
+    protected void setInitRefreshList(ListView listView, SwipeRefreshLayout swipeRefreshLayout, Bundle savedInstanceState) {
+
     }
 
     @Override
@@ -86,7 +83,7 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
         	if (canFooterAutoLoadMore()) {
         		for (int i = 0; i < getListView().getFooterViewsCount(); i++) {
                     if (getListView().getChildAt(getListView().getChildCount() - i - 1) == mFooterView) {
-                        if (getConfig().canLoadMore) {
+                        if (getRefreshConfig().canLoadMore) {
                         	final View layLoading = mFooterView.findViewById(R.id.layLoading);
                         	final TextView btnLoadMore = (TextView) mFooterView.findViewById(R.id.btnLoadMore);
                         	layLoading.setVisibility(View.VISIBLE);
@@ -118,7 +115,7 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
     }
 
     @Override
-    public void setRefreshViewComplete() {
+    public void onRefreshViewComplete() {
         if (swipeRefreshLayout.isRefreshing())
             swipeRefreshLayout.setRefreshing(false);
     }
@@ -128,7 +125,7 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
         super.taskStateChanged(state, extra);
 
         if (state == ABaseTaskState.finished) {
-        	setRefreshViewComplete();
+            onRefreshViewComplete();
 
         	if (canFooterAutoLoadMore()) {
         		final View layLoading = mFooterView.findViewById(R.id.layLoading);
@@ -145,8 +142,8 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
     };
 
     @Override
-    public void resetRefreshView(RefreshConfig config) {
-        if (canFooterAutoLoadMore()) {
+    public void onChangedByConfig(RefreshConfig config) {
+        if (canFooterAutoLoadMore() && mFooterView != null) {
         	final View layLoading = mFooterView.findViewById(R.id.layLoading);
         	TextView txtLoadingHint = (TextView) mFooterView.findViewById(R.id.txtLoadingHint);
         	final TextView btnLoadMore = (TextView) mFooterView.findViewById(R.id.btnLoadMore);
@@ -173,10 +170,6 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
                 btnLoadMore.setOnClickListener(null);
             }
         }
-    }
-
-    protected View getFooterView() {
-        return mFooterView;
     }
 
     protected boolean canFooterAutoLoadMore() {

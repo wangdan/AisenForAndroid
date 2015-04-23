@@ -17,7 +17,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.m.R;
-import com.m.common.setting.SettingUtility;
 import com.m.common.utils.ActivityHelper;
 import com.m.common.utils.Logger;
 import com.m.common.utils.ViewUtils;
@@ -26,24 +25,28 @@ import com.m.network.biz.IResult;
 import com.m.network.task.TaskException;
 import com.m.support.adapter.ABaseAdapter;
 import com.m.support.paging.IPaging;
-import com.m.support.paging.PagingProxy;
 import com.m.ui.widget.AsToolbar;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
 import java.io.Serializable;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class ARefreshFragment<T extends Serializable, Ts extends Serializable, V extends View> extends ABaseFragment
 									implements RecyclerListener, OnScrollListener, AsToolbar.OnToolbarDoubleClick, AdapterView.OnItemClickListener {
 
 	private static final String TAG = "ARefresh";
 	
-	private static final String SAVED_ADAPTER_DATAS = "com.m.ui.SAVED_ADAPTER_DATAS";
-	private static final String SAVED_PAGINGPROCESSORPROXY = "com.m.ui.SAVED_PAGINGPROCESSORPROXY";
+	private static final String SAVED_DATAS = "com.m.ui.Datas";
+	private static final String SAVED_PAGING = "com.m.ui.Paging";
+    private static final String SAVED_CONFIG = "com.m.ui.Config";
 
 	@SuppressWarnings("rawtypes")
-    PagingProxy mPagingProxy;
+    IPaging mPaging;
 
 	private ABaseAdapter<T> mAdapter;
 	
@@ -69,22 +72,44 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		refresh
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		ArrayList<T> datas = savedInstanceState == null ? new ArrayList<T>() : (ArrayList<T>) savedInstanceState.getSerializable(SAVED_ADAPTER_DATAS);
+		ArrayList<T> datas = savedInstanceState == null ? new ArrayList<T>()
+                                                        : (ArrayList<T>) savedInstanceState.getSerializable(SAVED_DATAS);
 		mAdapter = new MyBaseAdapter(datas, getActivity());
 		
-		if (savedInstanceState != null && savedInstanceState.getSerializable(SAVED_PAGINGPROCESSORPROXY) != null) {
-			mPagingProxy = (PagingProxy) savedInstanceState.getSerializable(SAVED_PAGINGPROCESSORPROXY);
+		if (savedInstanceState != null && savedInstanceState.getSerializable(SAVED_PAGING) != null) {
+            mPaging = (IPaging) savedInstanceState.getSerializable(SAVED_PAGING);
 		} else {
-			IPaging paging = configPaging();
-			if (paging != null)
-				mPagingProxy = new PagingProxy<T, Ts>(paging);
+            mPaging = configPaging();
 		}
 	}
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // 将分页信息保存起来
+        if (mPaging != null)
+            outState.putSerializable(SAVED_PAGING, mPaging);
+
+        onSaveDatas(outState);
+
+        outState.putSerializable(SAVED_CONFIG, refreshConfig);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    /**
+     * 数据量比较大的时候，子类可以不保存，会阻塞
+     *
+     * @param outState
+     */
+    protected void onSaveDatas(Bundle outState) {
+        // 将数据保存起来
+        if (getAdapterItems() != null && getAdapterItems().size() != 0)
+            outState.putSerializable(SAVED_DATAS, getAdapterItems());
+    }
 	
 	Handler mHandler = new Handler() {
 		
@@ -100,10 +125,13 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
             getRefreshView().setOnItemClickListener(this);
 		}
 
-        refreshConfig = savedInstanceSate == null ? new RefreshConfig()
-                                                  : (RefreshConfig) savedInstanceSate.getSerializable("refreshConfig");
-
-        config(refreshConfig);
+        if (savedInstanceSate == null) {
+            refreshConfig = new RefreshConfig();
+            configRefresh(refreshConfig);
+        }
+        else {
+            refreshConfig = (RefreshConfig) savedInstanceSate.getSerializable(SAVED_CONFIG);
+        }
 
         if (refreshConfig.animEnable) {
             swingAnimAdapter = new SwingBottomInAnimationAdapter(mAdapter) {
@@ -116,22 +144,10 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
             };
             swingAnimAdapter.setAbsListView(getRefreshView());
         }
+
+        setInitRefreshView(getRefreshView());
 		
-		if (!refreshConfig.canLoadMore)
-			resetRefreshView(refreshConfig);
-	}
-	
-	/**
-	 * 子类配置
-	 * 
-	 * @param config
-	 */
-	protected void config(RefreshConfig config) {
-		
-	}
-	
-	final protected RefreshConfig getConfig() {
-		return refreshConfig;
+        onChangedByConfig(refreshConfig);
 	}
 	
 	@Override
@@ -139,12 +155,12 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		
 	}
 	
-	private boolean isScrolling = false;
-	private boolean ignoreScroll = false;// 忽略滚动的情况，实时加载图片
-	
-	@Override
+	private boolean isScrolling = false;// 正在滚动
+
+    @Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
-		if (!ignoreScroll) {
+		// 滑动的时候，不加载图片
+        if (!refreshConfig.ignoreScroll) {
 			mHandler.removeCallbacks(refreshRunnable);
 			
 			if (scrollState == SCROLL_STATE_FLING) {
@@ -155,16 +171,20 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			}
 			else if (scrollState == SCROLL_STATE_IDLE) {
 				isScrolling = false;
-//				mHandler.postDelayed(refreshRunnable, 400);
-				notifyDataSetChanged();
 
-				if (!TextUtils.isEmpty(refreshConfig.saveLastPositionKey) && getRefreshView() != null) {
-					putLastReadPosition(getRefreshView().getFirstVisiblePosition());
-					
-					putLastReadTop(getRefreshView().getChildAt(0).getTop());
-				}
+				mHandler.postDelayed(refreshRunnable, 200);
+//				notifyDataSetChanged();
 			}
 		}
+
+        // 保存最后浏览位置
+        if (scrollState == SCROLL_STATE_IDLE) {
+            if (!TextUtils.isEmpty(refreshConfig.saveLastPositionKey) && getRefreshView() != null) {
+                putLastReadPosition(getRefreshView().getFirstVisiblePosition());
+
+                putLastReadTop(getRefreshView().getChildAt(0).getTop());
+            }
+        }
 	}
 	
 	Runnable refreshRunnable = new Runnable() {
@@ -178,35 +198,10 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	
 	@Override
 	public boolean canDisplay() {
-		if (ignoreScroll)
+		if (refreshConfig.ignoreScroll)
 			return true;
 		
 		return !isScrolling;
-	}
-	
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		// 将分页信息保存起来
-		if (mPagingProxy != null)
-			outState.putSerializable(SAVED_PAGINGPROCESSORPROXY, mPagingProxy);
-
-		saveRefreshListState(outState);
-
-		outState.putSerializable("refreshConfig", refreshConfig);
-		
-		super.onSaveInstanceState(outState);
-	}
-	
-	/**
-	 * 数据量比较大的时候，子类可以不保存，会阻塞
-	 * 
-	 * @param outState
-	 */
-	protected void saveRefreshListState(Bundle outState) {
-		// 将数据保存起来
-		if (getAdapterItems() != null && getAdapterItems().size() != 0)
-			outState.putSerializable(SAVED_ADAPTER_DATAS, getAdapterItems());
 	}
 
 	@Override
@@ -257,8 +252,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			this.mode = mode;
 			pagingTask = this;
 
-			if (mode == RefreshMode.reset && mPagingProxy != null)
-				mPagingProxy.newInstance();
+			if (mode == RefreshMode.reset && mPaging != null)
+                mPaging = configPaging();
 		}
 
 		@Override
@@ -266,9 +261,9 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			String previousPage = null;
 			String nextPage = null;
 
-			if (mPagingProxy != null) {
-				previousPage = mPagingProxy.getPreviousPage();
-				nextPage = mPagingProxy.getNextPage();
+			if (mPaging != null) {
+				previousPage = mPaging.getPreviousPage();
+				nextPage = mPaging.getNextPage();
 			}
 
 			return workInBackground(mode, previousPage, nextPage, params);
@@ -308,52 +303,42 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			notifyDataSetChanged();
 
 			// 处理分页数据
-			if (mPagingProxy != null) {
+			if (mPaging != null) {
 				if (getAdapterItems() != null && getAdapterItems().size() != 0)
-					mPagingProxy.processData(result, getAdapterItems().get(0),
+                    mPaging.processData(result, getAdapterItems().get(0),
 							getAdapterItems().get(getAdapterItems().size() - 1));
 				else
-					mPagingProxy.processData(result, null, null);
+                    mPaging.processData(result, null, null);
 			}
 
-			// 如果是缓存数据，且已经过期
-			if (getTaskCount(getTaskId()) == 1 && result instanceof IResult) {
-				// 这里增加一个自动刷新设置功能
-				if (SettingUtility.getPermanentSettingAsBool("pAutoRefresh", true)) {
-					IResult iResult = (IResult) result;
-					// 数据是缓存数据，显示缓存且同时刷新数据
-					if (iResult.isCache() && iResult.expired()) {
-						requestDataDelay(700);
-					}
-					// 缓存数据没有过期，滚动到最后阅读位置
-					else if (iResult.isCache()) {
-						toLastReadPosition();
-					}
-				}
-				else {
-					toLastReadPosition();
-				}
-			}
-			
-			// 如果是重置数据，重置canLoadMore
-			if (mode == RefreshMode.reset)
-				refreshConfig.canLoadMore = true;
-			boolean oldCanLoadMore = refreshConfig.canLoadMore;
-			
+            // 如果是重置数据，重置canLoadMore
+            if (mode == RefreshMode.reset)
+                refreshConfig.canLoadMore = true;
             // 如果数据少于这个值，默认加载完了
             refreshConfig.canLoadMore = resultList.size() >= refreshConfig.minResultSize;
-            // 没有更多数据了
-			if (refreshConfig.canLoadMore && result instanceof IResult && mode != RefreshMode.refresh) {
-				IResult iResult = (IResult) result;
-				if (iResult.noMore()) {
-					refreshConfig.canLoadMore = false;
-				}
+
+			// 如果是缓存数据，且已经过期
+			if (result instanceof IResult) {
+				// 这里增加一个自动刷新设置功能
+                IResult iResult = (IResult) result;
+
+                // 数据是缓存数据
+                if (iResult.isCache()) {
+                    // 缓存过期刷新数据
+                    if (refreshConfig.expiredAutoRefresh && iResult.expired()) {
+                        requestDataDelay(500);
+                    }
+                    // 滑动到最后浏览位置
+                    else {
+                        toLastReadPosition();
+                    }
+                }
+
+                if (iResult.noMore())
+                    refreshConfig.canLoadMore = false;
 			}
-			
-			// 状态发生改变，重置刷新控件
-			if (oldCanLoadMore != refreshConfig.canLoadMore || mode == RefreshMode.reset) {
-				resetRefreshView(refreshConfig);
-			}
+
+            onChangedByConfig(refreshConfig);
 
 			super.onSuccess(result);
 		}
@@ -363,7 +348,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			super.onFinished();
 			
 			if (isRefreshing())
-				setRefreshViewComplete();
+                onRefreshViewComplete();
 			
 			pagingTask = null;
 		}
@@ -440,23 +425,26 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		}
 
 	}
-	
+
+    private Map<String, WeakReference<View>> viewCache = new HashMap<>();
 	@Override
     public void onMovedToScrapHeap(View view) {
-		Logger.v(ARefreshFragment.class.getSimpleName(), "onMovedToScrapHeap");
-		
-//		releaseView(view);
+        if (!viewCache.containsKey(view.toString())) {
+            Logger.d(TAG, "保存一个View到Cache");
+
+            viewCache.put(view.toString(), new WeakReference<View>(view));
+        }
 	}
 
 	/**
 	 * 
-	 * @param view
+	 * @param container
 	 * @return true:子类自行释放，父类不做处理
 	 */
-	protected boolean releaseView(View view) {
-		if (recyleImageViewRes() != null) {
-			for (int imgId : recyleImageViewRes()) {
-				ImageView imgView = (ImageView) view.findViewById(imgId);
+	protected boolean releaseImageView(View container) {
+		if (configCanReleaseIds() != null) {
+			for (int imgId : configCanReleaseIds()) {
+				ImageView imgView = (ImageView) container.findViewById(imgId);
 				if (imgView != null) {
 					imgView.setImageDrawable(BitmapLoader.getLoadingDrawable(imgView));
 				
@@ -468,32 +456,49 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		return false;
 	}
 
-	protected int[] recyleImageViewRes() {
+	protected int[] configCanReleaseIds() {
 		return null;
 	}
+
+    protected int delayRlease() {
+        return 5 * 1000;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mHandler.postDelayed(releaseRunnable, delayRlease());
+    }
 
 	@Override
     public void onStop() {
 		super.onStop();
-		
-		mHandler.removeCallbacks(releaseRunnable);
 
-		releaseBitmap();
+        // TODO 有手势返回的时候，不会调用onStop()
+//		mHandler.removeCallbacks(releaseRunnable);
+//
+//        releaseImageViewByIds();
 	}
-	
-	@Override
+
+    @Override
     public void onResume() {
 		super.onResume();
 
-		ignoreScroll = ActivityHelper.getBooleanShareData("com.m.IGNORE_SCROLL", false);
-		
 		mHandler.removeCallbacks(releaseRunnable);
 		
 		refreshUI();
 	}
 
     public void refreshUI() {
-		notifyDataSetChanged();
+        mHandler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+
+        }, 200);
 
 		_refreshUI();
 	}
@@ -502,22 +507,35 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 
 	}
 
-    public void releaseBitmap() {
+    public void releaseImageViewByIds() {
+        Logger.v(TAG, "releaseImageViewByIds()");
+
 		if (getRefreshView() != null) {
 			int childSize = getRefreshView().getChildCount();
 			for (int i = 0; i < childSize; i++) {
-				releaseView(getRefreshView().getChildAt(i));
-			}
+                View view = getRefreshView().getChildAt(i);
+
+				releaseImageView(view);
+
+                if (viewCache.containsKey(view.toString())) {
+                    Logger.v(TAG, "已经释放了，从Cache中移除");
+
+                    viewCache.remove(view.toString());
+                }
+            }
+
+            if (viewCache.size() > 0) {
+                Set<String> keySet = viewCache.keySet();
+                for (String key : keySet) {
+                    View view = viewCache.get(key).get();
+                    if (view != null) {
+                        Logger.v(TAG, "从Cache中释放一个View");
+
+                        releaseImageView(view);
+                    }
+                }
+            }
 		}
-	}
-	
-	/**
-	 * 设置分页
-	 * 
-	 * @return <tt>null</tt> 不分页
-	 */
-	protected IPaging<T, Ts> configPaging() {
-		return null;
 	}
 	
 	protected void toLastReadPosition() {
@@ -555,12 +573,9 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 	
 	public void notifyDataSetChanged() {
-		if (swingAnimAdapter != null && refreshConfig.animEnable) {
+		if (swingAnimAdapter != null) {
 			// 刷新的时候，不显示动画
-			boolean anim = refreshConfig.animEnable;
-			refreshConfig.animEnable = false;
 			swingAnimAdapter.notifyDataSetChanged();
-			refreshConfig.animEnable = anim;
 		}
 		else {
 			mAdapter.notifyDataSetChanged();
@@ -577,7 +592,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		
 		return mAdapter.getCount();
 	}
-	
+
 	public void setAdapterSelected(int position) {
 		mAdapter.setSelected(position);
 	}
@@ -594,9 +609,31 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		mAdapter.addItems(items);
 	}
 
+    final protected RefreshConfig getRefreshConfig() {
+        return refreshConfig;
+    }
+
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+    }
+
+    /**
+     * 子类配置
+     *
+     * @param config
+     */
+    protected void configRefresh(RefreshConfig config) {
+
+    }
+
+    /**
+     * 设置分页
+     *
+     * @return <tt>null</tt> 不分页
+     */
+    protected IPaging<T, Ts> configPaging() {
+        return null;
     }
 
     /**
@@ -628,35 +665,34 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	abstract public boolean setRefreshing();
 	
 	/**
-	 * 设置列表控件没有更多了
+	 * 根据Config刷新RefreshView
 	 */
-	abstract public void resetRefreshView(RefreshConfig config);
+	abstract protected void onChangedByConfig(RefreshConfig config);
+
+    /**
+     * 初始化RefreshView
+     *
+     * @param refreshView
+     */
+    protected void setInitRefreshView(AbsListView refreshView) {
+
+    }
 
 	/**
 	 * 设置列表控件状态为刷新结束
 	 */
-	abstract public void setRefreshViewComplete();
+	abstract public void onRefreshViewComplete();
 	
 	public boolean isRefreshing() {
 		return pagingTask != null;
-	}
-	
-	@Override
-	public void onPause() {
-		super.onPause();
-		
-		mHandler.postDelayed(releaseRunnable, delayRlease());
-	}
-	
-	protected int delayRlease() {
-		return 15 * 1000;
 	}
 	
 	Runnable releaseRunnable = new Runnable() {
 		
 		@Override
 		public void run() {
-			releaseBitmap();
+            releaseImageViewByIds();
+
 			Logger.w("释放图片");
 		}
 		
@@ -689,6 +725,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 
         public static final long serialVersionUID = -963125420415611042L;
 
+        public boolean expiredAutoRefresh = true;// 缓存数据过期自动刷新列表
+
 		public boolean canLoadMore = true;// 是否可以加载更多
 		
 		public String saveLastPositionKey = null;// 最后阅读坐标的Key，null-不保存，针对缓存数据有效
@@ -698,6 +736,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		public boolean animEnable = false;// 是否启用加载动画
 		
 		public String emptyLabel;// 加载空显示文本
+
+        public boolean ignoreScroll = true;// 置为false表示滑动列表时不加载图片
 		
 	}
 	

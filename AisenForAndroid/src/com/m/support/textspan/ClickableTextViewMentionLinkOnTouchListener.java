@@ -1,5 +1,6 @@
 package com.m.support.textspan;
 
+import android.graphics.Color;
 import android.text.Layout;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -19,6 +20,10 @@ public class ClickableTextViewMentionLinkOnTouchListener implements View.OnTouch
 
     public ClickableTextViewMentionLinkOnTouchListener(int color) {
         this.color = color;
+    }
+
+    public ClickableTextViewMentionLinkOnTouchListener() {
+        this.color = Color.parseColor("#c8067bb1");
     }
 
 	@Override
