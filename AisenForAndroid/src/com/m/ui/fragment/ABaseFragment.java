@@ -352,6 +352,14 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+
+        if (getActivity() != null && getActivity() instanceof BaseActivity)
+            ((BaseActivity) getActivity()).removeFragment(this.toString());
+    }
+
+    @Override
     final public void addTask(@SuppressWarnings("rawtypes") WorkTask task) {
         taskManager.addTask(task);
     }

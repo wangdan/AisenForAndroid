@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -62,8 +63,22 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
         setHasOptionsMenu(true);
 
-        setTab(savedInstanceSate);
+        if (delayGenerateTabs() == 0) {
+            setTab(savedInstanceSate);
+        }
+        else {
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    setTab(savedInstanceSate);
+                }
+
+            }, delayGenerateTabs());
+        }
     }
+
+
 
     @SuppressWarnings("unchecked")
     protected void setTab(final Bundle savedInstanceSate) {
@@ -183,6 +198,11 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
     abstract protected ArrayList<T> generateTabs();
 
     abstract protected Fragment newFragment(T bean);
+
+    // 延迟一点初始化tabs，用于在首页切换菜单的时候，太多的tab页导致有点点卡顿
+    protected int delayGenerateTabs() {
+        return 0;
+    }
 
     @Override
     public void onDestroy() {

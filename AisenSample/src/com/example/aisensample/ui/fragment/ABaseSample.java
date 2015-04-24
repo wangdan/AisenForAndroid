@@ -40,7 +40,7 @@ public class ABaseSample extends ABaseFragment {
 
             // 方便我截图，延迟一下
             try {
-                long time = taskCount == 1 ? 10 : 2;
+                long time = taskCount == 1 ? 5 : 2;
 
                 Thread.sleep(time * 1000);
             } catch (Exception e) {
