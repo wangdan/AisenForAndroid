@@ -235,6 +235,10 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
         return null;
     }
 
+    public SlidingTabLayout getSlidingTabLayout() {
+        return slidingTabs;
+    }
+
     class MyViewPagerAdapter extends FragmentPagerAdapter {
 
         public MyViewPagerAdapter(FragmentManager fm) {
