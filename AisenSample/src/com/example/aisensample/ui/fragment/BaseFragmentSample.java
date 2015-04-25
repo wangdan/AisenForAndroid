@@ -10,10 +10,10 @@ import com.m.ui.fragment.ABaseFragment;
 /**
  * Created by wangdan on 15/4/23.
  */
-public class ABaseSample extends ABaseFragment {
+public class BaseFragmentSample extends ABaseFragment {
 
     public static Fragment newInstance() {
-        return new ABaseSample();
+        return new BaseFragmentSample();
     }
 
     @Override

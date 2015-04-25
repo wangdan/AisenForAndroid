@@ -87,7 +87,7 @@ public abstract class ABizLogic implements IHttpUtility {
 			try {
 				cacheUtility = (ICacheUtility) Class.forName(cacheUtilityStr).newInstance();
 			} catch (Exception e) {
-				Logger.w(TAG, "CacheUtility has not setting or error setting");
+				Logger.w(TAG, "CacheUtility 没有配置或者配置错误");
 			}
 		}
 		// 内存缓存
@@ -97,7 +97,7 @@ public abstract class ABizLogic implements IHttpUtility {
 				try {
 					memoryCacheUtility = (ICacheUtility) Class.forName(memoryCacheUtilityStr).newInstance();
 				} catch (Exception e) {
-					Logger.w(TAG, "MemoryCacheUtility has not setting or error setting");
+					Logger.w(TAG, "MemoryCacheUtility 没有配置或者配置错误");
 				}
 			}
 		}
@@ -116,7 +116,7 @@ public abstract class ABizLogic implements IHttpUtility {
 
 				if (cache != null) {
 					String state = cache.expired() ? "invalid" : "valid";
-					Logger.d(TAG, String.format("The state of the %s cache time is %s, action = %s", "MemoryCacheUtility", state,
+					Logger.d(TAG, String.format("%s 有效期： %s, action = %s", "MemoryCacheUtility", state,
 							actionSetting.getValue()));
 				}
 			}
@@ -126,14 +126,14 @@ public abstract class ABizLogic implements IHttpUtility {
 				cache = cacheUtility.findCacheData(actionSetting, params, responseCls);
 				if (cache != null) {
 					String state = cache.expired() ? "invalid" : "valid";
-					Logger.d(TAG, String.format("The state of the %s cache time is %s, action = %s", cacheUtility.getClass().getSimpleName(), state,
+					Logger.d(TAG, String.format(" %s 有效期 %s, action = %s", cacheUtility.getClass().getSimpleName(), state,
 							actionSetting.getValue()));
 				}
 
 				if (memoryCacheUtility != null && cache != null && !cache.expired()) {
 					// 文件缓存 拉到数据后 刷新内存
 					putToCache(actionSetting, params, cache.getT(), memoryCacheUtility);
-					Logger.v(TAG, String.format("Refresh the memory cache, action = %s", actionSetting.getValue()));
+					Logger.v(TAG, String.format("刷新内存缓存, action = %s", actionSetting.getValue()));
 				}
 			}
 		}
@@ -160,7 +160,7 @@ public abstract class ABizLogic implements IHttpUtility {
 						}
 					}
 
-					Logger.d(TAG, String.format("load data from webservice, action = %s --->%s", actionSetting.getValue(), Logger.toJson(result)));
+					Logger.d(TAG, String.format("加载服务端数据, action = %s --->%s", actionSetting.getValue(), Logger.toJson(result)));
 				}
 			} catch (Exception e) {
 				serviceEx = e;
@@ -243,7 +243,7 @@ public abstract class ABizLogic implements IHttpUtility {
 				return httpUtility;
 			} catch (Exception e) {
 				e.printStackTrace();
-				Logger.w(TAG, "CacheUtility has not setting or error setting");
+				Logger.w(TAG, "CacheUtility 没有配置或者配置错误");
 			}
 		}
 		return mHttpUtility;
