@@ -32,10 +32,20 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
     @Override
     void _layoutInit(LayoutInflater inflater, Bundle savedInstanceState) {
         super._layoutInit(inflater, savedInstanceState);
+    }
+
+    @Override
+    final protected void setInitRefreshView(AbsListView refreshView, Bundle savedInstanceSate) {
+        super.setInitRefreshView(refreshView, savedInstanceSate);
 
         if (canFooterAutoLoadMore()) {
             mFooterView = View.inflate(getActivity(), R.layout.comm_lay_footerview, null);
             getListView().addFooterView(mFooterView);
+
+//            final View layLoading = mFooterView.findViewById(R.id.layLoading);
+//            final TextView btnLoadMore = (TextView) mFooterView.findViewById(R.id.btnLoadMore);
+//            layLoading.setVisibility(View.VISIBLE);
+//            btnLoadMore.setVisibility(View.GONE);
         }
 
         swipeRefreshLayout.setOnRefreshListener(this);
@@ -46,12 +56,10 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
 
         swipeRefreshLayout.setVisibility(View.VISIBLE);
 
-        setInitRefreshList(getListView(), swipeRefreshLayout, savedInstanceState);
-
-        onChangedByConfig(getRefreshConfig());
+        setInitSwipeRefresh(getListView(), swipeRefreshLayout, savedInstanceSate);
     }
 
-    protected void setInitRefreshList(ListView listView, SwipeRefreshLayout swipeRefreshLayout, Bundle savedInstanceState) {
+    protected void setInitSwipeRefresh(ListView listView, SwipeRefreshLayout swipeRefreshLayout, Bundle savedInstanceState) {
 
     }
 
@@ -80,7 +88,7 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
 
         if (scrollState == SCROLL_STATE_FLING) {
         } else if (scrollState == SCROLL_STATE_IDLE) {
-        	if (canFooterAutoLoadMore()) {
+        	if (canFooterAutoLoadMore() && !isRefreshing()) {
         		for (int i = 0; i < getListView().getFooterViewsCount(); i++) {
                     if (getListView().getChildAt(getListView().getChildCount() - i - 1) == mFooterView) {
                         if (getRefreshConfig().canLoadMore) {
@@ -149,7 +157,8 @@ public abstract class ASwipeRefreshListFragment<T extends Serializable, Ts exten
         	final TextView btnLoadMore = (TextView) mFooterView.findViewById(R.id.btnLoadMore);
             
             if (config.canLoadMore) {
-                layLoading.setVisibility(View.GONE);
+                layLoading.setVisibility(View.VISIBLE);
+                btnLoadMore.setVisibility(View.GONE);
                 btnLoadMore.setText(loadMoreBtnLabel());
                 if (TextUtils.isEmpty(txtLoadingHint.getText()))
                     txtLoadingHint.setText(loadingLabel());

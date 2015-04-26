@@ -145,7 +145,9 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
             swingAnimAdapter.setAbsListView(getRefreshView());
         }
 
-        setInitRefreshView(getRefreshView());
+        setInitRefreshView(getRefreshView(), savedInstanceSate);
+
+        getRefreshView().setAdapter(getAdapter());
 		
         onChangedByConfig(refreshConfig);
 	}
@@ -674,7 +676,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
      *
      * @param refreshView
      */
-    protected void setInitRefreshView(AbsListView refreshView) {
+    protected void setInitRefreshView(AbsListView refreshView, Bundle savedInstanceSate) {
 
     }
 

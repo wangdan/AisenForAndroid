@@ -129,6 +129,14 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
     }
 
     @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        if (mHelper != null)
+            mHelper.onPostCreate(savedInstanceState);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
 

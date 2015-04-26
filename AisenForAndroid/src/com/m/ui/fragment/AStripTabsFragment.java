@@ -134,9 +134,10 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
         slidingTabs.setCustomTabView(R.layout.comm_lay_tab_indicator, android.R.id.text1);
         Resources res = getResources();
         slidingTabs.setSelectedIndicatorColors(res.getColor(R.color.comm_tab_selected_strip));
-        slidingTabs.setDistributeEvenly(true);
+        slidingTabs.setDistributeEvenly(mItems.size() <= 5);
         slidingTabs.setViewPager(viewPager);
         slidingTabs.setOnPageChangeListener(this);
+        slidingTabs.setCurrent(mCurrentPosition);
     }
 
     protected void destoryFragments() {
@@ -233,6 +234,10 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
         }
 
         return null;
+    }
+
+    public Map<String, Fragment> getFragments() {
+        return fragments;
     }
 
     public SlidingTabLayout getSlidingTabLayout() {

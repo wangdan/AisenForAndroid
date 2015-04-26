@@ -23,7 +23,7 @@ public class ClickableTextViewMentionLinkOnTouchListener implements View.OnTouch
     }
 
     public ClickableTextViewMentionLinkOnTouchListener() {
-        this.color = Color.parseColor("#c8067bb1");
+        this.color = Color.parseColor("#33969696");
     }
 
 	@Override

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
 
 /**
  * 用户注册回调BaseActivity的生命周期及相关的方法，自行添加
@@ -24,6 +25,14 @@ public class BaseActivityHelper {
 
     protected void onCreate(Bundle savedInstanceState) {
 
+    }
+
+    public void onPostCreate(Bundle savedInstanceState) {
+
+    }
+
+    public View findViewById(int id) {
+        return mActivity.findViewById(id);
     }
 
     protected void onStart() {

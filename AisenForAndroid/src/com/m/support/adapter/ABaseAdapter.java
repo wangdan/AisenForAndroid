@@ -72,6 +72,7 @@ public abstract class ABaseAdapter<T extends Serializable> extends BaseAdapter {
         }
 
         itemViewProcessor.position = position;
+        itemViewProcessor.size = datas.size();
         if (adapterHelper != null)
             itemViewProcessor.bindingData(convertView, adapterHelper.getItem(position, datas));
         else
@@ -204,6 +205,7 @@ public abstract class ABaseAdapter<T extends Serializable> extends BaseAdapter {
     abstract public static class AbstractItemView<T extends Serializable> {
 
         private int position;
+        private int size;
 
         /**
          * ItemView的layoutId
@@ -245,6 +247,10 @@ public abstract class ABaseAdapter<T extends Serializable> extends BaseAdapter {
 
         public void setPosition(int position) {
             this.position = position;
+        }
+
+        public int getSize() {
+            return size;
         }
 
         public void recycleView(View view) {
