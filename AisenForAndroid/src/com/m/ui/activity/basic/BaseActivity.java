@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 
 import com.m.R;
 import com.m.common.setting.SettingUtility;
+import com.m.common.utils.ActivityHelper;
 import com.m.common.utils.CommSettings;
 import com.m.common.utils.Logger;
 import com.m.common.utils.ViewUtils;
@@ -438,4 +439,9 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
 
         return false;
     }
+
+    public BaseActivityHelper getActivityHelper() {
+        return mHelper;
+    }
+
 }

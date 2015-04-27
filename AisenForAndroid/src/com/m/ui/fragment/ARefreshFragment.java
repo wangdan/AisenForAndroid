@@ -302,7 +302,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			else if (mode == RefreshMode.update)
 				addItems(resultList);
 			
-			notifyDataSetChanged();
+//			notifyDataSetChanged();
 
 			// 处理分页数据
 			if (mPaging != null) {
@@ -339,6 +339,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
                 if (iResult.noMore())
                     refreshConfig.canLoadMore = false;
 			}
+
+            notifyDataSetChanged();
 
             onChangedByConfig(refreshConfig);
 
