@@ -306,10 +306,10 @@ public abstract class ABizLogic implements IHttpUtility {
 		if (data instanceof IResult) {
 			IResult iResult = (IResult) data;
 			if (!iResult.isCache())
-				new PutCacheTask(setting, params, data, cacheUtility).execute();
+				new PutCacheTask(setting, params, data, cacheUtility).executeOnExecutor(ICacheUtility.THREAD_POOL_EXECUTOR);
 		}
 		else {
-			new PutCacheTask(setting, params, data, cacheUtility).execute();
+			new PutCacheTask(setting, params, data, cacheUtility).executeOnExecutor(ICacheUtility.THREAD_POOL_EXECUTOR);
 		}
 	}
 	
@@ -337,11 +337,19 @@ public abstract class ABizLogic implements IHttpUtility {
 
 		@Override
 		public Void workInBackground(Void... p) throws TaskException {
+            long time = System.currentTimeMillis();
 			cacheUtility.addCacheData(setting, params, o);
+            Logger.d(TAG, "保存缓存耗时%sms", String.valueOf(System.currentTimeMillis() - time));
 			return null;
 		}
 
-	}
+        @Override
+        protected void onFinished() {
+            super.onFinished();
+
+            Logger.v(TAG, "CacheTask onFinished()");
+        }
+    }
 	
 	private String generateMD5(String action, Params params) {
 		String key;

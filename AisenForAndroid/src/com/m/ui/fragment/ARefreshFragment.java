@@ -398,6 +398,16 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		mHandler.removeCallbacks(refreshDelay);
 		mHandler.postDelayed(refreshDelay, delay);
 	}
+
+    /**
+     * 设置刷新控件为刷新状态且刷新数据
+     *
+     */
+    public void setRefreshingRequestData() {
+        // 如果没有正在刷新，设置刷新控件，且子类没有自动刷新
+        if (!isRefreshing() && !setRefreshing())
+            requestData(RefreshMode.reset);
+    }
 	
 	Runnable refreshDelay = new Runnable() {
 		
@@ -410,9 +420,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			
 			putLastReadPosition(0);
 			putLastReadTop(0);
-			// 如果没有正在刷新，设置刷新控件，且子类没有自动刷新
-			if (!isRefreshing() && !setRefreshing())
-				requestData(RefreshMode.reset);
+
+			setRefreshingRequestData();
 		}
 		
 	};
