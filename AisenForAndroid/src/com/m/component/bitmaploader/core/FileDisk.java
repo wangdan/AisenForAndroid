@@ -35,7 +35,7 @@ public class FileDisk {
 		if (file.getParentFile().exists())
 			file.getParentFile().mkdirs();
 		FileOutputStream out = new FileOutputStream(file);
-		byte[] buffer = new byte[64 * 1024];
+		byte[] buffer = new byte[8 * 1024];
 		int len = -1;
 		while ((len = in.read(buffer)) != -1) {
 			out.write(buffer, 0, len);

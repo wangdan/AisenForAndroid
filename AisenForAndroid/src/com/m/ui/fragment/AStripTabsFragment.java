@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 
 import com.m.R;
 import com.m.common.utils.ActivityHelper;
+import com.m.common.utils.Logger;
 import com.m.support.adapter.FragmentPagerAdapter;
 import com.m.support.inject.ViewInject;
 import com.m.ui.activity.basic.BaseActivity;
@@ -90,7 +91,7 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
             mCurrentPosition = 0;
             if (getArguments() != null && getArguments().containsKey(SET_INDEX)) {
-                mCurrentPosition = getArguments().getInt(SET_INDEX);
+                mCurrentPosition = Integer.parseInt(getArguments().getSerializable(SET_INDEX).toString());
             }
             else {
                 if (configLastPositionKey() != null) {
@@ -111,6 +112,8 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
             mItems = (ArrayList<T>) savedInstanceSate.getSerializable("items");
             mCurrentPosition = savedInstanceSate.getInt("current");
         }
+
+        Logger.w("strip-current-" + mCurrentPosition);
 
         fragments = new HashMap<String, Fragment>();
 
@@ -238,6 +241,10 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
     public Map<String, Fragment> getFragments() {
         return fragments;
+    }
+
+    public ViewPager getViewPager() {
+        return viewPager;
     }
 
     public SlidingTabLayout getSlidingTabLayout() {

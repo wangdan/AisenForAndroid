@@ -1,12 +1,5 @@
 package com.m.ui.activity.basic;
 
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -22,8 +15,6 @@ import android.view.ViewGroup;
 
 import com.m.R;
 import com.m.common.setting.SettingUtility;
-import com.m.common.utils.ActivityHelper;
-import com.m.common.utils.CommSettings;
 import com.m.common.utils.Logger;
 import com.m.common.utils.ViewUtils;
 import com.m.component.bitmaploader.BitmapLoader;
@@ -34,6 +25,13 @@ import com.m.network.task.WorkTask;
 import com.m.support.inject.InjectUtility;
 import com.m.ui.fragment.ABaseFragment;
 import com.m.ui.widget.AsToolbar;
+
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by wangdan on 15-1-16.
@@ -76,7 +74,7 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
                 return theme;
         }
 
-        return CommSettings.getAppTheme();
+        return -1;
     }
 
     @Override
