@@ -34,8 +34,12 @@ public abstract class IAction {
         this.child = child;
     }
 
-    final protected IAction getChild() {
+    final public IAction getChild() {
         return child;
+    }
+
+    final public IAction getParent() {
+        return parent;
     }
 
     final protected Activity getContext() {
