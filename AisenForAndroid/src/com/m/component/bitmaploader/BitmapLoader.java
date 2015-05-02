@@ -438,7 +438,7 @@ public class BitmapLoader {
 			}
 
 			// 数据写入原始缓存
-			if (bitmapBytes != null)
+			if (bitmapBytes != null && config.isCacheEnable())
 				bitmapProcess.writeBytesToOrigDisk(bitmapBytes, imageUrl);
 		}
 

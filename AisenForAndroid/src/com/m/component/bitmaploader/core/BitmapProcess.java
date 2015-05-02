@@ -156,10 +156,9 @@ public class BitmapProcess {
 	/**
 	 * 图片做二级缓存处理
 	 * 
-	 * @param bitmap
+	 * @param bitmapBytes
 	 * @param url
 	 * @param config
-	 * @param bitmapType
 	 * @return
 	 * @throws Exception
 	 */
@@ -202,7 +201,7 @@ public class BitmapProcess {
 			writeToComp = true;
 
 		// 当图片做了圆角、压缩处理后，将图片放置二级缓存
-		if (writeToComp) {
+		if (writeToComp && config.isCacheEnable()) {
 			String key = KeyGenerator.generateMD5(BitmapLoader.getKeyByConfig(url, config));
 
 			// PNG以外其他格式，都压缩成JPG格式

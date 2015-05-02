@@ -1,10 +1,15 @@
 package com.m.component.bitmaploader.download;
 
+import android.graphics.Bitmap;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import com.m.common.utils.BitmapUtil;
+import com.m.common.utils.Logger;
+import com.m.component.bitmaploader.core.BitmapDecoder;
 import com.m.component.bitmaploader.core.ImageConfig;
 
 public class SdcardDownloader implements Downloader {
@@ -19,30 +24,53 @@ public class SdcardDownloader implements Downloader {
 				if (process != null)
 					process.prepareDownload(url);
 
-				InputStream in = new FileInputStream(new File(url));
+                // 如果图片需要压缩，直接解析成bitmap
+                if (config.getMaxHeight() > 0 || config.getMaxWidth() > 0) {
+                    Bitmap bitmap = BitmapDecoder.decodeSampledBitmapFromFile(imgFile.getAbsolutePath(), config.getMaxWidth(), config.getMaxHeight());
 
-				if (process != null)
-					process.sendLength(in.available());
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				byte[] buffer = new byte[8 * 1024];
-				int length = -1;
-				long readBytes = 0;
-				while ((length = in.read(buffer)) != -1) {
-					readBytes += length;
-					if (process != null)
-						process.sendProgress(readBytes);
-					out.write(buffer, 0, length);
-				}
-				out.flush();
-				byte[] result = out.toByteArray();
-				in.close();
-				out.close();
+                    boolean isPng = url.toLowerCase().endsWith("png") ? true : false;
+                    bitmap.compress(isPng ? Bitmap.CompressFormat.PNG : Bitmap.CompressFormat.JPEG, 100, out);
+                    byte[] result = out.toByteArray();
+                    out.close();
 
-				if (process != null)
-					process.sendFinishedDownload(result);
+                    if (process != null) {
+                        process.sendLength(result.length);
+                        process.sendProgress(result.length);
+                        process.sendFinishedDownload(result);
+                    }
 
-				return result;
+                    Logger.w("直接解析sd卡图片，压缩尺寸");
+
+                    return result;
+                }
+                else {
+                    InputStream in = new FileInputStream(new File(url));
+
+                    if (process != null)
+                        process.sendLength(in.available());
+
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[8 * 1024];
+                    int length = -1;
+                    long readBytes = 0;
+                    while ((length = in.read(buffer)) != -1) {
+                        readBytes += length;
+                        if (process != null)
+                            process.sendProgress(readBytes);
+                        out.write(buffer, 0, length);
+                    }
+                    out.flush();
+                    byte[] result = out.toByteArray();
+                    in.close();
+                    out.close();
+
+                    if (process != null)
+                        process.sendFinishedDownload(result);
+
+                    return result;
+                }
 			}
 			
 			if (config.getProgress() != null)
