@@ -5,6 +5,9 @@ Aisen一个免费开源、面向AOP、遵循Apache2开源协议发布的Android�
 
 Aisen微博是个人实验性项目，依赖AisenForAndroid开发，UI遵循Material Design，也会在部分功能实现上依赖Github上其他优秀的开源组件或者框架，作为范例让感兴趣的同志更加了解AisenForAndroid或者其他项目的使用。
 
+流程图
+![](https://github.com/wangdan/AisenForAndroid/raw/master/screenshots/aisen_.jpg) 
+
 ## UI层
 
 - [ABaseFragment](https://github.com/wangdan/AisenForAndroid/wiki/五、ABaseFragment)
@@ -168,5 +171,4 @@ BitmapLoader.display(BitmapOwner owner, String url, ImageView imageView, ImageCo
 Copyright (c) 2014 Jeff Wang
 
 Licensed under the [Apache License, Version 3.0](http://opensource.org/licenses/GPL-3.0)
-
 
