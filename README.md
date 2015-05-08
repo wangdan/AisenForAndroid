@@ -6,9 +6,38 @@ Aisen一个免费开源、面向AOP、遵循Apache2开源协议发布的Android�
 Aisen微博是个人实验性项目，依赖AisenForAndroid开发，UI遵循Material Design，也会在部分功能实现上依赖Github上其他优秀的开源组件或者框架，作为范例让感兴趣的同志更加了解AisenForAndroid或者其他项目的使用。
 
 流程图
+
 ![](https://github.com/wangdan/AisenForAndroid/raw/master/screenshots/aisen_.jpg) 
 
 ## UI层
+
+### 概要说明
+
+1、处理4种基本视图之间的自动切换；
+2、统一ListView、GridView、ViewPager等列表容器的刷新逻辑；
+3、处理分页加载线程的业务逻辑；
+
+1、ABaseFragment
+
+维护一个主业务线程，通过线程状态的回调，自动维护四种基本视图Loading、Empty、Failure、Content之间的动态切换。
+
+流程图
+
+![](https://github.com/wangdan/AisenForAndroid/raw/master/screenshots/abasefragment.jpg) 
+
+效果图
+
+![](https://github.com/wangdan/AisenForAndroid/raw/master/screenshots/abaseview_v2.jpg) 
+
+2、APagingFragment
+
+2.2.1概要说明
+		继承ABaseView，扩展Adapter支持，通过子类分页器配置，维护一个分页线程，自动根据刷新状态、分页等参数调度线程刷新服务端的业务数据，将数据自动append到adapter的数据池中刷新列表；支持ListView、GridView、ViewPager等控件的扩展。支持各种上下拉控件的扩展。
+		在Android端，基本所有的列表容器：ListView、GridView、ViewPager等，都是通过适配器BaseAdapter来操作数据，所以APagingView的工作就是维护好一个Adapter，剥离一个分页接口切面，通过分页器的配置，根据用户上拉、下拉的操作，自动的将分页参数传递给子类，让子类自行调度SDK方法完成数据的拉取，获取到数据后，根据刷新模式自动的完成列表页面刷新。即下拉刷新将数据拼接在adapter数据头部，上拉刷新将数据拼接在adapter数据尾部，reset刷新将数据重置adapter。以上所有的操作自动调度，子类只需要实现已经重用了的ItemView(你理解的ViewHolder)，基本一个列表界面3-4个方法搞定。
+		
+效果图
+
+![](https://github.com/wangdan/AisenForAndroid/raw/master/screenshots/alistview.jpg) 
 
 - [ABaseFragment](https://github.com/wangdan/AisenForAndroid/wiki/五、ABaseFragment)
 - ARefreshFragment
