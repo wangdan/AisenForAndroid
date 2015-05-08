@@ -180,6 +180,10 @@ public class BitmapLoader {
 		return mImageCache;
 	}
 
+    public BitmapProcess getBitmapProcess() {
+        return bitmapProcess;
+    }
+
 	private List<WeakReference<MyBitmapLoaderTask>> getTaskCache(BitmapOwner owner) {
 		List<WeakReference<MyBitmapLoaderTask>> taskWorkInOwner = null;
 
@@ -241,6 +245,17 @@ public class BitmapLoader {
 					Logger.d(TAG, String.format("fragemnt销毁，停止线程 url = %s", task.imageUrl));
 				}
 			}
+
+        for (WeakReference<BitmapOwner> key : ownerMap.keySet())
+            if (key != null && key.get() == owner) {
+                ownerMap.remove(key);
+
+                Logger.w(TAG, "移除一个owner --->" + owner.toString());
+
+                break;
+            }
+
+        Logger.w(TAG, "owner %d 个" + ownerMap.size());
 	}
 
 	private MyBitmapLoaderTask getWorkingTask(ImageView imageView) {

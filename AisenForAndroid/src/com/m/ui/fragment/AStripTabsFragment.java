@@ -59,6 +59,17 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        mItems = savedInstanceState == null ? generateTabs()
+                                            : (ArrayList<T>) savedInstanceState.getSerializable("items");
+
+        mCurrentPosition = savedInstanceState == null ? 0
+                                                      : savedInstanceState.getInt("current");
+    }
+
+    @Override
     protected void layoutInit(LayoutInflater inflater, final Bundle savedInstanceSate) {
         super.layoutInit(inflater, savedInstanceSate);
 
@@ -79,17 +90,12 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
         }
     }
 
-
-
     @SuppressWarnings("unchecked")
     protected void setTab(final Bundle savedInstanceSate) {
         if (getActivity() == null)
             return;
 
         if (savedInstanceSate == null) {
-            mItems = generateTabs();
-
-            mCurrentPosition = 0;
             if (getArguments() != null && getArguments().containsKey(SET_INDEX)) {
                 mCurrentPosition = Integer.parseInt(getArguments().getSerializable(SET_INDEX).toString());
             }
@@ -108,9 +114,6 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
                     }
                 }
             }
-        } else {
-            mItems = (ArrayList<T>) savedInstanceSate.getSerializable("items");
-            mCurrentPosition = savedInstanceSate.getInt("current");
         }
 
         Logger.w("strip-current-" + mCurrentPosition);
@@ -128,7 +131,7 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
         mViewPagerAdapter = new MyViewPagerAdapter(getFragmentManager());
 //					viewPager.setOffscreenPageLimit(mViewPagerAdapter.getCount());
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(0);
         viewPager.setAdapter(mViewPagerAdapter);
         if (mCurrentPosition >= mViewPagerAdapter.getCount())
             mCurrentPosition = 0;
@@ -155,8 +158,11 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
                 FragmentTransaction trs = getFragmentManager().beginTransaction();
                 Set<String> keySet = fragments.keySet();
                 for (String key : keySet) {
-                    if (fragments.get(key) != null)
+                    if (fragments.get(key) != null) {
                         trs.remove(fragments.get(key));
+
+                        Logger.e("remove fragment , key = " + key);
+                    }
                 }
                 trs.commit();
             } catch (RuntimeException e) {
@@ -210,13 +216,16 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-
         try {
             destoryFragments();
+
+            viewPager.setAdapter(null);
+            mViewPagerAdapter = null;
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        super.onDestroy();
     }
 
     public Fragment getCurrentFragment() {

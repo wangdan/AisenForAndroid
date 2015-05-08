@@ -126,11 +126,13 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		}
 
         if (savedInstanceSate == null) {
-            refreshConfig = new RefreshConfig();
-            configRefresh(refreshConfig);
         }
         else {
             refreshConfig = (RefreshConfig) savedInstanceSate.getSerializable(SAVED_CONFIG);
+        }
+        if (refreshConfig == null) {
+            refreshConfig = new RefreshConfig();
+            configRefresh(refreshConfig);
         }
 
         if (refreshConfig.animEnable) {
@@ -317,7 +319,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
             if (mode == RefreshMode.reset)
                 refreshConfig.canLoadMore = true;
             // 如果数据少于这个值，默认加载完了
-            refreshConfig.canLoadMore = resultList.size() >= refreshConfig.minResultSize;
+            if (mode == RefreshMode.update)
+                refreshConfig.canLoadMore = resultList.size() >= refreshConfig.minResultSize;
 
 			// 如果是缓存数据，且已经过期
 			if (result instanceof IResult) {

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -34,11 +35,13 @@ public class SqliteUtility {
 	public static final String TAG = "SqliteUtility";
 
     private static Hashtable<String, SqliteUtility> dbCache = new Hashtable<String, SqliteUtility>();
-	
+
+    private String dbName;
 	private SQLiteDatabase db;
 	
 	SqliteUtility(String dbName, SQLiteDatabase db) {
 		this.db = db;
+        this.dbName = dbName;
 		
 		dbCache.put(dbName, this);
         Logger.d(TAG, "将库 %s 放到缓存中", dbName);
@@ -246,6 +249,18 @@ public class SqliteUtility {
         }
     }
 
+    public <T> int update(Class<?> clazz, ContentValues values, String whereClause, String[] whereArgs) {
+        try {
+            TableInfo tableInfo = checkTable(clazz);
+
+            return db.update(tableInfo.getTableName(), values, whereClause, whereArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     /*******************************************开始Delete系列方法****************************************************/
 
     public <T> void deleteAll(Extra extra, Class<T> clazz) {
@@ -312,6 +327,54 @@ public class SqliteUtility {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /*******************************************系列统计的方法****************************************************/
+
+    public long sum(Class<?> clazz, String column, String whereClause, String[] whereArgs) {
+        TableInfo tableInfo = checkTable(clazz);
+
+        String sql = String.format(" select sum(%s) as _sum_ from %s where %s ", column, tableInfo.getTableName(), whereClause);
+
+        Logger.d(TAG, "sum --- > " + sql);
+        Logger.d(TAG, whereArgs);
+
+        try {
+            long time = System.currentTimeMillis();
+            Cursor cursor = db.rawQuery(sql, whereArgs);
+            if (cursor.moveToFirst()) {
+                long sum = cursor.getLong(cursor.getColumnIndex("_sum_"));
+                Logger.d(TAG, "sum = %s 耗时%sms", String.valueOf(sum) ,String.valueOf(System.currentTimeMillis() - time));
+                cursor.close();
+                return sum;
+            }
+        } catch (Exception e) {
+            Logger.logExc(e);
+        }
+        return 0;
+    }
+
+    public long count(Class<?> clazz, String whereClause, String[] whereArgs) {
+        TableInfo tableInfo = checkTable(clazz);
+
+        String sql = String.format(" select count(*) as _count_ from %s where %s ", tableInfo.getTableName(), whereClause);
+
+        Logger.d(TAG, "count --- > " + sql);
+        Logger.d(TAG, whereArgs);
+
+        try {
+            long time = System.currentTimeMillis();
+            Cursor cursor = db.rawQuery(sql, whereArgs);
+            if (cursor.moveToFirst()) {
+                long count = cursor.getLong(cursor.getColumnIndex("_count_"));
+                Logger.d(TAG, "count = %s 耗时%sms", String.valueOf(count) ,String.valueOf(System.currentTimeMillis() - time));
+                cursor.close();
+                return count;
+            }
+        } catch (Exception e) {
+            Logger.logExc(e);
+        }
+        return 0;
     }
 
     /*******************************************系列绑定数据的方法****************************************************/
@@ -433,12 +496,12 @@ public class SqliteUtility {
 	 * @param clazz
 	 */
 	private <T> TableInfo checkTable(Class<T> clazz) {
-		TableInfo tableInfo = TableInfoUtils.exist(clazz);
+		TableInfo tableInfo = TableInfoUtils.exist(dbName, clazz);
 		if (tableInfo != null) {
 			;
 		}
 		else {
-            tableInfo = TableInfoUtils.newTable(db, clazz);
+            tableInfo = TableInfoUtils.newTable(dbName, db, clazz);
 		}
 
         return tableInfo;

@@ -23,8 +23,8 @@ public class TableInfoUtils {
 		tableInfoMap = new HashMap<String, TableInfo>();
 	}
 
-	public static <T> TableInfo exist(Class<T> clazz) {
-		return tableInfoMap.get(getTableName(clazz));
+	public static <T> TableInfo exist(String dbName, Class<T> clazz) {
+		return tableInfoMap.get(dbName + "-" + getTableName(clazz));
 	}
 	
 	/**
@@ -41,11 +41,11 @@ public class TableInfoUtils {
 		return table.table();
 	}
 	
-	public static <T> TableInfo newTable(SQLiteDatabase db, Class<T> clazz) {
+	public static <T> TableInfo newTable(String dbName, SQLiteDatabase db, Class<T> clazz) {
 		Cursor cursor = null;
 		
 		TableInfo tableInfo = new TableInfo(clazz);
-		tableInfoMap.put(getTableName(clazz), tableInfo);
+		tableInfoMap.put(dbName + "-" + getTableName(clazz), tableInfo);
 		
 		try {
 			// 检查表是否存在

@@ -65,7 +65,7 @@ public class Logger {
 			Log.w(tag, toJson(msg));
 	}
 
-	public static void w(String tag, String format, String msg) {
+	public static void w(String tag, String format, Object... msg) {
 		if (DEBUG)
 			Log.w(tag, String.format(format, msg));
 	}

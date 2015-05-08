@@ -16,7 +16,7 @@ public class BitmapCache {
 		mMemoryCache = new LruMemoryCache<String, MyBitmap>(memCacheSize) {
 			@Override
 			protected int sizeOf(String key, MyBitmap bitmap) {
-				return BitmapCommonUtils.getBitmapSize(bitmap.getBitmap());
+				return BitmapCommonUtils.getBitmapSize(bitmap.getBitmap()) * 4;
 			}
 		};
 

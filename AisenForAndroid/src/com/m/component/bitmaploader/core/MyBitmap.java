@@ -57,21 +57,26 @@ public class MyBitmap {
 	}
 
     public MyBitmap(int resId) {
+        this();
         this.bitmap = getCacheBitmap(resId);
     }
 	
 	public MyBitmap(int resId, String url) {
+        this();
 		this.bitmap = getCacheBitmap(resId);
         this.url = url;
 	}
 
 	public MyBitmap(Bitmap bitmap, String url) {
+        this();
 		this.url = url;
 		this.bitmap = bitmap;
-		
-		createdCount++;
-		Logger.v(TAG, createdCount + "");
 	}
+
+    private MyBitmap() {
+        createdCount++;
+        Logger.v(TAG, createdCount + "");
+    }
 
 	public String getId() {
 		return id;

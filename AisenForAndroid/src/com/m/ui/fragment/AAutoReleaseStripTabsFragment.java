@@ -29,6 +29,14 @@ public abstract class AAutoReleaseStripTabsFragment<T extends AStripTabsFragment
         mHandler.postDelayed(refreshFragmentRunnable, 700);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mHandler.removeCallbacks(refreshFragmentRunnable);
+        mHandler.removeCallbacks(releaseFragmentRunnable);
+    }
+
     Runnable refreshFragmentRunnable = new Runnable() {
 
         @Override
