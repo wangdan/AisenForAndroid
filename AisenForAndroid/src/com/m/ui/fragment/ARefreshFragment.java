@@ -319,7 +319,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
             if (mode == RefreshMode.reset)
                 refreshConfig.canLoadMore = true;
             // 如果数据少于这个值，默认加载完了
-            if (mode == RefreshMode.update)
+            if (mode == RefreshMode.update || mode == RefreshMode.reset)
                 refreshConfig.canLoadMore = resultList.size() >= refreshConfig.minResultSize;
 
 			// 如果是缓存数据，且已经过期

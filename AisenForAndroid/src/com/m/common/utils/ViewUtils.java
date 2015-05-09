@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.m.R;
 import com.m.common.context.GlobalContext;
 
 public class ViewUtils {
@@ -77,11 +80,13 @@ public class ViewUtils {
 	}
 
 	public static ProgressDialog progressDialog2;
-	
-	public static ProgressDialog createProgressDialog(Activity context, String message) {
+
+	public static ProgressDialog createProgressDialog(Activity context, String message, Drawable indeterminateDrawable) {
 		dismissProgressDialog();
-		
-		progressDialog2 = new ProgressDialog(context);
+		//Theme.Material.Dialog.Alert
+        progressDialog2 = new ProgressDialog(context);
+        if (indeterminateDrawable != null)
+            progressDialog2.setIndeterminateDrawable(indeterminateDrawable);
 		progressDialog2.setMessage(message);
 		progressDialog2.setIndeterminate(true);
 		progressDialog2.setCancelable(false);
