@@ -125,8 +125,11 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
 
         for (int i = 0; i < mItems.size(); i++) {
             Fragment fragment = getActivity().getFragmentManager().findFragmentByTag(makeFragmentName(i));
-            if (fragment != null)
-                fragments.put(makeFragmentName(i), fragment);
+            if (fragment != null) {
+                getActivity().getFragmentManager().beginTransaction()
+                        .remove(fragment).commit();
+            }
+//                fragments.put(makeFragmentName(i), fragment);
         }
 
         mViewPagerAdapter = new MyViewPagerAdapter(getFragmentManager());
@@ -136,14 +139,17 @@ public abstract class AStripTabsFragment<T extends AStripTabsFragment.StripTabIt
         if (mCurrentPosition >= mViewPagerAdapter.getCount())
             mCurrentPosition = 0;
         viewPager.setCurrentItem(mCurrentPosition);
-
         slidingTabs.setCustomTabView(R.layout.comm_lay_tab_indicator, android.R.id.text1);
         Resources res = getResources();
         slidingTabs.setSelectedIndicatorColors(res.getColor(R.color.comm_tab_selected_strip));
-        slidingTabs.setDistributeEvenly(mItems.size() <= 5);
+        slidingTabs.setDistributeEvenly(isDistributeEvenly());
         slidingTabs.setViewPager(viewPager);
         slidingTabs.setOnPageChangeListener(this);
         slidingTabs.setCurrent(mCurrentPosition);
+    }
+
+    protected boolean isDistributeEvenly() {
+        return mItems.size() <= 5;
     }
 
     protected void destoryFragments() {
