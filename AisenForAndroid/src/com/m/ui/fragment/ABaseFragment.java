@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.m.R;
+import com.m.common.utils.Logger;
 import com.m.common.utils.ViewUtils;
 import com.m.component.bitmaploader.BitmapLoader;
 import com.m.component.bitmaploader.core.BitmapOwner;
@@ -343,7 +344,12 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        try {
+            // 4.1.1必报错，不知道为什么
+            super.onDestroy();
+        } catch (Exception e) {
+            Logger.logExc(e);
+        }
 
         removeAllTask(true);
 

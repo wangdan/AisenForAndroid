@@ -73,8 +73,9 @@ public class TableInfo {
 	}
 	
 	public void setColumns(Class<?> c) {
-		if (c == null)
-			return;
+        if (c == null || "Object".equalsIgnoreCase(c.getSimpleName())) {
+            return;
+        }
 		
 		Field fields[] = c.getDeclaredFields();
 		
