@@ -2,12 +2,19 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-version = "1.0.3"
+version = "1.0.4"
 
 android {
+    signingConfigs {
+        aisen {
+            keyAlias 'sysweal'
+            keyPassword '123456'
+            storeFile file('/Users/wangdan/work/sysweal.keystore')
+            storePassword '123456'
+        }
+    }
     compileSdkVersion 22
     buildToolsVersion "23.0.0 rc2"
-
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 22
