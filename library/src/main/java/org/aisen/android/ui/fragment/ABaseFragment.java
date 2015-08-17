@@ -1,7 +1,5 @@
 package org.aisen.android.ui.fragment;
 
-import java.io.Serializable;
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -23,6 +21,8 @@ import org.aisen.android.network.task.WorkTask;
 import org.aisen.android.support.inject.InjectUtility;
 import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.activity.basic.BaseActivity;
+
+import java.io.Serializable;
 
 /**
  * Created by wangdan on 15-1-16.

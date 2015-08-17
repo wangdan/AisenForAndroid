@@ -16,8 +16,6 @@
 
 package org.aisen.android.support.adapter;
 
-import java.io.Serializable;
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -28,6 +26,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.aisen.android.ui.fragment.ARefreshFragment;
+
+import java.io.Serializable;
 
 /**
  * Implementation of {@link PagerAdapter} that

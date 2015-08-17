@@ -1,7 +1,5 @@
 package org.aisen.android.common.context;
 
-import java.io.File;
-
 import android.app.Application;
 import android.os.Handler;
 
@@ -9,6 +7,8 @@ import org.aisen.android.common.setting.SettingUtility;
 import org.aisen.android.common.utils.ActivityHelper;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.SdcardUtils;
+
+import java.io.File;
 
 public class GlobalContext extends Application {
 

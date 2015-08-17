@@ -1,10 +1,9 @@
 package org.aisen.android.network.biz;
 
-import java.io.File;
-
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
+
 import org.aisen.android.common.setting.Setting;
 import org.aisen.android.common.setting.SettingUtil;
 import org.aisen.android.common.setting.SettingUtility;
@@ -19,6 +18,8 @@ import org.aisen.android.network.http.Params;
 import org.aisen.android.network.http.ParamsUtil;
 import org.aisen.android.network.task.TaskException;
 import org.aisen.android.network.task.WorkTask;
+
+import java.io.File;
 
 public abstract class ABizLogic implements IHttpUtility {
 

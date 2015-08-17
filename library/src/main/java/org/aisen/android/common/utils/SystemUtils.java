@@ -1,9 +1,5 @@
 package org.aisen.android.common.utils;
 
-import java.io.File;
-
-import org.apache.http.HttpHost;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -30,6 +26,9 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import org.aisen.android.common.context.GlobalContext;
+import org.apache.http.HttpHost;
+
+import java.io.File;
 
 @SuppressLint("SdCardPath") public class SystemUtils {
 

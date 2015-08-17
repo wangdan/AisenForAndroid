@@ -15,6 +15,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
+import com.nineoldandroids.animation.Animator;
+
 import org.aisen.android.R;
 import org.aisen.android.common.utils.ActivityHelper;
 import org.aisen.android.common.utils.Logger;
@@ -25,8 +28,6 @@ import org.aisen.android.network.task.TaskException;
 import org.aisen.android.support.adapter.ABaseAdapter;
 import org.aisen.android.support.paging.IPaging;
 import org.aisen.android.ui.widget.AsToolbar;
-import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
-import com.nineoldandroids.animation.Animator;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -46,7 +47,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
     private static final String SAVED_CONFIG = "org.aisen.android.ui.Config";
 
 	@SuppressWarnings("rawtypes")
-    IPaging mPaging;
+	IPaging mPaging;
 
 	private ABaseAdapter<T> mAdapter;
 	
@@ -564,6 +565,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 			public void run() {
 				if (getRefreshView() instanceof ListView) {
 					ListView listView = (ListView) getRefreshView();
+//					listView.smoothScrollToPositionFromTop(getLastReadPosition(), getLastReadTop() + listView.getPaddingTop());
 					listView.setSelectionFromTop(getLastReadPosition(), getLastReadTop() + listView.getPaddingTop());
 				}
 			}

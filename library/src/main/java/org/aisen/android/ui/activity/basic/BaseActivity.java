@@ -23,7 +23,6 @@ import org.aisen.android.network.task.ITaskManager;
 import org.aisen.android.network.task.TaskManager;
 import org.aisen.android.network.task.WorkTask;
 import org.aisen.android.support.inject.InjectUtility;
-
 import org.aisen.android.ui.fragment.ABaseFragment;
 import org.aisen.android.ui.widget.AsToolbar;
 

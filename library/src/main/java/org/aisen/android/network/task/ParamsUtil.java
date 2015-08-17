@@ -1,5 +1,6 @@
-package org.aisen.android.network.http;
+package org.aisen.android.network.task;
 
+import org.aisen.android.network.http.Params;
 import org.json.JSONException;
 import org.json.JSONObject;
 

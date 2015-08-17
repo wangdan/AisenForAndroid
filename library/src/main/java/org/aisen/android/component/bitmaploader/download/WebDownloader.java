@@ -1,8 +1,8 @@
 package org.aisen.android.component.bitmaploader.download;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-
+import org.aisen.android.common.utils.Logger;
+import org.aisen.android.common.utils.SystemUtils;
+import org.aisen.android.component.bitmaploader.core.ImageConfig;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -12,9 +12,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 
-import org.aisen.android.common.utils.Logger;
-import org.aisen.android.common.utils.SystemUtils;
-import org.aisen.android.component.bitmaploader.core.ImageConfig;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 public class WebDownloader implements Downloader {
 

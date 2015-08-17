@@ -23,7 +23,7 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
     android:textAllCaps="true"
-    android:textColor="@color/comm_white"
+    android:textColor="@color/comm_tab_text_color"
     android:textSize="14sp"
     />
 

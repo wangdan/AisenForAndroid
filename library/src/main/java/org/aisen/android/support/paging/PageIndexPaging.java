@@ -1,11 +1,11 @@
 package org.aisen.android.support.paging;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-
 import android.text.TextUtils;
 
 import org.aisen.android.network.biz.IResult;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  * 始终自增，但是有最大分页页码，根据配置的属性获取

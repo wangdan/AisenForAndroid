@@ -4,12 +4,12 @@ import android.net.Proxy;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
+
 import org.aisen.android.common.setting.Setting;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.SystemUtils;
 import org.aisen.android.network.biz.ABizLogic;
 import org.aisen.android.network.task.TaskException;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -134,7 +134,7 @@ public class DefHttpUtility implements IHttpUtility {
 				}
 			} else {
 				Logger.e(ABizLogic.TAG,
-                        String.format("Access to the server error, statusCode = %d", httpResponse.getStatusLine().getStatusCode()));
+						String.format("Access to the server error, statusCode = %d", httpResponse.getStatusLine().getStatusCode()));
 				Logger.w(ABizLogic.TAG, readResponse(httpResponse));
 				throw new TaskException(TaskException.TaskError.timeout.toString());
 			}

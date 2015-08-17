@@ -1,13 +1,9 @@
 package org.aisen.android.ui.fragment;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -23,6 +19,11 @@ import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.activity.basic.BaseActivity;
 import org.aisen.android.ui.fragment.AStripTabsFragment.IStripTabInitData;
 import org.aisen.android.ui.fragment.AStripTabsFragment.StripTabItem;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by wangdan on 15-1-20.
@@ -137,10 +138,20 @@ public abstract class ATabLayoutFragment<T extends StripTabItem> extends ABaseFr
         viewPager.setAdapter(mViewPagerAdapter);
         if (mCurrentPosition >= mViewPagerAdapter.getCount())
             mCurrentPosition = 0;
-        viewPager.setCurrentItem(mCurrentPosition);
         viewPager.addOnPageChangeListener(this);
+        viewPager.setCurrentItem(mCurrentPosition);
 
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        tabLayout.setTabTextColors(Color.parseColor("#b3ffffff"), Color.WHITE);
         tabLayout.setupWithViewPager(viewPager);
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                tabLayout.setScrollPosition(mCurrentPosition, 0, true);
+            }
+
+        }, 150);
     }
 
     protected void destoryFragments() {
