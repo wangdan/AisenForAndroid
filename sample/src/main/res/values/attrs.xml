@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--主题颜色-->
+    <attr name="theme_color" format="reference|color"/>
+    <!--状态栏颜色-->
+    <attr name="statusbar_color" format="reference|color"/>
+    <!--是否适配Windows-->
+    <attr name="fitSystemWindows" format="boolean"/>
+</resources>

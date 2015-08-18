@@ -1,9 +1,8 @@
-package com.example.aisensample.ui.fragment;
+package org.aisen.sample.ui.fragment;
 
-import com.example.aisensample.support.bean.NeihanduanziBean;
-import com.example.aisensample.support.bean.NeihanduanziBeans;
+import org.aisen.sample.support.bean.NeihanduanziBean;
+import org.aisen.sample.support.bean.NeihanduanziBeans;
 import org.aisen.android.support.adapter.ABaseAdapter;
-import org.aisen.android.ui.fragment.ARefreshFragment;
 import org.aisen.android.ui.fragment.ASwipeRefreshListFragment;
 
 /**

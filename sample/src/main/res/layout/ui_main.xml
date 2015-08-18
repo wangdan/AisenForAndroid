@@ -1,28 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent" android:layout_height="match_parent"
-                android:orientation="vertical">
+<org.aisen.android.ui.widget.FitWindowsFrameLayout
+    android:id="@+id/layMainRoot"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:fitsSystemWindows="?attr/fitSystemWindows"
+    android:orientation="vertical" app:fitType="bottom"
+    app:navigationBarColor="?attr/theme_color" app:statusBarColor="?attr/statusbar_color">
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/content_frame" android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="@dimen/abc_action_bar_default_height_material"/>
+        <org.aisen.android.ui.widget.FitWindowsFrameLayout
+            android:id="@+id/layMainContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" app:fitType="top"
+            app:statusBarColor="?attr/statusbar_color">
 
-        <LinearLayout
+            <FrameLayout
+                android:id="@+id/content_frame" android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/abc_action_bar_default_height_material"/>
+
+            <include
+                layout="@layout/comm_lay_toolbar_spinner" android:layout_width="match_parent"
+                android:layout_height="@dimen/abc_action_bar_default_height_material"/>
+
+        </org.aisen.android.ui.widget.FitWindowsFrameLayout>
+
+        <FrameLayout
             android:id="@+id/menu_frame" android:layout_width="match_parent"
             android:layout_height="match_parent" android:layout_gravity="start"
-            android:layout_marginRight="10dip" android:orientation="vertical"
-            android:paddingTop="@dimen/abc_action_bar_default_height_material"/>
+            android:layout_marginRight="10dip"
+            android:background="#00ff00" android:orientation="vertical"
+            />
 
     </android.support.v4.widget.DrawerLayout>
 
-    <include
-        layout="@layout/comm_lay_toolbar_spinner" android:layout_width="match_parent"
-        android:layout_height="@dimen/abc_action_bar_default_height_material"/>
-
-</RelativeLayout>
+</org.aisen.android.ui.widget.FitWindowsFrameLayout>

@@ -1,12 +1,13 @@
-package com.example.aisensample.ui.fragment;
+package org.aisen.sample.ui.fragment;
 
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.aisensample.R;
-import com.example.aisensample.support.bean.MenuBean;
-import com.example.aisensample.ui.activity.MainActivity;
+import org.aisen.sample.support.bean.MenuBean;
+import org.aisen.sample.ui.activity.MainActivity;
+
 import org.aisen.android.support.adapter.ABaseAdapter;
 import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.fragment.AListFragment;

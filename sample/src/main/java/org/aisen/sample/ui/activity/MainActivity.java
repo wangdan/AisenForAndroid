@@ -1,4 +1,4 @@
-package com.example.aisensample.ui.activity;
+package org.aisen.sample.ui.activity;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -15,12 +15,15 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.aisensample.R;
-import com.example.aisensample.support.bean.MenuBean;
-import com.example.aisensample.ui.fragment.BaseFragmentSample;
-import com.example.aisensample.ui.fragment.MenuFragment;
+import org.aisen.sample.support.bean.MenuBean;
+import org.aisen.sample.support.utils.SystemBarUtils;
+import org.aisen.sample.ui.fragment.BaseFragmentSample;
+import org.aisen.sample.ui.fragment.MenuFragment;
+
 import org.aisen.android.common.utils.SystemUtils;
 import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.activity.basic.BaseActivity;
+import org.aisen.android.ui.widget.FitWindowsFrameLayout;
 
 /**
  * Created by wangdan on 15/4/23.
@@ -29,6 +32,10 @@ public class MainActivity extends BaseActivity {
 
     @ViewInject(id = R.id.drawer)
     private DrawerLayout mDrawerLayout;
+    @ViewInject(id = R.id.layMainContent)
+    FitWindowsFrameLayout mainContent;
+    @ViewInject(id = R.id.layMainRoot)
+    FitWindowsFrameLayout mainRoot;
 
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -36,11 +43,21 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        SystemBarUtils.setStatusBar(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_main);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(false);
+
+        mainRoot.setOnFitSystemWindowsListener(new FitWindowsFrameLayout.OnFitSystemWindowsListener() {
+
+            @Override
+            public void onFitSystemWindows(Rect insets) {
+                mainContent.setFitWindowns(insets);
+            }
+
+        });
 
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
                 getToolbar(), R.string.draw_open, R.string.draw_close) {
@@ -154,4 +171,5 @@ public class MainActivity extends BaseActivity {
         public int initPosition();
 
     }
+
 }

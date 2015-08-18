@@ -1,4 +1,4 @@
-package com.example.aisensample.support.bean;
+package org.aisen.sample.support.bean;
 
 import java.io.Serializable;
 

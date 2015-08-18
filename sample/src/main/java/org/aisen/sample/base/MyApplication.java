@@ -1,4 +1,4 @@
-package com.example.aisensample.base;
+package org.aisen.sample.base;
 
 import org.aisen.android.common.context.GlobalContext;
 

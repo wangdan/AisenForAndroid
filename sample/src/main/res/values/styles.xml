@@ -1,28 +1,5 @@
 <resources>
 
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
-    <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
-    </style>
-
-    <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-
-        <!-- Actionbar color -->
-        <item name="colorPrimary">@color/material_deep_teal_500</item>
-        <!-- Status bar color-->
-        <item name="colorPrimaryDark">@color/comm_black</item>
-        <item name="colorAccent">?attr/colorPrimary</item>
-    </style>
-
     <style name="main_overflow_menus" parent="android:Theme.Holo.Light.Dialog">
         <item name="android:listPreferredItemHeightSmall">48dip</item>
         <item name="android:windowIsFloating">false</item>

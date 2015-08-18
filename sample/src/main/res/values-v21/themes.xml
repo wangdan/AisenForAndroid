@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Values-vxx之间的差异属性-->
+    <style name="AppBaseTheme" parent="AppCommonTheme">
+        <!--v21直接指定状态栏和导航栏颜色-->
+        <item name="android:navigationBarColor">?attr/theme_color</item>
+        <item name="android:statusBarColor">?attr/statusbar_color</item>
+    </style>
+    <style name="MainTheme" parent="AppTheme">
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+</resources>

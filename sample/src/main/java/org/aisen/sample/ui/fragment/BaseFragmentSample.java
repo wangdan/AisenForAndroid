@@ -1,9 +1,9 @@
-package com.example.aisensample.ui.fragment;
+package org.aisen.sample.ui.fragment;
 
 import android.app.Fragment;
 
 import com.example.aisensample.R;
-import com.example.aisensample.support.bean.MenuBean;
+import org.aisen.sample.support.bean.MenuBean;
 
 import org.aisen.android.network.task.TaskException;
 import org.aisen.android.ui.fragment.ABaseFragment;
