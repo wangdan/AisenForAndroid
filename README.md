@@ -5,17 +5,11 @@ Aisen一个免费开源、面向AOP、遵循Apache2开源协议发布的Android�
 
 Aisen微博是个人实验性项目，依赖AisenForAndroid开发，UI遵循Material Design，也会在部分功能实现上依赖Github上其他优秀的开源组件或者框架，作为范例让感兴趣的同志更加了解AisenForAndroid或者其他项目的使用。
 
+## 分支更新
 
-## 依赖工程
- * [SmoothProgressBar](https://github.com/castorflex/SmoothProgressBar)
- * [PhotoView](https://github.com/chrisbanes/PhotoView)
- * [ActionBar-PullToRefresh](https://github.com/chrisbanes/ActionBar-PullToRefresh)
- * [Android-PullToRefresh](https://github.com/chrisbanes/Android-PullToRefresh)
- * [DragSortListView](https://github.com/bauerca/drag-sort-listview)
- * [ChangeLog](https://github.com/gabrielemariotti/changeloglib)
- * [DateTimePicker](https://github.com/flavienlaurent/datetimepicker)
- * [Android PagerSlidingTabStrip](https://github.com/astuetz/PagerSlidingTabStrip)
+2.0.0.200
 
+适配4.2、4.4、5.0状态栏变色
 
 ## License
 
