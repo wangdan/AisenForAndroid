@@ -12,7 +12,7 @@ import org.aisen.android.network.task.TaskException;
 import org.aisen.android.support.adapter.ABaseAdapter;
 import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.support.paging.IPaging;
-import org.aisen.android.ui.fragment.AListFragment;
+import org.aisen.android.ui.fragment.ASwipeRefreshFragment;
 import org.aisen.sample.support.HuabanPaging;
 import org.aisen.sample.support.SampleSDK;
 import org.aisen.sample.support.bean.HuabanPin;
@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * 花瓣图片
  */
-public class HuabanFragment extends AListFragment<HuabanPin, HuabanPins> {
+public class HuabanFragment extends ASwipeRefreshFragment<HuabanPin, HuabanPins> {
 
     public static HuabanFragment newInstance(Category category) {
         HuabanFragment fragment = new HuabanFragment();
@@ -72,6 +72,9 @@ public class HuabanFragment extends AListFragment<HuabanPin, HuabanPins> {
 
     @Override
     protected void requestData(RefreshMode mode) {
+        if (mode == RefreshMode.refresh)
+            mode = RefreshMode.reset;
+
         new HuabanTask(mode).execute();
     }
 

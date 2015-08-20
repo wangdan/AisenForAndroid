@@ -719,11 +719,13 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 			absListView.setOnItemClickListener(this);
 		}
 
-		if (getRefreshView() instanceof ListView) {
+		if (getRefreshView() instanceof ListView && mFooterView != null) {
 			ListView listView = (ListView) getRefreshView();
 
 			listView.addFooterView(mFooterView);
 		}
+
+		bindAdapter(refreshView, getAdapter());
     }
 
 	protected void bindAdapter(ViewGroup refreshView, BaseAdapter adapter) {
@@ -797,21 +799,29 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 		if (!refreshConfig.footerMoreEnable || footerView == null)
 			return;
 
-		if (state == ABaseTaskState.finished && mode == RefreshMode.update) {
+		if (state == ABaseTaskState.finished && mode != RefreshMode.refresh) {
 			View layLoading = footerView.findViewById(R.id.layLoading);
 			TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
 			layLoading.setVisibility(View.GONE);
 			btnLoadMore.setVisibility(View.VISIBLE);
-		} else if (state == ABaseTaskState.prepare && mode == RefreshMode.update) {
-			View layLoading = footerView.findViewById(R.id.layLoading);
-			TextView txtLoadingHint = (TextView) footerView.findViewById(R.id.txtLoading);
-			TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
+		}
+		else if (state == ABaseTaskState.prepare) {
+			boolean b = mode == RefreshMode.update;
+			if (getAdapter().getDatas().size() == 0) {
+				b = true;
+			}
+			if (b) {
+				View layLoading = footerView.findViewById(R.id.layLoading);
+				TextView txtLoadingHint = (TextView) footerView.findViewById(R.id.txtLoading);
+				TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
 
-			txtLoadingHint.setText(footerRefreshConfig.hintLoading);
-			layLoading.setVisibility(View.VISIBLE);
-			btnLoadMore.setVisibility(View.GONE);
-			btnLoadMore.setText(footerRefreshConfig.btnMore);
-		} else if (state == ABaseTaskState.success) {
+				txtLoadingHint.setText(footerRefreshConfig.hintLoading);
+				layLoading.setVisibility(View.VISIBLE);
+				btnLoadMore.setVisibility(View.GONE);
+				btnLoadMore.setText(footerRefreshConfig.btnMore);
+			}
+		}
+		else if (state == ABaseTaskState.success) {
 			if (mode == RefreshMode.update || mode == RefreshMode.reset) {
 				final TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
 				if (refreshConfig.pagingEnd) {
@@ -820,7 +830,8 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 					btnLoadMore.setText(footerRefreshConfig.btnMore);
 				}
 			}
-		} else if (state == ABaseTaskState.falid) {
+		}
+		else if (state == ABaseTaskState.falid) {
 			if (mode == RefreshMode.update) {
 				// 正在加载
 				View layLoading = footerView.findViewById(R.id.layLoading);

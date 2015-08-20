@@ -277,7 +277,7 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
 
             setViewVisiable(emptyLayout, View.GONE);
             if (isContentEmpty() && loadingLayout == null) {
-                setViewVisiable(emptyLayout, View.VISIBLE);
+                setViewVisiable(contentLayout, View.VISIBLE);
             }
 
             setViewVisiable(loadFailureLayout, View.GONE);
