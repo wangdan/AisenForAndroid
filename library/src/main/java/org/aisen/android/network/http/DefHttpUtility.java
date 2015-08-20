@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.alibaba.fastjson.JSON;
 
 import org.aisen.android.common.setting.Setting;
+import org.aisen.android.common.setting.SettingUtility;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.SystemUtils;
 import org.aisen.android.network.biz.ABizLogic;
@@ -118,6 +119,12 @@ public class DefHttpUtility implements IHttpUtility {
 	@SuppressWarnings("unchecked")
 	private <T> T executeClient(HttpUriRequest request, Class<T> responseCls) throws TaskException {
 		try {
+			try {
+				if (SettingUtility.getIntSetting("http_delay") > 0)
+					Thread.sleep(SettingUtility.getIntSetting("http_delay"));
+			} catch (Throwable e) {
+			}
+
 			HttpClient httpClient = generateHttpClient();
 
 			HttpResponse httpResponse = httpClient.execute(request);
@@ -159,10 +166,10 @@ public class DefHttpUtility implements IHttpUtility {
 	private void configHttpHeader(HttpUriRequest request, HttpConfig config) {
 		request.addHeader("Cookie", config.cookie);
 		request.addHeader("Accept-Charset", "utf-8");
-		if (!TextUtils.isEmpty(config.contentType))
-			request.addHeader("Content-Type", config.contentType);
-		else
-			request.addHeader("Content-Type", "application/json");
+//		if (!TextUtils.isEmpty(config.contentType))
+//			request.addHeader("Content-Type", config.contentType);
+//		else
+//			request.addHeader("Content-Type", "application/json");
 	}
 
 	private HttpClient generateHttpClient() {

@@ -5,9 +5,10 @@
         <!--v21直接指定状态栏和导航栏颜色-->
         <item name="android:navigationBarColor">?attr/theme_color</item>
         <item name="android:statusBarColor">?attr/statusbar_color</item>
+        <item name="menuHeaderHeight">185dip</item>
+        <item name="menuHeaderPaddingTop">40dip</item>
     </style>
     <style name="MainTheme" parent="AppTheme">
-        <item name="android:fitsSystemWindows">true</item>
         <item name="android:windowTranslucentStatus">true</item>
     </style>
 </resources>

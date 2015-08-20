@@ -5,6 +5,7 @@
     <string name="draw_open">打开</string>
     <string name="draw_close">关闭</string>
 
-    <string name="a_base_fragment">ABaseFragment</string>
+    <!--菜单项-->
+    <string name="draw_pics">花瓣美图</string>
 
 </resources>

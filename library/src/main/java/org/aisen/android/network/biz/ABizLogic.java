@@ -68,12 +68,7 @@ public abstract class ABizLogic implements IHttpUtility {
 
 	@Override
 	public <T> T doGet(HttpConfig config, Setting actionSetting, Params params, Class<T> responseCls) throws TaskException {
-		throw new RuntimeException(
-				"not support this method ---> doGet(HttpConfig config, Setting actionSetting, Params params, Class<T> responseCls), please call ---> doGet(Setting actionSetting, Params params, Class<T> responseCls)");
-	}
-
-	public <T> T doGet(final Setting actionSetting, final Params params, Class<T> responseCls) throws TaskException {
-		HttpConfig mConfig = cloneHttpConfig(configHttpConfig(), actionSetting);
+		HttpConfig mConfig = cloneHttpConfig(config, actionSetting);
 
 		String action = actionSetting.getValue();
 
@@ -177,7 +172,7 @@ public abstract class ABizLogic implements IHttpUtility {
 				if (serviceEx != null) {
 					TaskException taskException = null;
 					if (serviceEx.getCause() instanceof TaskException) {
-						
+
 						taskException = (TaskException) serviceEx.getCause();
 					}
 					else if (serviceEx instanceof TaskException) {
@@ -197,6 +192,10 @@ public abstract class ABizLogic implements IHttpUtility {
 		// 返回 克隆对象 任意编辑不对这边的 数据产生影响
 //		return ObjectUtil.cloneObject(result);
 		return result;
+	}
+
+	public <T> T doGet(final Setting actionSetting, final Params params, Class<T> responseCls) throws TaskException {
+		return doGet(cloneHttpConfig(configHttpConfig(), actionSetting), actionSetting, params, responseCls);
 	}
 
 	@Override

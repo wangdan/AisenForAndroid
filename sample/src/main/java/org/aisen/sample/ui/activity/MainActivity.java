@@ -9,21 +9,21 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.aisensample.R;
-import org.aisen.sample.support.bean.MenuBean;
-import org.aisen.sample.support.utils.SystemBarUtils;
-import org.aisen.sample.ui.fragment.BaseFragmentSample;
-import org.aisen.sample.ui.fragment.MenuFragment;
 
 import org.aisen.android.common.utils.SystemUtils;
 import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.activity.basic.BaseActivity;
 import org.aisen.android.ui.widget.FitWindowsFrameLayout;
+import org.aisen.sample.support.utils.SystemBarUtils;
+import org.aisen.sample.ui.fragment.menu.MenuFragment;
+import org.aisen.sample.ui.fragment.pics.HuabanFragment;
 
 /**
  * Created by wangdan on 15/4/23.
@@ -77,18 +77,21 @@ public class MainActivity extends BaseActivity {
         getFragmentManager().beginTransaction().add(R.id.menu_frame, menuFragment, "MenuFragment").commit();
     }
 
-    public void onMenuSelected(MenuBean bean) {
+    public void onMenuSelected(MenuItem menu, MenuItem previousMenu) {
         Fragment fragment = null;
 
-        switch (Integer.parseInt(bean.getType())) {
-        case 0:
-            fragment = BaseFragmentSample.newInstance();
+        switch (menu.getItemId()) {
+        case R.id.drawPics:
+            fragment = HuabanFragment.newInstance(HuabanFragment.Category.beauty);
             break;
         }
 
+        if (fragment == null)
+            return;
+
         closeDrawer();
 
-        getSupportActionBar().setTitle(bean.getTitleRes());
+        getSupportActionBar().setTitle(menu.getTitle());
 
         getFragmentManager().beginTransaction().replace(R.id.content_frame, fragment, "Main").commit();
 

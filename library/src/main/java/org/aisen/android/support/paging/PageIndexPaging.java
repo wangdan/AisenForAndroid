@@ -31,11 +31,6 @@ public class PageIndexPaging<T extends Serializable, Ts extends Serializable> im
 	}
 
 	@Override
-    public IPaging<T, Ts> newInstance() {
-		return new PageIndexPaging<T, Ts>(pageTotalField);
-	}
-
-	@Override
     public void processData(Ts newDatas, T firstData, T lastData) {
 		pageIndex++;
 		if (newDatas instanceof IResult) {
@@ -60,16 +55,6 @@ public class PageIndexPaging<T extends Serializable, Ts extends Serializable> im
 	}
 
 	@Override
-    public boolean canRefresh() {
-		return true;
-	}
-
-	@Override
-    public boolean canUpdate() {
-		return pageTotal == -1 ? true : (pageIndex < pageTotal + 1);
-	}
-
-	@Override
     public String getPreviousPage() {
 		return String.valueOf(pageIndex - 1);
 	}
@@ -77,11 +62,6 @@ public class PageIndexPaging<T extends Serializable, Ts extends Serializable> im
 	@Override
     public String getNextPage() {
 		return String.valueOf(pageIndex);
-	}
-
-	@Override
-    public void setPage(String previousPage, String nextPage) {
-		this.pageIndex = Integer.parseInt(nextPage);
 	}
 
 }

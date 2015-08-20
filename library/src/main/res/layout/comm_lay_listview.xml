@@ -11,15 +11,15 @@
             android:smoothScrollbar="true"/>
     </LinearLayout>
 
-    <include
-        android:id="@id/layoutLoading" layout="@layout/comm_lay_loading" android:layout_width="fill_parent" android:layout_height="fill_parent"
-        android:visibility="gone"/>
+    <!--<include-->
+        <!--android:id="@id/layoutLoading" layout="@layout/comm_lay_loading" android:layout_width="fill_parent" android:layout_height="fill_parent"-->
+        <!--android:visibility="gone"/>-->
 
-    <include
-        android:id="@id/layoutLoadFailed" layout="@layout/comm_lay_loadfailed" android:layout_width="match_parent" android:layout_height="match_parent"
-        android:visibility="gone"/>
+    <!--<include-->
+        <!--android:id="@id/layoutLoadFailed" layout="@layout/comm_lay_loadfailed" android:layout_width="match_parent" android:layout_height="match_parent"-->
+        <!--android:visibility="gone"/>-->
 
-    <include
-        android:id="@id/layoutEmpty" layout="@layout/comm_lay_emptyview" android:layout_width="match_parent" android:layout_height="match_parent"
-        android:visibility="gone"/>
+    <!--<include-->
+        <!--android:id="@id/layoutEmpty" layout="@layout/comm_lay_emptyview" android:layout_width="match_parent" android:layout_height="match_parent"-->
+        <!--android:visibility="gone"/>-->
 </RelativeLayout>

@@ -1,28 +1,24 @@
 package org.aisen.android.ui.fragment;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AbsListView.RecyclerListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-
-import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
-import com.nineoldandroids.animation.Animator;
+import android.widget.TextView;
 
 import org.aisen.android.R;
+import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.ActivityHelper;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.ViewUtils;
-import org.aisen.android.component.bitmaploader.BitmapLoader;
 import org.aisen.android.network.biz.IResult;
 import org.aisen.android.network.task.TaskException;
 import org.aisen.android.support.adapter.ABaseAdapter;
@@ -37,26 +33,39 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class ARefreshFragment<T extends Serializable, Ts extends Serializable, V extends View> extends ABaseFragment
-									implements RecyclerListener, OnScrollListener, AsToolbar.OnToolbarDoubleClick, AdapterView.OnItemClickListener {
+/**
+ * 基于APagingFragment，可以扩展支持BaseAdapter的UI控件，并处理上、下拉的交互逻辑<br/>
+ *
+ * 1、维护Adapter<br/>
+ * 2、维护分页线程<br/>
+ * 3、处理UI界面的上、下拉<br/>
+ * 4、新增FooterView，用于ListView等界面的自动加载更多<br/>
+ * 5、当读取缓存数据并配置positionKey时，可以自动滑动到上次最后阅读位置<br/>
+ *
+ * @param <T>
+ * @param <Ts>
+ * @param <V>
+ */
+public abstract class APagingFragment<T extends Serializable, Ts extends Serializable, V extends View> extends ABaseFragment
+									implements AbsListView.RecyclerListener, AbsListView.OnScrollListener, AsToolbar.OnToolbarDoubleClick, AdapterView.OnItemClickListener {
 
-	private static final String TAG = "ARefresh";
+	private static final String TAG = "AFragment-Paging";
 	
 	private static final String SAVED_DATAS = "org.aisen.android.ui.Datas";
 	private static final String SAVED_PAGING = "org.aisen.android.ui.Paging";
     private static final String SAVED_CONFIG = "org.aisen.android.ui.Config";
 
-	@SuppressWarnings("rawtypes")
-	IPaging mPaging;
+	private IPaging mPaging;
 
 	private ABaseAdapter<T> mAdapter;
 	
-	private SwingBottomInAnimationAdapter swingAnimAdapter;
-	
-	@SuppressWarnings("rawtypes")
 	private PagingTask pagingTask;
 	
 	private RefreshConfig refreshConfig;
+	private FooterViewConfig footerRefreshConfig;
+
+	private View mFooterView;// FooterView，滑动到底部时，自动加载更多数据
+	private int footviewHeight = GlobalContext.getInstance().getResources().getDimensionPixelSize(R.dimen.comm_footer_height);// 默认高度
 
 	public enum RefreshMode {
 		/**
@@ -64,11 +73,11 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		 */
 		reset,
 		/**
-		 * 拉取更多
+		 * 上拉，加载更多
 		 */
 		update,
 		/**
-		 * 刷新最新
+		 * 下拉，刷新最新
 		 */
 		refresh
 	}
@@ -86,6 +95,8 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		} else {
             mPaging = configPaging();
 		}
+
+		footerRefreshConfig = initFooterViewConfig();
 	}
 
     @Override
@@ -96,7 +107,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 
         onSaveDatas(outState);
 
-        outState.putSerializable(SAVED_CONFIG, refreshConfig);
+//        outState.putSerializable(SAVED_CONFIG, refreshConfig);
 
         super.onSaveInstanceState(outState);
     }
@@ -108,24 +119,14 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
      */
     protected void onSaveDatas(Bundle outState) {
         // 将数据保存起来
-        if (getAdapterItems() != null && getAdapterItems().size() != 0)
-            outState.putSerializable(SAVED_DATAS, getAdapterItems());
+        if (getAdapter() != null && getAdapter().getDatas().size() != 0)
+            outState.putSerializable(SAVED_DATAS, getAdapter().getDatas());
     }
-	
-	Handler mHandler = new Handler() {
-		
-	};
 	
 	@Override
 	void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
 		super._layoutInit(inflater, savedInstanceSate);
 		
-		if (getRefreshView() != null) {
-			getRefreshView().setOnScrollListener(this);
-			getRefreshView().setRecyclerListener(this);
-            getRefreshView().setOnItemClickListener(this);
-		}
-
         if (savedInstanceSate == null) {
         }
         else {
@@ -136,77 +137,81 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
             configRefresh(refreshConfig);
         }
 
-        if (refreshConfig.animEnable) {
-            swingAnimAdapter = new SwingBottomInAnimationAdapter(mAdapter) {
-
-                @Override
-                protected Animator getAnimator(ViewGroup parent, View view) {
-                    return super.getAnimator(parent, view);
-                }
-
-            };
-            swingAnimAdapter.setAbsListView(getRefreshView());
-        }
-
         setInitRefreshView(getRefreshView(), savedInstanceSate);
 
-        getRefreshView().setAdapter(getAdapter());
-		
         onChangedByConfig(refreshConfig);
 	}
 	
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		
+
 	}
 	
-	private boolean isScrolling = false;// 正在滚动
+	private boolean refreshViewScrolling = false;// 正在滚动
 
     @Override
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		// 滑动的时候，不加载图片
-        if (!refreshConfig.ignoreScroll) {
+        if (!refreshConfig.displayWhenScrolling) {
 			mHandler.removeCallbacks(refreshRunnable);
 			
 			if (scrollState == SCROLL_STATE_FLING) {
-				isScrolling = true;
+				refreshViewScrolling = true;
 			}
 			else if (scrollState == SCROLL_STATE_TOUCH_SCROLL) {
-				isScrolling = true;
+				refreshViewScrolling = true;
 			}
 			else if (scrollState == SCROLL_STATE_IDLE) {
-				isScrolling = false;
+				refreshViewScrolling = false;
 
-				mHandler.postDelayed(refreshRunnable, 200);
-//				notifyDataSetChanged();
+				runUIRunnable(refreshRunnable, 200);
+			}
+		}
+
+		if (scrollState == SCROLL_STATE_IDLE && // 停止滚动
+				!refreshConfig.pagingEnd && // 分页未加载完
+				refreshConfig.footerMoreEnable && // 自动加载更多
+				mFooterView != null // 配置了FooterView
+				) {
+			int childCount = getRefreshView().getChildCount();
+			if (childCount > 0 && getRefreshView().getChildAt(childCount - 1) == mFooterView) {
+				if (setFooterRefreshing(mFooterView)) {
+					onPullUpToRefresh();
+				}
 			}
 		}
 
         // 保存最后浏览位置
         if (scrollState == SCROLL_STATE_IDLE) {
-            if (!TextUtils.isEmpty(refreshConfig.saveLastPositionKey) && getRefreshView() != null) {
-                putLastReadPosition(getRefreshView().getFirstVisiblePosition());
+            if (!TextUtils.isEmpty(refreshConfig.positionKey) && getRefreshView() != null) {
+                runNUIRunnable(new Runnable() {
+						@Override
+						public void run() {
+							putLastReadPosition(getFirstVisiblePosition());
 
-                putLastReadTop(getRefreshView().getChildAt(0).getTop());
+							putLastReadTop(getRefreshView().getChildAt(0).getTop());
+						}
+				});
             }
         }
 	}
 	
-	Runnable refreshRunnable = new Runnable() {
+	private Runnable refreshRunnable = new Runnable() {
 		
 		@Override
 		public void run() {
 			Logger.w(TAG, "刷新视图");
-			notifyDataSetChanged();
+
+			getAdapter().notifyDataSetChanged();
 		}
 	};
 	
 	@Override
 	public boolean canDisplay() {
-		if (refreshConfig.ignoreScroll)
+		if (refreshConfig.displayWhenScrolling)
 			return true;
 		
-		return !isScrolling;
+		return !refreshViewScrolling;
 	}
 
 	@Override
@@ -214,29 +219,56 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		requestData(RefreshMode.reset);
 	}
 
-	public BaseAdapter getAdapter() {
-		if (swingAnimAdapter != null)
-			return swingAnimAdapter;
-		
+	public ABaseAdapter getAdapter() {
 		return mAdapter;
 	}
 	
-	ABaseAdapter<T> getABaseAdapter() {
-		return mAdapter;
-	}
-
     public void onPullDownToRefresh() {
 		requestData(RefreshMode.refresh);
 	}
 
     public void onPullUpToRefresh() {
-		if (!isRefreshing())
-			requestData(RefreshMode.update);
+		requestData(RefreshMode.update);
 	}
 	
 	@Override
     public boolean isContentEmpty() {
-		return getAdapterItems() == null || getAdapterItems().size() == 0;
+		return getAdapter() == null || getAdapter().getDatas().size() == 0;
+	}
+
+	// 子类不再允许重写这个类
+	@Override
+	final protected void taskStateChanged(ABaseTaskState state, TaskException exception) {
+		// super.taskStateChanged(state, tag);
+	}
+
+	/**
+	 * 子类需要根据不同的刷新模式，来刷新自己的UI
+	 *
+	 * @param state
+	 * @param exception
+	 * @param mode
+	 */
+	protected void taskStateChanged(ABaseTaskState state, TaskException exception, RefreshMode mode) {
+		super.taskStateChanged(state, exception);
+
+		setFooterViewAsTaskStateChanged(mFooterView, state, exception, mode);
+
+		if (state == ABaseTaskState.success) {
+			if (isContentEmpty()) {
+				if (emptyLayout != null && !TextUtils.isEmpty(refreshConfig.emptyHint))
+					ViewUtils.setTextViewValue(emptyLayout, R.id.txtLoadEmpty, refreshConfig.emptyHint);
+			}
+		}
+		else if (state == ABaseTaskState.falid) {
+			if (isContentEmpty()) {
+				if (loadFailureLayout != null && !TextUtils.isEmpty(exception.getMessage()))
+					ViewUtils.setTextViewValue(loadFailureLayout, R.id.txtLoadFailed, exception.getMessage());
+			}
+		}
+		else if (state == ABaseTaskState.finished) {
+			onRefreshViewComplete(mode);
+		}
 	}
 
 	/**
@@ -262,6 +294,13 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		}
 
 		@Override
+		protected void onPrepare() {
+			super.onPrepare();
+
+			taskStateChanged(ABaseTaskState.prepare, null, mode);
+		}
+
+		@Override
 		public Result workInBackground(Params... params) throws TaskException {
 			String previousPage = null;
 			String nextPage = null;
@@ -282,8 +321,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 				return;
 			}
 
-            if (getRefreshView().getAdapter() == null)
-                getRefreshView().setAdapter(getAdapter());
+            bindAdapter(getRefreshView(), getAdapter());
 			
 			List<T> resultList;
 			if (result instanceof List)
@@ -301,27 +339,25 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 
 			// append数据
 			if (mode == RefreshMode.reset || mode == RefreshMode.refresh)
-				addItemsAtFront(resultList);
+				getAdapter().addItemsAtFront(resultList);
 			else if (mode == RefreshMode.update)
-				addItems(resultList);
+				getAdapter().addItems(resultList);
 			
-//			notifyDataSetChanged();
-
 			// 处理分页数据
 			if (mPaging != null) {
-				if (getAdapterItems() != null && getAdapterItems().size() != 0)
-                    mPaging.processData(result, getAdapterItems().get(0),
-							getAdapterItems().get(getAdapterItems().size() - 1));
+				if (getAdapter() != null && getAdapter().getDatas().size() != 0)
+                    mPaging.processData(result, (T) getAdapter().getDatas().get(0),
+							(T) getAdapter().getDatas().get(getAdapter().getDatas().size() - 1));
 				else
                     mPaging.processData(result, null, null);
 			}
 
             // 如果是重置数据，重置canLoadMore
             if (mode == RefreshMode.reset)
-                refreshConfig.canLoadMore = true;
+                refreshConfig.pagingEnd = false;
             // 如果数据少于这个值，默认加载完了
             if (mode == RefreshMode.update || mode == RefreshMode.reset)
-                refreshConfig.canLoadMore = resultList.size() >= refreshConfig.minResultSize;
+                refreshConfig.pagingEnd = resultList.size() < refreshConfig.resultMin;
 
 			// 如果是缓存数据，且已经过期
 			if (result instanceof IResult) {
@@ -341,23 +377,31 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
                 }
 
                 if (iResult.noMore())
-                    refreshConfig.canLoadMore = false;
+                    refreshConfig.pagingEnd = true;
 			}
 
-            notifyDataSetChanged();
+            getAdapter().notifyDataSetChanged();
 
             onChangedByConfig(refreshConfig);
 
+			taskStateChanged(ABaseTaskState.success, null, mode);
+
 			super.onSuccess(result);
 		}
-		
+
+		@Override
+		protected void onFailure(TaskException exception) {
+			super.onFailure(exception);
+
+			taskStateChanged(ABaseTaskState.falid, exception, mode);
+		}
+
 		@Override
 		protected void onFinished() {
 			super.onFinished();
-			
-			if (isRefreshing())
-                onRefreshViewComplete();
-			
+
+			taskStateChanged(ABaseTaskState.finished, null, mode);
+
 			pagingTask = null;
 		}
 
@@ -399,8 +443,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 
     public void requestDataDelay(int delay) {
-		mHandler.removeCallbacks(refreshDelay);
-		mHandler.postDelayed(refreshDelay, delay);
+		runUIRunnable(refreshDelay, delay);
 	}
 
     /**
@@ -438,7 +481,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 
 		@Override
 		protected AbstractItemView<T> newItemView() {
-			return ARefreshFragment.this.newItemView();
+			return APagingFragment.this.newItemView();
 		}
 
 	}
@@ -459,13 +502,14 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	 * @return true:子类自行释放，父类不做处理
 	 */
 	protected boolean releaseImageView(View container) {
-		if (configCanReleaseIds() != null) {
-			for (int imgId : configCanReleaseIds()) {
+		if (refreshConfig.releaseItemIds != null) {
+			for (int imgId : refreshConfig.releaseItemIds) {
 				ImageView imgView = (ImageView) container.findViewById(imgId);
-				if (imgView != null) {
-					imgView.setImageDrawable(BitmapLoader.getLoadingDrawable(imgView));
+				Drawable drawable = loadingDrawableHolder(imgId);
+				if (imgView != null && drawable != null) {
+					imgView.setImageDrawable(drawable);
 				
-					Logger.v(ARefreshFragment.class.getSimpleName(), "释放ImageView");
+					Logger.v(APagingFragment.class.getSimpleName(), "释放ImageView");
 				}
 			}
 		}
@@ -473,49 +517,48 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 		return false;
 	}
 
-	protected int[] configCanReleaseIds() {
-		return null;
-	}
+	private static Drawable defLoadingDrawable;
+	protected Drawable loadingDrawableHolder(int viewId) {
+		try {
+			if (defLoadingDrawable == null)
+				defLoadingDrawable = GlobalContext.getInstance().getResources().getDrawable(R.drawable.comm_loading);
+		} catch (Throwable e) {
+			Logger.logExc(e);
+		}
 
-    protected int delayRlease() {
-        return 5 * 1000;
-    }
+		return defLoadingDrawable;
+	}
 
     @Override
     public void onPause() {
-        super.onPause();
+		super.onPause();
 
-        mHandler.postDelayed(releaseRunnable, delayRlease());
+		// 当有手势返回时，不会调用onStop()，所以放到这里做释放了
+		if (refreshConfig.releaseItemIds != null) {
+			runUIRunnable(refreshRunnable, refreshConfig.releaseDelay);
+		}
     }
-
-	@Override
-    public void onStop() {
-		super.onStop();
-
-        // TODO 有手势返回的时候，不会调用onStop()
-//		mHandler.removeCallbacks(releaseRunnable);
-//
-//        releaseImageViewByIds();
-	}
 
     @Override
     public void onResume() {
 		super.onResume();
 
-		mHandler.removeCallbacks(releaseRunnable);
-		
-		refreshUI();
+		if (refreshConfig.releaseItemIds != null) {
+			mHandler.removeCallbacks(releaseRunnable);
+
+			refreshUI();
+		}
 	}
 
     public void refreshUI() {
-        mHandler.postDelayed(new Runnable() {
+        runUIRunnable(new Runnable() {
 
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
+			@Override
+			public void run() {
+				getAdapter().notifyDataSetChanged();
+			}
 
-        }, 200);
+		}, 200);
 
 		_refreshUI();
 	}
@@ -525,7 +568,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 
     public void releaseImageViewByIds() {
-        Logger.v(TAG, "releaseImageViewByIds()");
+		Logger.v(TAG, "releaseImageViewByIds()");
 
 		if (getRefreshView() != null) {
 			int childSize = getRefreshView().getChildCount();
@@ -556,16 +599,15 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 	
 	protected void toLastReadPosition() {
-		if (getRefreshView() == null)
+		if (getRefreshView() == null || TextUtils.isEmpty(refreshConfig.positionKey))
 			return;
 		
-		getRefreshView().post(new Runnable() {
-			
+		runUIRunnable(new Runnable() {
+
 			@Override
 			public void run() {
 				if (getRefreshView() instanceof ListView) {
 					ListView listView = (ListView) getRefreshView();
-//					listView.smoothScrollToPositionFromTop(getLastReadPosition(), getLastReadTop() + listView.getPaddingTop());
 					listView.setSelectionFromTop(getLastReadPosition(), getLastReadTop() + listView.getPaddingTop());
 				}
 			}
@@ -573,60 +615,27 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	}
 	
 	protected int getLastReadPosition() {
-		return ActivityHelper.getIntShareData(refreshConfig.saveLastPositionKey + "Position", 0);
+		return ActivityHelper.getIntShareData(refreshConfig.positionKey + "Position", 0);
 	}
 	
 	protected void putLastReadPosition(int position) {
-		if (!TextUtils.isEmpty(refreshConfig.saveLastPositionKey))
-			ActivityHelper.putIntShareData(refreshConfig.saveLastPositionKey + "Position", position);
+		if (!TextUtils.isEmpty(refreshConfig.positionKey))
+			ActivityHelper.putIntShareData(refreshConfig.positionKey + "Position", position);
 	}
 	
 	private int getLastReadTop() {
-		return ActivityHelper.getIntShareData(refreshConfig.saveLastPositionKey + "Top", 0);
+		return ActivityHelper.getIntShareData(refreshConfig.positionKey + "Top", 0);
 	}
 	
 	protected void putLastReadTop(int top) {
-		if (!TextUtils.isEmpty(refreshConfig.saveLastPositionKey))
-			ActivityHelper.putIntShareData(refreshConfig.saveLastPositionKey + "Top", top);
-	}
-	
-	public void notifyDataSetChanged() {
-		if (swingAnimAdapter != null) {
-			// 刷新的时候，不显示动画
-			swingAnimAdapter.notifyDataSetChanged();
-		}
-		else {
-			mAdapter.notifyDataSetChanged();
-		}
-	}
-	
-	public ArrayList<T> getAdapterItems() {
-		return mAdapter.getDatas();
-	}
-	
-	private int getAdapterCount() {
-		if (swingAnimAdapter != null)
-			return swingAnimAdapter.getCount();
-		
-		return mAdapter.getCount();
-	}
-
-	public void setAdapterSelected(int position) {
-		mAdapter.setSelected(position);
+		if (!TextUtils.isEmpty(refreshConfig.positionKey))
+			ActivityHelper.putIntShareData(refreshConfig.positionKey + "Top", top);
 	}
 	
 	public void setAdapterItems(ArrayList<T> items) {
 		mAdapter.setDatas(items);
 	}
 	
-	public void addItemsAtFront(List<T> items) {
-		mAdapter.addItemsAtFront(items);
-	}
-	
-	public void addItems(List<T> items) {
-		mAdapter.addItems(items);
-	}
-
     final protected RefreshConfig getRefreshConfig() {
         return refreshConfig;
     }
@@ -673,7 +682,7 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	 * 
 	 * @return
 	 */
-	abstract public AbsListView getRefreshView();
+	abstract public ViewGroup getRefreshView();
 	
 	/**
 	 * 设置列表控件状态为刷新状态
@@ -687,25 +696,152 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
 	 */
 	abstract protected void onChangedByConfig(RefreshConfig config);
 
+	/**
+	 * 设置列表控件状态为刷新结束
+	 */
+	abstract public void onRefreshViewComplete(RefreshMode mode);
+
     /**
      * 初始化RefreshView
      *
      * @param refreshView
      */
-    protected void setInitRefreshView(AbsListView refreshView, Bundle savedInstanceSate) {
+    protected void setInitRefreshView(ViewGroup refreshView, Bundle savedInstanceSate) {
+		if (refreshConfig.footerMoreEnable)
+			mFooterView = configFooterView();
 
+		// 设置事件
+		if (getRefreshView() != null && getRefreshView() instanceof AbsListView) {
+			AbsListView absListView = (AbsListView) getRefreshView();
+
+			absListView.setOnScrollListener(this);
+			absListView.setRecyclerListener(this);
+			absListView.setOnItemClickListener(this);
+		}
+
+		if (getRefreshView() instanceof ListView) {
+			ListView listView = (ListView) getRefreshView();
+
+			listView.addFooterView(mFooterView);
+		}
     }
 
+	protected void bindAdapter(ViewGroup refreshView, BaseAdapter adapter) {
+		if (refreshView instanceof AbsListView) {
+			AbsListView listView = (AbsListView) refreshView;
+			if (listView.getAdapter() == null)
+				listView.setAdapter(adapter);
+		}
+	}
+
+	protected int getFirstVisiblePosition() {
+		if (getRefreshView() instanceof AbsListView) {
+			return ((AbsListView) getRefreshView()).getFirstVisiblePosition();
+		}
+
+		return 0;
+	}
+
+	protected View configFooterView() {
+		View footerView = View.inflate(getActivity(), R.layout.comm_lay_footerview, null);
+
+		footerView.findViewById(R.id.btnMore).setVisibility(View.VISIBLE);
+		footerView.findViewById(R.id.layLoading).setVisibility(View.GONE);
+		TextView btnMore = (TextView) footerView.findViewById(R.id.btnMore);
+		btnMore.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (!refreshConfig.pagingEnd) {
+					onPullUpToRefresh();
+				}
+			}
+
+		});
+
+		return footerView;
+	}
+
 	/**
-	 * 设置列表控件状态为刷新结束
+	 * 设置FooterView为加载状态，
+	 *
+	 * @param footerView
+	 * @return false:当前正在加载数据
 	 */
-	abstract public void onRefreshViewComplete();
-	
+	protected boolean setFooterRefreshing(View footerView) {
+		View layLoading = footerView.findViewById(R.id.layLoading);
+
+		if (footviewHeight == 0 && footerView.getHeight() > 0)
+			footviewHeight = footerView.getHeight();
+
+		if (layLoading.getVisibility() == View.VISIBLE)
+			return false;
+
+		layLoading.setVisibility(View.VISIBLE);
+
+		return true;
+	}
+
+	protected FooterViewConfig initFooterViewConfig() {
+		FooterViewConfig config = new FooterViewConfig();
+
+		config.hintLoading = getString(R.string.comm_footer_loading);
+		config.btnFaild = getString(R.string.comm_footer_faild);
+		config.btnMore = getString(R.string.comm_footer_more);
+		config.btnPagingEnd = getString(R.string.comm_footer_pagingend);
+
+		return config;
+	}
+
+	protected void setFooterViewAsTaskStateChanged(View footerView, ABaseTaskState state, TaskException exception, RefreshMode mode) {
+		if (!refreshConfig.footerMoreEnable || footerView == null)
+			return;
+
+		if (state == ABaseTaskState.finished && mode == RefreshMode.update) {
+			View layLoading = footerView.findViewById(R.id.layLoading);
+			TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
+			layLoading.setVisibility(View.GONE);
+			btnLoadMore.setVisibility(View.VISIBLE);
+		} else if (state == ABaseTaskState.prepare && mode == RefreshMode.update) {
+			View layLoading = footerView.findViewById(R.id.layLoading);
+			TextView txtLoadingHint = (TextView) footerView.findViewById(R.id.txtLoading);
+			TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
+
+			txtLoadingHint.setText(footerRefreshConfig.hintLoading);
+			layLoading.setVisibility(View.VISIBLE);
+			btnLoadMore.setVisibility(View.GONE);
+			btnLoadMore.setText(footerRefreshConfig.btnMore);
+		} else if (state == ABaseTaskState.success) {
+			if (mode == RefreshMode.update || mode == RefreshMode.reset) {
+				final TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
+				if (refreshConfig.pagingEnd) {
+					btnLoadMore.setText(footerRefreshConfig.btnPagingEnd);
+				} else {
+					btnLoadMore.setText(footerRefreshConfig.btnMore);
+				}
+			}
+		} else if (state == ABaseTaskState.falid) {
+			if (mode == RefreshMode.update) {
+				// 正在加载
+				View layLoading = footerView.findViewById(R.id.layLoading);
+				if (layLoading.getVisibility() == View.VISIBLE) {
+					TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
+					btnLoadMore.setText(footerRefreshConfig.btnFaild);
+				}
+			}
+		}
+	}
+
+	/**
+	 * 当前页面是否正在加载刷新
+	 *
+	 * @return
+	 */
 	public boolean isRefreshing() {
 		return pagingTask != null;
 	}
 	
-	Runnable releaseRunnable = new Runnable() {
+	private Runnable releaseRunnable = new Runnable() {
 		
 		@Override
 		public void run() {
@@ -721,42 +857,38 @@ public abstract class ARefreshFragment<T extends Serializable, Ts extends Serial
         return false;
     }
 
-    @Override
-    protected void taskStateChanged(ABaseTaskState state, Serializable tag) {
-        super.taskStateChanged(state, tag);
-
-        if (state == ABaseTaskState.success) {
-            if (isContentEmpty()) {
-                if (emptyLayout != null && !TextUtils.isEmpty(refreshConfig.emptyLabel))
-                    ViewUtils.setTextViewValue(emptyLayout, R.id.txtLoadEmpty, refreshConfig.emptyLabel);
-            }
-        }
-        else if (state == ABaseTaskState.falid) {
-            if (isContentEmpty()) {
-                if (loadFailureLayout != null && !TextUtils.isEmpty(tag + ""))
-                    ViewUtils.setTextViewValue(loadFailureLayout, R.id.txtLoadFailed, tag + "");
-            }
-        }
-    }
-
-    public static class RefreshConfig implements Serializable {
-
-        public static final long serialVersionUID = -963125420415611042L;
+    public static class RefreshConfig {
 
         public boolean expiredAutoRefresh = true;// 缓存数据过期自动刷新列表
 
-		public boolean canLoadMore = true;// 是否可以加载更多
+		public boolean pagingEnd = false;// 分页是否结束
 		
-		public String saveLastPositionKey = null;// 最后阅读坐标的Key，null-不保存，针对缓存数据有效
+		public String positionKey = null;// 最后阅读坐标的Key，null-不保存，针对缓存数据有效
 		
-		public int minResultSize = 10;// 当加载的数据少于这个值时，默认没有更多加载
+		public int resultMin = 3;// 当加载的数据少于这个值时，默认没有更多加载
 		
-		public boolean animEnable = false;// 是否启用加载动画
-		
-		public String emptyLabel;// 加载空显示文本
+        public boolean displayWhenScrolling = true;// 滚动的时候加载图片
 
-        public boolean ignoreScroll = true;// 置为false表示滑动列表时不加载图片
+		public int releaseDelay = 5 * 1000;// 当配置了releaseItemIds参数时，离开页面后自动释放资源
+
+		public int[] releaseItemIds = null;// 离开页面时，释放图片的控件，针对ItemView
+
+		public String emptyHint = "数据为空";// 如果EmptyLayout中有R.id.txtLoadEmpty这个控件，将这个提示绑定显示
+
+		public boolean footerMoreEnable = true;// FooterView加载更多
 		
 	}
-	
+
+	public static class FooterViewConfig {
+
+		public String btnMore;
+
+		public String btnFaild;
+
+		public String btnPagingEnd;
+
+		public String hintLoading;
+
+	}
+
 }

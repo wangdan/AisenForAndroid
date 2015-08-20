@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<app-settings>
+
+	<setting type="base_url">
+		<des></des>
+		<value></value>
+	</setting>
+
+	<setting type="getHuabanFavorite">
+		<des>花瓣美女</des>
+		<value>favorite/</value>
+		<extras>
+			<extra type="base_url">
+				<value>http://api.huaban.com/</value>
+			</extra>
+		</extras>
+	</setting>
+
+
+</app-settings>

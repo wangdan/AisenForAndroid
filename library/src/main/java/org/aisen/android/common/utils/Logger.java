@@ -82,10 +82,10 @@ public class Logger {
 	
 	public static void e(String tag, String format, Object... msg) {
 		if (DEBUG)
-			Log.w(tag, String.format(format, msg));
+			Log.e(tag, String.format(format, msg));
 	}
 
-	public static void logExc(Exception e) {
+	public static void logExc(Throwable e) {
 		if (DEBUG)
 			e.printStackTrace();
 	}

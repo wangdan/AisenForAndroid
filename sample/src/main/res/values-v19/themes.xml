@@ -9,5 +9,8 @@
         <item name="statusbar_color">@color/md_teal_500</item>
         <!--在4.4的时候，适配Windows-->
         <item name="fitSystemWindows">true</item>
+        <item name="menuHeaderHeight">185dip</item>
+        <item name="menuHeaderPaddingTop">40dip</item>
+        <item name="android:selectableItemBackground">@drawable/selector_list_holo</item>
     </style>
 </resources>

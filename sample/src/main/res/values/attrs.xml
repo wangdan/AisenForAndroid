@@ -6,4 +6,7 @@
     <attr name="statusbar_color" format="reference|color"/>
     <!--是否适配Windows-->
     <attr name="fitSystemWindows" format="boolean"/>
+    <!--Draw的Header高度-->
+    <attr name="menuHeaderHeight" format="dimension"/>
+    <attr name="menuHeaderPaddingTop" format="dimension"/>
 </resources>
