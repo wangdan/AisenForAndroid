@@ -10,19 +10,19 @@ import org.aisen.android.support.inject.ViewInject;
 import java.io.Serializable;
 
 /**
- * 维护ListView的SwipeRefreshLayout控件
+ * 维护瀑布流的SwipeRefreshLayout控件
  *
  */
-public abstract class ASwipeRefreshFragment<T extends Serializable, Ts extends Serializable>
-                                            extends AListFragment<T, Ts>
-                                            implements SwipeRefreshLayout.OnRefreshListener {
+public abstract class AWaterfallSwipeRefreshFragment<T extends Serializable, Ts extends Serializable>
+                                    extends AWaterfallFragment<T, Ts>
+                                    implements SwipeRefreshLayout.OnRefreshListener {
 
     @ViewInject(idStr = "swipeRefreshLayout")
     SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected int inflateContentView() {
-        return R.layout.comm_lay_swiperefreshlist;
+        return R.layout.comm_lay_waterfall_swiperefresh;
     }
 
     @Override

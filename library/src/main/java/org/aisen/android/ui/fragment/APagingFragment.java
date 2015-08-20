@@ -145,18 +145,25 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 	}
 	
 	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+	final public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+		handleScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+	}
+
+	protected void handleScroll(ViewGroup refreshView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
 	}
 	
 	private boolean refreshViewScrolling = false;// 正在滚动
-
     @Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
+	final public void onScrollStateChanged(AbsListView view, int scrollState) {
+		handleScrollStateChanged(view, scrollState);
+	}
+
+	void handleScrollStateChanged(ViewGroup refreshView, int scrollState) {
 		// 滑动的时候，不加载图片
-        if (!refreshConfig.displayWhenScrolling) {
+		if (!refreshConfig.displayWhenScrolling) {
 			mHandler.removeCallbacks(refreshRunnable);
-			
+
 			if (scrollState == SCROLL_STATE_FLING) {
 				refreshViewScrolling = true;
 			}
@@ -175,27 +182,27 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 				refreshConfig.footerMoreEnable && // 自动加载更多
 				mFooterView != null // 配置了FooterView
 				) {
-			int childCount = getRefreshView().getChildCount();
-			if (childCount > 0 && getRefreshView().getChildAt(childCount - 1) == mFooterView) {
+			int childCount = refreshView.getChildCount();
+			if (childCount > 0 && refreshView.getChildAt(childCount - 1) == mFooterView) {
 				if (setFooterRefreshing(mFooterView)) {
 					onPullUpToRefresh();
 				}
 			}
 		}
 
-        // 保存最后浏览位置
-        if (scrollState == SCROLL_STATE_IDLE) {
-            if (!TextUtils.isEmpty(refreshConfig.positionKey) && getRefreshView() != null) {
-                runNUIRunnable(new Runnable() {
-						@Override
-						public void run() {
-							putLastReadPosition(getFirstVisiblePosition());
+		// 保存最后浏览位置
+		if (scrollState == SCROLL_STATE_IDLE) {
+			if (!TextUtils.isEmpty(refreshConfig.positionKey) && refreshView != null) {
+				runNUIRunnable(new Runnable() {
+					@Override
+					public void run() {
+						putLastReadPosition(getFirstVisiblePosition());
 
-							putLastReadTop(getRefreshView().getChildAt(0).getTop());
-						}
+						putLastReadTop(getRefreshView().getChildAt(0).getTop());
+					}
 				});
-            }
-        }
+			}
+		}
 	}
 	
 	private Runnable refreshRunnable = new Runnable() {
@@ -388,7 +395,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
                     refreshConfig.pagingEnd = true;
 			}
 
-            getAdapter().notifyDataSetChanged();
+//            getAdapter().notifyDataSetChanged();
 
             onChangedByConfig(refreshConfig);
 
@@ -736,14 +743,18 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 			absListView.setOnItemClickListener(this);
 		}
 
-		if (getRefreshView() instanceof ListView && mFooterView != null) {
-			ListView listView = (ListView) getRefreshView();
-
-			listView.addFooterView(mFooterView);
-		}
+		bindFooterView(refreshView, mFooterView);
 
 		bindAdapter(refreshView, getAdapter());
     }
+
+	protected void bindFooterView(ViewGroup refreshView, View footerView) {
+		if (refreshView instanceof ListView && footerView != null) {
+			ListView listView = (ListView) refreshView;
+
+			listView.addFooterView(footerView);
+		}
+	}
 
 	protected void bindAdapter(ViewGroup refreshView, BaseAdapter adapter) {
 		if (refreshView instanceof AbsListView) {

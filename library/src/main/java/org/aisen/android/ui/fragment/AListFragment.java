@@ -14,14 +14,15 @@ import java.util.ArrayList;
  * 维护ListView
  *
  */
-public abstract class AListFragment<T extends Serializable, Ts extends Serializable> extends APagingFragment<T, Ts, ListView> {
+public abstract class AListFragment<T extends Serializable, Ts extends Serializable>
+                                extends APagingFragment<T, Ts, ListView> {
 
     @ViewInject(idStr = "listView")
     ListView mListView;
 
     @Override
     protected int inflateContentView() {
-        return R.layout.comm_lay_listview;
+        return R.layout.comm_lay_list;
     }
 
     @Override

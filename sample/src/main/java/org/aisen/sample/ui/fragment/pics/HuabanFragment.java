@@ -3,16 +3,18 @@ package org.aisen.sample.ui.fragment.pics;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 
 import com.example.aisensample.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.aisen.android.common.utils.SystemUtils;
 import org.aisen.android.network.task.TaskException;
 import org.aisen.android.support.adapter.ABaseAdapter;
 import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.support.paging.IPaging;
-import org.aisen.android.ui.fragment.ASwipeRefreshFragment;
+import org.aisen.android.ui.fragment.AWaterfallSwipeRefreshFragment;
+import org.aisen.android.ui.widget.pla.PLAImageView;
 import org.aisen.sample.support.HuabanPaging;
 import org.aisen.sample.support.SampleSDK;
 import org.aisen.sample.support.bean.HuabanPin;
@@ -23,7 +25,7 @@ import java.util.List;
 /**
  * 花瓣图片
  */
-public class HuabanFragment extends ASwipeRefreshFragment<HuabanPin, HuabanPins> {
+public class HuabanFragment extends AWaterfallSwipeRefreshFragment<HuabanPin, HuabanPins> {
 
     public static HuabanFragment newInstance(Category category) {
         HuabanFragment fragment = new HuabanFragment();
@@ -81,7 +83,7 @@ public class HuabanFragment extends ASwipeRefreshFragment<HuabanPin, HuabanPins>
     class HuabanItemView extends ABaseAdapter.AbstractItemView<HuabanPin> {
 
         @ViewInject(id = R.id.img)
-        ImageView img;
+        PLAImageView img;
 
         @Override
         public int inflateViewId() {
@@ -92,7 +94,21 @@ public class HuabanFragment extends ASwipeRefreshFragment<HuabanPin, HuabanPins>
         public void bindingData(View convertView, HuabanPin data) {
             String image = String.format("http://img.hb.aicdn.com/%s_fw192w", data.getFile().getKey());
 
-            ImageLoader.getInstance().displayImage(image, img);
+            DisplayImageOptions options = new DisplayImageOptions.Builder()
+                                                    .showImageOnLoading(R.drawable.comm_loading)
+                                                    .build();
+            ImageLoader.getInstance().displayImage(image, img, options);
+
+            int origW = data.getFile().getWidth();
+            int origH = data.getFile().getHeight();
+
+            int screenW = SystemUtils.getScreenWidth();
+
+            int imgW = screenW / 2;
+            int imgH = Math.round(imgW * 1.0f / origW * origH);
+
+            img.setImageWidth(imgW);
+            img.setImageHeight(imgH);
         }
 
     }
@@ -110,7 +126,7 @@ public class HuabanFragment extends ASwipeRefreshFragment<HuabanPin, HuabanPins>
 
         @Override
         protected HuabanPins workInBackground(RefreshMode mode, String previousPage, String nextPage, Void... params) throws TaskException {
-            int limit = 8;
+            int limit = 20;
             long max = 0;
             if (!TextUtils.isEmpty(nextPage) && mode == RefreshMode.update)
                 max = Long.parseLong(nextPage);
