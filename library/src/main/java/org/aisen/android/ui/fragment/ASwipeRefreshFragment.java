@@ -54,7 +54,7 @@ public abstract class ASwipeRefreshFragment<T extends Serializable, Ts extends S
 
     @Override
     public void onRefreshViewComplete(RefreshMode mode) {
-        if (swipeRefreshLayout.isRefreshing())
+        if (mode != RefreshMode.update && swipeRefreshLayout.isRefreshing())
             swipeRefreshLayout.setRefreshing(false);
     }
 

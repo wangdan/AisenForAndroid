@@ -403,6 +403,13 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
         }
 
         @Override
+        protected void onCancelled() {
+            super.onCancelled();
+
+            taskStateChanged(ABaseTaskState.canceled, null);
+        }
+
+        @Override
         protected void onFinished() {
             super.onFinished();
 

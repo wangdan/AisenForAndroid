@@ -100,7 +100,7 @@ public class HuabanFragment extends ASwipeRefreshFragment<HuabanPin, HuabanPins>
     class HuabanTask extends PagingTask<Void, Void, HuabanPins> {
 
         public HuabanTask(RefreshMode mode) {
-            super("HuabanTask", mode);
+            super(mode);
         }
 
         @Override
@@ -110,7 +110,7 @@ public class HuabanFragment extends ASwipeRefreshFragment<HuabanPin, HuabanPins>
 
         @Override
         protected HuabanPins workInBackground(RefreshMode mode, String previousPage, String nextPage, Void... params) throws TaskException {
-            int limit = 5;
+            int limit = 8;
             long max = 0;
             if (!TextUtils.isEmpty(nextPage) && mode == RefreshMode.update)
                 max = Long.parseLong(nextPage);

@@ -50,6 +50,8 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 									implements AbsListView.RecyclerListener, AbsListView.OnScrollListener, AsToolbar.OnToolbarDoubleClick, AdapterView.OnItemClickListener {
 
 	private static final String TAG = "AFragment-Paging";
+
+	public static final String PAGING_TASK_ID = "org.aisen.android.PAGING_TASK";
 	
 	private static final String SAVED_DATAS = "org.aisen.android.ui.Datas";
 	private static final String SAVED_PAGING = "org.aisen.android.ui.Paging";
@@ -216,7 +218,12 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 
 	@Override
     public void requestData() {
-		requestData(RefreshMode.reset);
+		// 如果没有Loading视图，且数据为空，就显示FootView加载状态
+		RefreshMode mode = RefreshMode.reset;
+		if (getAdapter().getCount() == 0 && loadingLayout == null)
+			mode = RefreshMode.update;
+
+		requestData(mode);
 	}
 
 	public ABaseAdapter getAdapter() {
@@ -284,8 +291,8 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 
 		final protected RefreshMode mode;
 
-        public PagingTask(String taskId, RefreshMode mode) {
-			super(taskId);
+        public PagingTask(RefreshMode mode) {
+			super(PAGING_TASK_ID);
 			this.mode = mode;
 			pagingTask = this;
 
@@ -297,6 +304,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 		protected void onPrepare() {
 			super.onPrepare();
 
+			Logger.d(TAG, toString() + "-" + ABaseTaskState.prepare + " - " + mode);
 			taskStateChanged(ABaseTaskState.prepare, null, mode);
 		}
 
@@ -384,6 +392,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 
             onChangedByConfig(refreshConfig);
 
+			Logger.d(TAG, toString() + "-" + ABaseTaskState.success + " - " + mode);
 			taskStateChanged(ABaseTaskState.success, null, mode);
 
 			super.onSuccess(result);
@@ -393,13 +402,23 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 		protected void onFailure(TaskException exception) {
 			super.onFailure(exception);
 
+			Logger.d(TAG, toString() + "-" + ABaseTaskState.falid + " - " + mode + "-" + exception.getMessage());
 			taskStateChanged(ABaseTaskState.falid, exception, mode);
+		}
+
+		@Override
+		protected void onCancelled() {
+			super.onCancelled();
+
+			Logger.d(TAG, toString() + "-" + ABaseTaskState.canceled + " - " + mode);
+			taskStateChanged(ABaseTaskState.canceled, null, mode);
 		}
 
 		@Override
 		protected void onFinished() {
 			super.onFinished();
 
+			Logger.d(TAG, toString() + "-" + ABaseTaskState.finished + " - " + mode);
 			taskStateChanged(ABaseTaskState.finished, null, mode);
 
 			pagingTask = null;
@@ -490,8 +509,6 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 	@Override
     public void onMovedToScrapHeap(View view) {
         if (!viewCache.containsKey(view.toString())) {
-            Logger.d(TAG, "保存一个View到Cache");
-
             viewCache.put(view.toString(), new WeakReference<View>(view));
         }
 	}
@@ -796,49 +813,39 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 	}
 
 	protected void setFooterViewAsTaskStateChanged(View footerView, ABaseTaskState state, TaskException exception, RefreshMode mode) {
-		if (!refreshConfig.footerMoreEnable || footerView == null)
+		if (!refreshConfig.footerMoreEnable || footerView == null || mode != RefreshMode.update)
 			return;
 
-		if (state == ABaseTaskState.finished && mode != RefreshMode.refresh) {
+		if (state == ABaseTaskState.finished) {
 			View layLoading = footerView.findViewById(R.id.layLoading);
 			TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
 			layLoading.setVisibility(View.GONE);
 			btnLoadMore.setVisibility(View.VISIBLE);
 		}
 		else if (state == ABaseTaskState.prepare) {
-			boolean b = mode == RefreshMode.update;
-			if (getAdapter().getDatas().size() == 0) {
-				b = true;
-			}
-			if (b) {
-				View layLoading = footerView.findViewById(R.id.layLoading);
-				TextView txtLoadingHint = (TextView) footerView.findViewById(R.id.txtLoading);
-				TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
+			View layLoading = footerView.findViewById(R.id.layLoading);
+			TextView txtLoadingHint = (TextView) footerView.findViewById(R.id.txtLoading);
+			TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
 
-				txtLoadingHint.setText(footerRefreshConfig.hintLoading);
-				layLoading.setVisibility(View.VISIBLE);
-				btnLoadMore.setVisibility(View.GONE);
+			txtLoadingHint.setText(footerRefreshConfig.hintLoading);
+			layLoading.setVisibility(View.VISIBLE);
+			btnLoadMore.setVisibility(View.GONE);
+			btnLoadMore.setText(footerRefreshConfig.btnMore);
+		}
+		else if (state == ABaseTaskState.success) {
+			final TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
+			if (refreshConfig.pagingEnd) {
+				btnLoadMore.setText(footerRefreshConfig.btnPagingEnd);
+			} else {
 				btnLoadMore.setText(footerRefreshConfig.btnMore);
 			}
 		}
-		else if (state == ABaseTaskState.success) {
-			if (mode == RefreshMode.update || mode == RefreshMode.reset) {
-				final TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
-				if (refreshConfig.pagingEnd) {
-					btnLoadMore.setText(footerRefreshConfig.btnPagingEnd);
-				} else {
-					btnLoadMore.setText(footerRefreshConfig.btnMore);
-				}
-			}
-		}
 		else if (state == ABaseTaskState.falid) {
-			if (mode == RefreshMode.update) {
-				// 正在加载
-				View layLoading = footerView.findViewById(R.id.layLoading);
-				if (layLoading.getVisibility() == View.VISIBLE) {
-					TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
-					btnLoadMore.setText(footerRefreshConfig.btnFaild);
-				}
+			// 正在加载
+			View layLoading = footerView.findViewById(R.id.layLoading);
+			if (layLoading.getVisibility() == View.VISIBLE) {
+				TextView btnLoadMore = (TextView) footerView.findViewById(R.id.btnMore);
+				btnLoadMore.setText(footerRefreshConfig.btnFaild);
 			}
 		}
 	}
