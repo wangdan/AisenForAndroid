@@ -46,7 +46,7 @@ import java.util.Set;
  * @param <Ts>
  * @param <V>
  */
-public abstract class APagingFragment<T extends Serializable, Ts extends Serializable, V extends View> extends ABaseFragment
+public abstract class APagingFragment<T extends Serializable, Ts extends Serializable, V extends ViewGroup> extends ABaseFragment
 									implements AbsListView.RecyclerListener, AbsListView.OnScrollListener, AsToolbar.OnToolbarDoubleClick, AdapterView.OnItemClickListener {
 
 	private static final String TAG = "AFragment-Paging";
@@ -146,20 +146,20 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 	
 	@Override
 	final public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		handleScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+		handleScroll((V) view, firstVisibleItem, visibleItemCount, totalItemCount);
 	}
 
-	protected void handleScroll(ViewGroup refreshView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+	protected void handleScroll(V refreshView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
 	}
 	
 	private boolean refreshViewScrolling = false;// 正在滚动
     @Override
 	final public void onScrollStateChanged(AbsListView view, int scrollState) {
-		handleScrollStateChanged(view, scrollState);
+		handleScrollStateChanged((V) view, scrollState);
 	}
 
-	void handleScrollStateChanged(ViewGroup refreshView, int scrollState) {
+	void handleScrollStateChanged(V refreshView, int scrollState) {
 		// 滑动的时候，不加载图片
 		if (!refreshConfig.displayWhenScrolling) {
 			mHandler.removeCallbacks(refreshRunnable);
@@ -379,23 +379,15 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 				// 这里增加一个自动刷新设置功能
                 IResult iResult = (IResult) result;
 
-                // 数据是缓存数据
-                if (iResult.isCache()) {
-                    // 缓存过期刷新数据
-                    if (refreshConfig.expiredAutoRefresh && iResult.expired()) {
-                        requestDataDelay(500);
-                    }
-                    // 滑动到最后浏览位置
-                    else {
-                        toLastReadPosition();
-                    }
-                }
+				if (iResult.fromCache() && !iResult.outofdate())
+					toLastReadPosition();
 
-                if (iResult.noMore())
+                if (iResult.endPaging())
                     refreshConfig.pagingEnd = true;
 			}
 
-//            getAdapter().notifyDataSetChanged();
+			if (mode == RefreshMode.reset && getTaskCount(getTaskId()) > 1)
+            	getAdapter().notifyDataSetChanged();
 
             onChangedByConfig(refreshConfig);
 
@@ -468,37 +460,29 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 
 	}
 
-    public void requestDataDelay(int delay) {
-		runUIRunnable(refreshDelay, delay);
+	@Override
+	protected void requestDataOutofdate() {
+		if (getRefreshView() instanceof ListView) {
+			ListView listView = (ListView) getRefreshView();
+			listView.setSelectionFromTop(0, 0);
+		}
+
+		putLastReadPosition(0);
+		putLastReadTop(0);
+
+		requestDataSetRefreshing();
 	}
 
-    /**
+	/**
      * 设置刷新控件为刷新状态且刷新数据
      *
      */
-    public void setRefreshingRequestData() {
+    public void requestDataSetRefreshing() {
         // 如果没有正在刷新，设置刷新控件，且子类没有自动刷新
         if (!isRefreshing() && !setRefreshing())
             requestData(RefreshMode.reset);
     }
 	
-	Runnable refreshDelay = new Runnable() {
-		
-		@Override
-		public void run() {
-			if (getRefreshView() instanceof ListView) {
-				ListView listView = (ListView) getRefreshView();
-				listView.setSelectionFromTop(0, 0);
-			}
-			
-			putLastReadPosition(0);
-			putLastReadTop(0);
-
-			setRefreshingRequestData();
-		}
-		
-	};
-
 	class MyBaseAdapter extends ABaseAdapter<T> {
 
         public MyBaseAdapter(ArrayList<T> datas, Activity context) {
@@ -625,17 +609,17 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 	protected void toLastReadPosition() {
 		if (getRefreshView() == null || TextUtils.isEmpty(refreshConfig.positionKey))
 			return;
-		
-		runUIRunnable(new Runnable() {
 
-			@Override
-			public void run() {
-				if (getRefreshView() instanceof ListView) {
+		if (getRefreshView() instanceof ListView) {
+			runUIRunnable(new Runnable() {
+
+				@Override
+				public void run() {
 					ListView listView = (ListView) getRefreshView();
 					listView.setSelectionFromTop(getLastReadPosition(), getLastReadTop() + listView.getPaddingTop());
 				}
-			}
-		});
+			});
+		}
 	}
 	
 	protected int getLastReadPosition() {
@@ -647,7 +631,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 			ActivityHelper.putIntShareData(refreshConfig.positionKey + "Position", position);
 	}
 	
-	private int getLastReadTop() {
+	protected int getLastReadTop() {
 		return ActivityHelper.getIntShareData(refreshConfig.positionKey + "Top", 0);
 	}
 	
@@ -706,7 +690,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 	 * 
 	 * @return
 	 */
-	abstract public ViewGroup getRefreshView();
+	abstract public V getRefreshView();
 	
 	/**
 	 * 设置列表控件状态为刷新状态
@@ -730,7 +714,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
      *
      * @param refreshView
      */
-    protected void setInitRefreshView(ViewGroup refreshView, Bundle savedInstanceSate) {
+    protected void setInitRefreshView(V refreshView, Bundle savedInstanceSate) {
 		if (refreshConfig.footerMoreEnable)
 			mFooterView = configFooterView();
 
@@ -748,7 +732,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 		bindAdapter(refreshView, getAdapter());
     }
 
-	protected void bindFooterView(ViewGroup refreshView, View footerView) {
+	protected void bindFooterView(V refreshView, View footerView) {
 		if (refreshView instanceof ListView && footerView != null) {
 			ListView listView = (ListView) refreshView;
 
@@ -756,7 +740,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 		}
 	}
 
-	protected void bindAdapter(ViewGroup refreshView, BaseAdapter adapter) {
+	protected void bindAdapter(V refreshView, BaseAdapter adapter) {
 		if (refreshView instanceof AbsListView) {
 			AbsListView listView = (AbsListView) refreshView;
 			if (listView.getAdapter() == null)

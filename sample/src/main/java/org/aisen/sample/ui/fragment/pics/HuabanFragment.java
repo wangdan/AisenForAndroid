@@ -3,11 +3,12 @@ package org.aisen.sample.ui.fragment.pics;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 
-import com.example.aisensample.R;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.aisen.android.common.context.GlobalContext;
+import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.SystemUtils;
 import org.aisen.android.network.task.TaskException;
 import org.aisen.android.support.adapter.ABaseAdapter;
@@ -15,10 +16,11 @@ import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.support.paging.IPaging;
 import org.aisen.android.ui.fragment.AWaterfallSwipeRefreshFragment;
 import org.aisen.android.ui.widget.pla.PLAImageView;
-import org.aisen.sample.support.HuabanPaging;
-import org.aisen.sample.support.SampleSDK;
+import org.aisen.huaban.R;
 import org.aisen.sample.support.bean.HuabanPin;
 import org.aisen.sample.support.bean.HuabanPins;
+import org.aisen.sample.support.biz.HuabanSDK;
+import org.aisen.sample.support.paging.HuabanPaging;
 
 import java.util.List;
 
@@ -42,6 +44,11 @@ public class HuabanFragment extends AWaterfallSwipeRefreshFragment<HuabanPin, Hu
     }
 
     private Category category;
+
+    @Override
+    protected int inflateContentView() {
+        return R.layout.ui_find_waterfall;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,10 +87,20 @@ public class HuabanFragment extends AWaterfallSwipeRefreshFragment<HuabanPin, Hu
         new HuabanTask(mode).execute();
     }
 
-    class HuabanItemView extends ABaseAdapter.AbstractItemView<HuabanPin> {
+    static class HuabanItemView extends ABaseAdapter.AbstractItemView<HuabanPin> {
 
         @ViewInject(id = R.id.img)
         PLAImageView img;
+        @ViewInject(id = R.id.txtTitle)
+        TextView txtTitle;
+
+        static int gap_h;
+        static int gap_v;
+
+        static {
+            gap_h = GlobalContext.getInstance().getResources().getDimensionPixelSize(R.dimen.find_waterfall_gap_h);
+            gap_v = GlobalContext.getInstance().getResources().getDimensionPixelSize(R.dimen.find_waterfall_gap_v);
+        }
 
         @Override
         public int inflateViewId() {
@@ -92,19 +109,25 @@ public class HuabanFragment extends AWaterfallSwipeRefreshFragment<HuabanPin, Hu
 
         @Override
         public void bindingData(View convertView, HuabanPin data) {
+            String title = data.getRaw_text();
+            if (!TextUtils.isEmpty(title)) {
+                txtTitle.setText(title);
+                txtTitle.setVisibility(View.VISIBLE);
+            }
+            else {
+                txtTitle.setVisibility(View.GONE);
+            }
+
             String image = String.format("http://img.hb.aicdn.com/%s_fw192w", data.getFile().getKey());
 
-            DisplayImageOptions options = new DisplayImageOptions.Builder()
-                                                    .showImageOnLoading(R.drawable.comm_loading)
-                                                    .build();
-            ImageLoader.getInstance().displayImage(image, img, options);
+            ImageLoader.getInstance().displayImage(image, img);
 
             int origW = data.getFile().getWidth();
             int origH = data.getFile().getHeight();
 
             int screenW = SystemUtils.getScreenWidth();
 
-            int imgW = screenW / 2;
+            int imgW = (screenW - gap_h * 4 - gap_v * 2) / 2;
             int imgH = Math.round(imgW * 1.0f / origW * origH);
 
             img.setImageWidth(imgW);
@@ -117,6 +140,8 @@ public class HuabanFragment extends AWaterfallSwipeRefreshFragment<HuabanPin, Hu
 
         public HuabanTask(RefreshMode mode) {
             super(mode);
+
+            Logger.e("huabanTask running");
         }
 
         @Override
@@ -131,7 +156,7 @@ public class HuabanFragment extends AWaterfallSwipeRefreshFragment<HuabanPin, Hu
             if (!TextUtils.isEmpty(nextPage) && mode == RefreshMode.update)
                 max = Long.parseLong(nextPage);
 
-            return SampleSDK.getInstance().getHuabanFavorite(category.toString(), max, limit);
+            return HuabanSDK.getInstance(getTaskCacheMode(this)).getHuabanFavorite(category.toString(), max, limit);
         }
 
     }

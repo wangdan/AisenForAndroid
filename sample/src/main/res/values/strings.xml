@@ -8,4 +8,41 @@
     <!--菜单项-->
     <string name="draw_pics">花瓣美图</string>
 
+    <array name="categories">
+        <item>家居/装饰</item>
+        <item>旅游</item>
+        <item>美食</item>
+        <item>手工/工艺</item>
+        <item>婚纱/婚礼</item>
+        <item>服饰/街拍/秀场</item>
+        <item>搭配</item>
+        <item>造型/美妆/纹身</item>
+        <item>潮品/单品</item>
+        <item>健身/减肥</item>
+        <item>汽车/摩托</item>
+        <item>男士风尚</item>
+        <item>工业设计</item>
+        <item>插画</item>
+        <item>平面设计</item>
+        <item>UI 平面交互设计</item>
+        <item>动漫</item>
+        <item>游戏</item>
+        <item>极客</item>
+        <item>建筑设计</item>
+        <item>动物</item>
+        <item>儿童</item>
+        <item>摄影</item>
+        <item>美文美图</item>
+        <item>人文艺术</item>
+        <item>音乐/电影/图书</item>
+        <item>名人/明显</item>
+        <item>生活百科</item>
+        <item>教育</item>
+        <item>数据图</item>
+        <item>体育运动</item>
+        <item>美女</item>
+        <item>搞笑图</item>
+        <item>其他</item>
+    </array>
+
 </resources>

@@ -2,7 +2,7 @@ package org.aisen.android.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.ViewGroup;
+import android.widget.ListView;
 
 import org.aisen.android.R;
 import org.aisen.android.support.inject.ViewInject;
@@ -26,7 +26,7 @@ public abstract class AListSwipeRefreshFragment<T extends Serializable, Ts exten
     }
 
     @Override
-    protected void setInitRefreshView(ViewGroup refreshView, Bundle savedInstanceSate) {
+    protected void setInitRefreshView(ListView refreshView, Bundle savedInstanceSate) {
         super.setInitRefreshView(refreshView, savedInstanceSate);
 
         setInitSwipeRefreshLayout();

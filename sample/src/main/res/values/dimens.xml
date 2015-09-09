@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="find_waterfall_gap_h">2dip</dimen>
+    <dimen name="find_waterfall_gap_v">6dip</dimen>
+
+</resources>

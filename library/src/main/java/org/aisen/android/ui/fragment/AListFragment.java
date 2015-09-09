@@ -26,7 +26,7 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
     }
 
     @Override
-    public ViewGroup getRefreshView() {
+    public ListView getRefreshView() {
         return mListView;
     }
 

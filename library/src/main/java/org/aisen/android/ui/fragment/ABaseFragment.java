@@ -178,7 +178,7 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
         runNUIRunnable(requestDelayRunnable, delay);
     }
 
-    private void requestDataOutofdate() {
+    protected void requestDataOutofdate() {
         requestData();
     }
 
@@ -373,10 +373,10 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
                 IResult iResult = (IResult) result;
 
                 // 数据是缓存数据
-                if (iResult.isCache()) {
+                if (iResult.fromCache()) {
                     // 缓存过期刷新数据
-                    if (iResult.expired()) {
-                        runNUIRunnable(new Runnable() {
+                    if (iResult.outofdate()) {
+                        runUIRunnable(new Runnable() {
 
                                                 @Override
                                                 public void run() {

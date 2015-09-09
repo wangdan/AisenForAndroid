@@ -8,6 +8,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 import org.aisen.android.common.context.GlobalContext;
+import org.aisen.huaban.R;
+import org.aisen.sample.support.db.HuabanDB;
 
 import java.io.File;
 
@@ -21,11 +23,16 @@ public class MyApplication extends GlobalContext {
         super.onCreate();
 
         initImageLoader();
+
+        HuabanDB.setDB();
     }
 
     private void initImageLoader() {
         DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder();
-        DisplayImageOptions imageOption = builder.cacheInMemory(true).cacheOnDisk(true).build();
+        DisplayImageOptions imageOption = builder.cacheInMemory(true)
+                                                    .showImageOnLoading(R.drawable.comm_loading)
+                                                    .cacheOnDisk(true)
+                                                    .build();
 
         ImageLoaderConfiguration config =
                 new ImageLoaderConfiguration.Builder(this)

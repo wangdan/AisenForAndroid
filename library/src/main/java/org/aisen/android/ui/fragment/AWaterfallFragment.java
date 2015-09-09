@@ -2,7 +2,6 @@ package org.aisen.android.ui.fragment;
 
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import org.aisen.android.R;
@@ -29,7 +28,7 @@ public abstract class AWaterfallFragment<T extends Serializable, Ts extends Seri
     }
 
     @Override
-    public ViewGroup getRefreshView() {
+    public PLAMultiColumnListView getRefreshView() {
         return mPlaMultiColumnList;
     }
 
@@ -39,10 +38,24 @@ public abstract class AWaterfallFragment<T extends Serializable, Ts extends Seri
     }
 
     @Override
-    protected void setInitRefreshView(ViewGroup refreshView, Bundle savedInstanceSate) {
+    protected void setInitRefreshView(PLAMultiColumnListView refreshView, Bundle savedInstanceSate) {
         super.setInitRefreshView(refreshView, savedInstanceSate);
 
         mPlaMultiColumnList.setOnScrollListener(this);
+    }
+
+    @Override
+    protected void toLastReadPosition() {
+        super.toLastReadPosition();
+
+        runUIRunnable(new Runnable() {
+
+            @Override
+            public void run() {
+                mPlaMultiColumnList.setSelectionFromTop(getLastReadPosition(), getLastReadTop() + mPlaMultiColumnList.getPaddingTop());
+            }
+
+        });
     }
 
     @Override
@@ -56,15 +69,15 @@ public abstract class AWaterfallFragment<T extends Serializable, Ts extends Seri
     }
 
     @Override
-    protected void bindFooterView(ViewGroup refreshView, View footerView) {
+    protected void bindFooterView(PLAMultiColumnListView refreshView, View footerView) {
         if (footerView != null)
-            mPlaMultiColumnList.addFooterView(footerView);
+            refreshView.addFooterView(footerView);
     }
 
     @Override
-    protected void bindAdapter(ViewGroup refreshView, BaseAdapter adapter) {
-        if (mPlaMultiColumnList.getAdapter() == null)
-            mPlaMultiColumnList.setAdapter(adapter);
+    protected void bindAdapter(PLAMultiColumnListView refreshView, BaseAdapter adapter) {
+        if (refreshView.getAdapter() == null)
+            refreshView.setAdapter(adapter);
     }
 
     @Override
@@ -74,12 +87,12 @@ public abstract class AWaterfallFragment<T extends Serializable, Ts extends Seri
 
     @Override
     public void onScrollStateChanged(PLAAbsListView view, int scrollState) {
-        handleScrollStateChanged(view, scrollState);
+        handleScrollStateChanged(mPlaMultiColumnList, scrollState);
     }
 
     @Override
     public void onScroll(PLAAbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        handleScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        handleScroll(mPlaMultiColumnList, firstVisibleItem, visibleItemCount, totalItemCount);
     }
 
 }

@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/find_waterfall_gap_h">
 
-    <org.aisen.android.ui.widget.pla.PLAImageView android:id="@+id/img"
+    <org.aisen.android.ui.widget.pla.PLAImageView
+        android:id="@+id/img"
         android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent" android:layout_height="55dip"
+        android:layout_alignParentBottom="true" android:background="#60000000" android:ellipsize="end"
+        android:gravity="center_vertical" android:lineSpacingExtra="2dip" android:maxLines="2" android:paddingLeft="4dip" android:paddingRight="4dip"
+        android:textColor="@color/comm_white" android:textSize="14sp"/>
+
+</RelativeLayout>

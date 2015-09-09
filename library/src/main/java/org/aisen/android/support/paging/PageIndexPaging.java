@@ -35,7 +35,7 @@ public class PageIndexPaging<T extends Serializable, Ts extends Serializable> im
 		pageIndex++;
 		if (newDatas instanceof IResult) {
 			IResult iResult = (IResult) newDatas;
-			if (iResult.isCache() && iResult.pagingIndex() != null) {
+			if (iResult.fromCache() && iResult.pagingIndex() != null) {
 				pageIndex = Integer.parseInt(iResult.pagingIndex()[1]);
 			}
 		}

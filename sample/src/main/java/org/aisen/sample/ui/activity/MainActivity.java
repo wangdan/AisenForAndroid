@@ -1,5 +1,6 @@
 package org.aisen.sample.ui.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -15,15 +16,14 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
-import com.example.aisensample.R;
-
 import org.aisen.android.common.utils.SystemUtils;
 import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.activity.basic.BaseActivity;
 import org.aisen.android.ui.widget.FitWindowsFrameLayout;
+import org.aisen.huaban.R;
 import org.aisen.sample.support.utils.SystemBarUtils;
 import org.aisen.sample.ui.fragment.menu.MenuFragment;
-import org.aisen.sample.ui.fragment.pics.HuabanFragment;
+import org.aisen.sample.ui.fragment.pics.HuabanSpinnerFragment;
 
 /**
  * Created by wangdan on 15/4/23.
@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity {
 
         switch (menu.getItemId()) {
         case R.id.drawPics:
-            fragment = HuabanFragment.newInstance(HuabanFragment.Category.beauty);
+            fragment = HuabanSpinnerFragment.newInstance();
             break;
         }
 
@@ -101,12 +101,12 @@ public class MainActivity extends BaseActivity {
 
             toolbarSpinner.setVisibility(View.VISIBLE);
             TextView txtTitle = (TextView) toolbarSpinner.findViewById(R.id.txtTitle);
-            txtTitle.setText(navigation.generateItems()[0]);
+            txtTitle.setText(navigation.generateItems()[navigation.initPosition()]);
             toolbarSpinner.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    showSpinnerDialog(MainActivity.this, navigation, v);
+                    showSpinnerDialog(navigation, v);
                 }
 
             });
@@ -114,6 +114,7 @@ public class MainActivity extends BaseActivity {
             getSupportActionBar().setTitle("");
         }
         else {
+            toolbarSpinner.setOnClickListener(null);
             toolbarSpinner.setVisibility(View.GONE);
         }
     }
@@ -130,20 +131,26 @@ public class MainActivity extends BaseActivity {
         mDrawerLayout.closeDrawers();
     }
 
-    public static void showSpinnerDialog(final BaseActivity activity, final MainSpinnerNavigation navigation, View targetView) {
+    public void showSpinnerDialog(final MainSpinnerNavigation navigation, View targetView) {
+        Activity activity = this;
         String[] items = navigation.generateItems();
 
         Rect rect = new Rect();
         targetView.getGlobalVisibleRect(rect);
 
-        AlertDialog menuDialog = new AlertDialog.Builder(activity, R.style.main_overflow_menus).setItems(items, new DialogInterface.OnClickListener() {
+        AlertDialog menuDialog = new AlertDialog.Builder(activity, R.style.main_overflow_menus)
+                                        .setItems(items, new DialogInterface.OnClickListener() {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                navigation.onItemSelected(null, null, which, which);
-            }
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                TextView txtTitle = (TextView) getToolbar().findViewById(R.id.txtTitle);
+                                                txtTitle.setText(navigation.generateItems()[which]);
 
-        }).create();
+                                                navigation.onItemSelected(null, null, which, which);
+                                            }
+
+                                        })
+                                        .create();
         menuDialog.show();
 
         if (Build.VERSION.SDK_INT < 21) {
@@ -154,12 +161,12 @@ public class MainActivity extends BaseActivity {
 
         WindowManager.LayoutParams params = menuDialog.getWindow().getAttributes();
         params.x = rect.left - Math.round(activity.getResources().getDimensionPixelSize(R.dimen.abc_action_bar_icon_vertical_padding_material) * 1.2f);
-        params.y = rect.bottom - Math.round(activity.getResources().getDimensionPixelSize(R.dimen.abc_action_bar_icon_vertical_padding_material) * 0.8f);
+        params.y = rect.top - Math.round(activity.getResources().getDimensionPixelSize(R.dimen.abc_action_bar_icon_vertical_padding_material) * 0.8f);
         params.width = Math.round(targetView.getWidth() * 1.3f);
         menuDialog.setCanceledOnTouchOutside(true);
         menuDialog.getWindow().setGravity(Gravity.LEFT | Gravity.TOP);
         if (items.length > 5) {
-            menuDialog.getWindow().setLayout(params.width, SystemUtils.getScreenHeight() * 3 / 5);
+            menuDialog.getWindow().setLayout(params.width, SystemUtils.getScreenHeight() * 4 / 5);
         }
         else {
             menuDialog.getWindow().setLayout(params.width, WindowManager.LayoutParams.WRAP_CONTENT);

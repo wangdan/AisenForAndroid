@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.example.aisensample.R;
+import org.aisen.huaban.R;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.aisen.android.support.inject.ViewInject;

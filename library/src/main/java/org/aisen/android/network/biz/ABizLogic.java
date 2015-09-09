@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.alibaba.fastjson.JSON;
 
 import org.aisen.android.common.setting.Setting;
+import org.aisen.android.common.setting.SettingExtra;
 import org.aisen.android.common.setting.SettingUtil;
 import org.aisen.android.common.setting.SettingUtility;
 import org.aisen.android.common.utils.Consts;
@@ -66,6 +67,16 @@ public abstract class ABizLogic implements IHttpUtility {
 		return SettingUtility.getSetting(type);
 	}
 
+	protected SettingExtra newSettingExtra(String type, String value, String desc) {
+		SettingExtra extra = new SettingExtra();
+
+		extra.setType(type);
+		extra.setValue(value);
+		extra.setDescription(desc);
+
+		return extra;
+	}
+
 	@Override
 	public <T> T doGet(HttpConfig config, Setting actionSetting, Params params, Class<T> responseCls) throws TaskException {
 		HttpConfig mConfig = cloneHttpConfig(config, actionSetting);
@@ -102,7 +113,7 @@ public abstract class ABizLogic implements IHttpUtility {
 
 		// 缓存是否在action中配置打开
 		boolean cacheEnable = actionSetting.getExtras().containsKey(Consts.CACHE_ENABLE) ? Boolean.parseBoolean(actionSetting.getExtras()
-				.get(Consts.CACHE_ENABLE).getValue()) : false;
+				.get(Consts.CACHE_ENABLE).getValue()) : true;
 
 		if (cacheEnable && (mCacheMode == CacheMode.cachePriority || mCacheMode != CacheMode.disable)) {
 			// 拉取内存
@@ -148,7 +159,7 @@ public abstract class ABizLogic implements IHttpUtility {
 					// 刷新持久缓存
 					if (cacheUtility != null) {
 						// 如果数据来自缓存，则不刷新
-						if (result instanceof IResult && ((IResult) result).isCache()) {
+						if (result instanceof IResult && ((IResult) result).fromCache()) {
 							Logger.w(ABizLogic.TAG, "数据来自缓存，不刷新");
 						}
 						else {
@@ -305,7 +316,7 @@ public abstract class ABizLogic implements IHttpUtility {
 	public void putToCache(Setting setting, Params params, Object data, ICacheUtility cacheUtility) {
 		if (data instanceof IResult) {
 			IResult iResult = (IResult) data;
-			if (!iResult.isCache())
+			if (!iResult.fromCache())
 				new PutCacheTask(setting, params, data, cacheUtility).executeOnExecutor(ICacheUtility.THREAD_POOL_EXECUTOR);
 		}
 		else {

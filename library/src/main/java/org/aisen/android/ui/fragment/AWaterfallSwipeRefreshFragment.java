@@ -2,10 +2,10 @@ package org.aisen.android.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.ViewGroup;
 
 import org.aisen.android.R;
 import org.aisen.android.support.inject.ViewInject;
+import org.aisen.android.ui.widget.pla.PLAMultiColumnListView;
 
 import java.io.Serializable;
 
@@ -26,7 +26,7 @@ public abstract class AWaterfallSwipeRefreshFragment<T extends Serializable, Ts 
     }
 
     @Override
-    protected void setInitRefreshView(ViewGroup refreshView, Bundle savedInstanceSate) {
+    protected void setInitRefreshView(PLAMultiColumnListView refreshView, Bundle savedInstanceSate) {
         super.setInitRefreshView(refreshView, savedInstanceSate);
 
         setInitSwipeRefreshLayout();

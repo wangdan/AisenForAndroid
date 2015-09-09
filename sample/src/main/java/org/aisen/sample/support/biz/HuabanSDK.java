@@ -1,4 +1,4 @@
-package org.aisen.sample.support;
+package org.aisen.sample.support.biz;
 
 import org.aisen.android.common.setting.Setting;
 import org.aisen.android.common.utils.Consts;
@@ -11,7 +11,7 @@ import org.aisen.sample.support.bean.HuabanPins;
 /**
  * SDK
  */
-public class SampleSDK extends ABizLogic {
+public class HuabanSDK extends ABizLogic {
 
     @Override
     protected HttpConfig configHttpConfig() {
@@ -20,22 +20,31 @@ public class SampleSDK extends ABizLogic {
         return httpConfig;
     }
 
-    private SampleSDK() {
+    private HuabanSDK() {
         super();
     }
 
-    private SampleSDK(CacheMode cacheMode) {
+    private HuabanSDK(CacheMode cacheMode) {
         super(cacheMode);
     }
 
-    public static SampleSDK getInstance() {
-        return new SampleSDK();
+    public static HuabanSDK getInstance() {
+        return new HuabanSDK();
     }
 
-    public static SampleSDK getInstance(CacheMode cacheMode) {
-        return new SampleSDK(cacheMode);
+    public static HuabanSDK getInstance(CacheMode cacheMode) {
+        return new HuabanSDK(cacheMode);
     }
 
+    /**
+     * 获取花瓣分类图片
+     *
+     * @param category 分类
+     * @param maxId 分页id
+     * @param limit 加载数量
+     * @return
+     * @throws TaskException
+     */
     public HuabanPins getHuabanFavorite(String category, long maxId, int limit) throws TaskException {
         Params params = new Params();
         if (maxId > 0)
@@ -44,8 +53,9 @@ public class SampleSDK extends ABizLogic {
 
         Setting action = getSetting("getHuabanFavorite").copy();
         action.setValue(action.getValue() + category);
+        action.getExtras().put("category", newSettingExtra("category", category, ""));
 
-        return doGet(configHttpConfig(), action, params, HuabanPins.class);
+        return doGet(action, params, HuabanPins.class);
     }
 
 }

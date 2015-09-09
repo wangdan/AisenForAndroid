@@ -1,10 +1,13 @@
 package org.aisen.sample.support.bean;
 
+import org.aisen.orm.annotation.PrimaryKey;
+
 /**
  * Created by wangdan on 15/8/20.
  */
 public class HuabanPin extends BaseBean {
 
+    @PrimaryKey(column = "pin_id")
     private long pin_id;
 
     private long user_id;

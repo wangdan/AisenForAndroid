@@ -6,7 +6,7 @@ import com.alibaba.fastjson.JSON;
 
 public class Logger {
 
-	private final static String TAG = "Logger";
+	public final static String TAG = "Logger";
 
 	public static boolean DEBUG = true;
 

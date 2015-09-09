@@ -1,4 +1,5 @@
 .gradle
+/orm
 local.properties
 /.idea/workspace.xml
 /.idea/libraries

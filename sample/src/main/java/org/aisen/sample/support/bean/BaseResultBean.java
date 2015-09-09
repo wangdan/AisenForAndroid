@@ -9,48 +9,64 @@ import java.io.Serializable;
  */
 public class BaseResultBean implements IResult, Serializable {
 
-    private boolean cache;// 是否是缓存数据
+    private boolean fromCache;// 是否是缓存数据
 
-    private boolean _expired;
+    private boolean outofDate;
 
-    private boolean _noMore;
+    private boolean endPaging;
 
-    private String[] pagingIndex = new String[0];
+    private String[] pagingIndex = new String[2];
 
-    @Override
-    public boolean expired() {
-        return _expired;
+    public boolean isFromCache() {
+        return fromCache;
     }
 
-    public void setExpired(boolean expired) {
-        this._expired = expired;
+    public void setFromCache(boolean fromCache) {
+        this.fromCache = fromCache;
     }
 
-    @Override
-    public boolean isCache() {
-        return cache;
+    public boolean isOutofDate() {
+        return outofDate;
     }
 
-    public void setCache(boolean cache) {
-        this.cache = cache;
+    public void setOutofDate(boolean outofDate) {
+        this.outofDate = outofDate;
     }
 
-    @Override
-    public boolean noMore() {
-        return _noMore;
+    public boolean isEndPaging() {
+        return endPaging;
     }
 
-    public void setNoMore(boolean noMore) {
-        this._noMore = noMore;
+    public void setEndPaging(boolean endPaging) {
+        this.endPaging = endPaging;
     }
 
-    @Override
-    public String[] pagingIndex() {
+    public String[] getPagingIndex() {
         return pagingIndex;
     }
 
     public void setPagingIndex(String[] pagingIndex) {
         this.pagingIndex = pagingIndex;
+    }
+
+    @Override
+    public boolean outofdate() {
+        return isOutofDate();
+    }
+
+    @Override
+    public boolean fromCache() {
+        return isFromCache();
+    }
+
+    @Override
+    public boolean endPaging() {
+        return isEndPaging();
+    }
+
+    @Override
+    public String[] pagingIndex() {
+        return getPagingIndex();
     }
 
 }

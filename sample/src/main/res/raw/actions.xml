@@ -2,16 +2,16 @@
 <app-settings>
 
 	<setting type="base_url">
-		<des></des>
-		<value></value>
+		<des>花瓣</des>
+		<value>http://api.huaban.com/</value>
 	</setting>
 
 	<setting type="getHuabanFavorite">
 		<des>花瓣美女</des>
 		<value>favorite/</value>
 		<extras>
-			<extra type="base_url">
-				<value>http://api.huaban.com/</value>
+			<extra type="cache_utility">
+				<value>org.aisen.sample.support.cache.HuabanCacheUtility</value>
 			</extra>
 		</extras>
 	</setting>

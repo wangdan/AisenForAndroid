@@ -1,4 +1,4 @@
-package org.aisen.sample.support;
+package org.aisen.sample.support.paging;
 
 import org.aisen.android.support.paging.IPaging;
 import org.aisen.sample.support.bean.HuabanPin;
