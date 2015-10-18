@@ -1,4 +1,4 @@
-package org.aisen.android.component.container;
+package org.aisen.android.ui.activity.container;
 
 import android.app.Activity;
 import android.app.Fragment;

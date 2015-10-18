@@ -8,7 +8,6 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.aisen.android.common.context.GlobalContext;
-import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.SystemUtils;
 import org.aisen.android.network.task.TaskException;
 import org.aisen.android.support.adapter.ABaseAdapter;
@@ -140,8 +139,6 @@ public class HuabanFragment extends AWaterfallSwipeRefreshFragment<HuabanPin, Hu
 
         public HuabanTask(RefreshMode mode) {
             super(mode);
-
-            Logger.e("huabanTask running");
         }
 
         @Override
