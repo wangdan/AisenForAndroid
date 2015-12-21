@@ -85,9 +85,27 @@ public class Logger {
 			Log.e(tag, String.format(format, msg));
 	}
 
-	public static void logExc(Throwable e) {
-		if (DEBUG)
-			e.printStackTrace();
+	// 这个日志会打印，不会因为release版本屏蔽
+	public static void sysout(String msg) {
+		try {
+			Log.v(TAG, msg);
+		} catch (Throwable e) {
+		}
+	}
+
+	public static void printExc(Class<?> clazz, Throwable e) {
+		try {
+			if (DEBUG) {
+				e.printStackTrace();
+			}
+			else {
+				String clazzName = clazz == null ? "Unknow" : clazz.getSimpleName();
+
+				Log.v(TAG, String.format("class[%s], %s", clazzName, e + ""));
+			}
+		} catch (Throwable ee) {
+			ee.printStackTrace();
+		}
 	}
 
 	public static String toJson(Object msg) {

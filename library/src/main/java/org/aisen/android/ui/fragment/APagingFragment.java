@@ -531,7 +531,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 			if (defLoadingDrawable == null)
 				defLoadingDrawable = GlobalContext.getInstance().getResources().getDrawable(R.drawable.comm_loading);
 		} catch (Throwable e) {
-			Logger.logExc(e);
+			Logger.printExc(getClass(), e);
 		}
 
 		return defLoadingDrawable;

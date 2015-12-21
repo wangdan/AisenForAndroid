@@ -434,7 +434,7 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
             // 4.1.1必报错，不知道为什么
             super.onDestroy();
         } catch (Exception e) {
-            Logger.logExc(e);
+            Logger.printExc(getClass(), e);
         }
 
         removeAllTask(true);
