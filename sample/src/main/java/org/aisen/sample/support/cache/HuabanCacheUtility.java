@@ -7,9 +7,10 @@ import org.aisen.android.common.utils.Logger;
 import org.aisen.android.network.cache.ICacheUtility;
 import org.aisen.android.network.http.Params;
 import org.aisen.orm.extra.Extra;
+import org.aisen.orm.utils.FieldUtils;
 import org.aisen.sample.support.bean.HuabanPin;
 import org.aisen.sample.support.bean.HuabanPins;
-import org.aisen.sample.support.db.HuabanDB;
+import org.aisen.sample.support.db.AisenDB;
 
 import java.util.List;
 
@@ -28,7 +29,9 @@ public class HuabanCacheUtility implements ICacheUtility {
 
         String category = categoryExtra.getValue();
 
-        List<HuabanPin> beanList = HuabanDB.getDB().select(null, HuabanPin.class);
+        String selection = String.format(" %s = ? ", FieldUtils.KEY);
+        String[] selectionArgs = new String[]{ category };
+        List<HuabanPin> beanList = AisenDB.getDB().select(HuabanPin.class, selection, selectionArgs);
         if (beanList.size() > 0) {
             HuabanPins beans = new HuabanPins();
             beans.setFromCache(true);
@@ -52,12 +55,12 @@ public class HuabanCacheUtility implements ICacheUtility {
         HuabanPins beans = (HuabanPins) responseObj;
 
         if (!params.containsKey("max")) {
-            HuabanDB.getDB().deleteAll(new Extra(null, category), HuabanPin.class);
+            AisenDB.getDB().deleteAll(new Extra(null, category), HuabanPin.class);
 
             Logger.d(Logger.TAG, "清理花瓣数据，category[%s]", category);
         }
 
-        HuabanDB.getDB().insert(null, beans.getPins());
+        AisenDB.getDB().insert(new Extra(null, category), beans.getPins());
 
         CacheTimeUtils.saveTime(KEY_CACHE);
 

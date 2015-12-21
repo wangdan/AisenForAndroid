@@ -2,10 +2,10 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion "23.0.0 rc2"
+    buildToolsVersion '23.0.1'
 
     defaultConfig {
-        applicationId "org.aisen.huaban"
+        applicationId "org.aiwen.android"
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 200

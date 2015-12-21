@@ -1,4 +1,4 @@
-package org.aisen.sample.ui.fragment.pics;
+package org.aisen.sample.ui.fragment.huaban;
 
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +10,8 @@ import org.aisen.huaban.R;
 import org.aisen.sample.ui.activity.MainActivity;
 
 /**
+ * 花瓣的Spinner
+ *
  * Created by wangdan on 15/9/10.
  */
 public class HuabanSpinnerFragment extends ABaseFragment implements MainActivity.MainSpinnerNavigation {
@@ -18,7 +20,15 @@ public class HuabanSpinnerFragment extends ABaseFragment implements MainActivity
         return new HuabanSpinnerFragment();
     }
 
-    ABaseFragment mFragment;
+    public static final HuabanFragment.Category[] HUABAN_CATEGORIES = new HuabanFragment.Category[] {
+            HuabanFragment.Category.beauty, HuabanFragment.Category.home, HuabanFragment.Category.travel_places, HuabanFragment.Category.food_drink,
+            HuabanFragment.Category.diy_crafts, HuabanFragment.Category.wedding_events, HuabanFragment.Category.modeling_hair, HuabanFragment.Category.men,
+            HuabanFragment.Category.illustration, HuabanFragment.Category.design, HuabanFragment.Category.architecture, HuabanFragment.Category.pets,
+            HuabanFragment.Category.kids, HuabanFragment.Category.photography, HuabanFragment.Category.art, HuabanFragment.Category.film_music_books,
+            HuabanFragment.Category.tips
+    };
+
+    HuabanFragment mFragment;
 
     @Override
     protected int inflateContentView() {
@@ -45,12 +55,16 @@ public class HuabanSpinnerFragment extends ABaseFragment implements MainActivity
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        mFragment = HuabanFragment.newInstance(HuabanFragment.Category.beauty);
+        if (mFragment != null && mFragment.getCategory().equals(HUABAN_CATEGORIES[position])) {
+            return;
+        }
+
+        mFragment = HuabanFragment.newInstance(HUABAN_CATEGORIES[position]);
 
         getActivity().getFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.layFindMain, mFragment, "FindMainFragment")
-                        .commit();
+                            .beginTransaction()
+                            .replace(R.id.layFindMain, mFragment, "FindMainFragment")
+                            .commit();
     }
 
     @Override

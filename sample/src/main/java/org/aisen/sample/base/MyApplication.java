@@ -9,7 +9,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
 import org.aisen.android.common.context.GlobalContext;
 import org.aisen.huaban.R;
-import org.aisen.sample.support.db.HuabanDB;
+import org.aisen.sample.support.db.AisenDB;
 
 import java.io.File;
 
@@ -24,7 +24,7 @@ public class MyApplication extends GlobalContext {
 
         initImageLoader();
 
-        HuabanDB.setDB();
+        AisenDB.setDB();
     }
 
     private void initImageLoader() {

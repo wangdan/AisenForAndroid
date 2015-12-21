@@ -1,4 +1,4 @@
-package org.aisen.sample.ui.fragment.pics;
+package org.aisen.sample.ui.fragment.huaban;
 
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -18,13 +18,13 @@ import org.aisen.android.ui.widget.pla.PLAImageView;
 import org.aisen.huaban.R;
 import org.aisen.sample.support.bean.HuabanPin;
 import org.aisen.sample.support.bean.HuabanPins;
-import org.aisen.sample.support.biz.HuabanSDK;
+import org.aisen.sample.support.biz.AisenSDK;
 import org.aisen.sample.support.paging.HuabanPaging;
 
 import java.util.List;
 
 /**
- * 花瓣图片
+ * 花瓣的瀑布流示例
  */
 public class HuabanFragment extends AWaterfallSwipeRefreshFragment<HuabanPin, HuabanPins> {
 
@@ -39,7 +39,23 @@ public class HuabanFragment extends AWaterfallSwipeRefreshFragment<HuabanPin, Hu
     }
 
     public enum Category {
-        beauty // 美女
+        beauty, // 美女
+        home, // 家居
+        travel_places, // 旅游
+        food_drink, // 美食
+        diy_crafts, // 手工/工艺
+        wedding_events, // 婚纱/婚礼
+        modeling_hair, // 造型
+        men, // 男士风尚
+        illustration, // 插画/漫画
+        design, // 平面设计
+        architecture, // 建筑设计
+        pets, // 动物
+        kids, // 儿童
+        photography, // 摄影
+        art, // 人文艺术
+        film_music_books, // 音乐/电影/图书
+        tips // 生活百科
     }
 
     private Category category;
@@ -153,9 +169,13 @@ public class HuabanFragment extends AWaterfallSwipeRefreshFragment<HuabanPin, Hu
             if (!TextUtils.isEmpty(nextPage) && mode == RefreshMode.update)
                 max = Long.parseLong(nextPage);
 
-            return HuabanSDK.getInstance(getTaskCacheMode(this)).getHuabanFavorite(category.toString(), max, limit);
+            return AisenSDK.getInstance(getTaskCacheMode(this)).getHuabanFavorite(category.toString(), max, limit);
         }
 
+    }
+
+    public Category getCategory() {
+        return category;
     }
 
 }

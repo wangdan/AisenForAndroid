@@ -11,7 +11,7 @@ import org.aisen.sample.support.bean.HuabanPins;
 /**
  * SDK
  */
-public class HuabanSDK extends ABizLogic {
+public class AisenSDK extends ABizLogic {
 
     @Override
     protected HttpConfig configHttpConfig() {
@@ -20,20 +20,20 @@ public class HuabanSDK extends ABizLogic {
         return httpConfig;
     }
 
-    private HuabanSDK() {
+    private AisenSDK() {
         super();
     }
 
-    private HuabanSDK(CacheMode cacheMode) {
+    private AisenSDK(CacheMode cacheMode) {
         super(cacheMode);
     }
 
-    public static HuabanSDK getInstance() {
-        return new HuabanSDK();
+    public static AisenSDK getInstance() {
+        return new AisenSDK();
     }
 
-    public static HuabanSDK getInstance(CacheMode cacheMode) {
-        return new HuabanSDK(cacheMode);
+    public static AisenSDK getInstance(CacheMode cacheMode) {
+        return new AisenSDK(cacheMode);
     }
 
     /**

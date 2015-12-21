@@ -23,7 +23,7 @@ import org.aisen.android.ui.widget.FitWindowsFrameLayout;
 import org.aisen.huaban.R;
 import org.aisen.sample.support.utils.SystemBarUtils;
 import org.aisen.sample.ui.fragment.menu.MenuFragment;
-import org.aisen.sample.ui.fragment.pics.HuabanSpinnerFragment;
+import org.aisen.sample.ui.fragment.huaban.HuabanSpinnerFragment;
 
 /**
  * Created by wangdan on 15/4/23.
