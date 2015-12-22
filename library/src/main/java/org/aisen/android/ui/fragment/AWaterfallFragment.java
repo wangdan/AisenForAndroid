@@ -24,7 +24,7 @@ public abstract class AWaterfallFragment<T extends Serializable, Ts extends Seri
 
     @Override
     protected int inflateContentView() {
-        return R.layout.comm_lay_waterfall;
+        return R.layout.comm_ui_waterfall;
     }
 
     @Override

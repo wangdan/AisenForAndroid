@@ -2,7 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/drawPics" android:icon="@drawable/ic_picture"
-        android:title="@string/draw_pics" android:checked="true" />
+        android:id="@+id/drawPics" android:checked="true"
+        android:icon="@drawable/ic_picture" android:title="@string/draw_pics"/>
+
+    <item
+        android:id="@+id/drawNews" android:icon="@drawable/ic_picture"
+        android:title="@string/draw_news"/>
 
 </menu>

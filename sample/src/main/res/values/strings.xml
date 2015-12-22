@@ -7,8 +7,9 @@
 
     <!--菜单项-->
     <string name="draw_pics">花瓣美图</string>
+    <string name="draw_news">新闻</string>
 
-    <array name="categories">
+    <array name="huaban_categories">
         <item>美女</item>
         <item>家居/装饰</item>
         <item>旅游</item>
@@ -26,6 +27,12 @@
         <item>人文艺术</item>
         <item>音乐/电影/图书</item>
         <item>生活百科</item>
+    </array>
+
+    <array name="news_tabs">
+        <item>美女1</item>
+        <item>美女2</item>
+        <item>美女3</item>
     </array>
 
 </resources>

@@ -46,7 +46,7 @@ public abstract class WorkTask<Params, Progress, Result> {
 		private final AtomicInteger mCount = new AtomicInteger(1);
 
 		public Thread newThread(Runnable r) {
-			return new Thread(r, "AsyncTask #" + mCount.getAndIncrement());
+			return new Thread(r, "WorkTask #" + mCount.getAndIncrement());
 		}
 	};
 
@@ -254,13 +254,13 @@ public abstract class WorkTask<Params, Progress, Result> {
 	}
 
 	final protected void onPreExecute() {
-		Logger.d(TAG, String.format("%s --->onTaskStarted()", TextUtils.isEmpty(taskId) ? "run " : (taskId + " run ")));
+		Logger.d(TAG, String.format("%s --->onPrepare()()", TextUtils.isEmpty(taskId) ? "run " : (taskId + " run ")));
 		onPrepare();
 	}
 
 	final protected void onPostExecute(Result result) {
 		if (exception == null) {
-			Logger.d(TAG, String.format("%s --->onTaskSuccess()", TextUtils.isEmpty(taskId) ? "run " : (taskId + " run ")));
+			Logger.d(TAG, String.format("%s --->onSuccess()", TextUtils.isEmpty(taskId) ? "run " : (taskId + " run ")));
 			onSuccess(result);
 		}
 		else if (exception != null) {

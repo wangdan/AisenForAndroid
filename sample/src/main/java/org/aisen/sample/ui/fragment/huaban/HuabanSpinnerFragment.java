@@ -45,7 +45,7 @@ public class HuabanSpinnerFragment extends ABaseFragment implements MainActivity
 
     @Override
     public String[] generateItems() {
-        return GlobalContext.getInstance().getResources().getStringArray(R.array.categories);
+        return GlobalContext.getInstance().getResources().getStringArray(R.array.huaban_categories);
     }
 
     @Override

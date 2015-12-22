@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 
+import org.aisen.android.R;
 import org.aisen.android.common.utils.ActivityHelper;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.support.adapter.FragmentPagerAdapter;
@@ -29,11 +30,11 @@ import java.util.Set;
 public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
                             implements ViewPager.OnPageChangeListener {
 
-    static final String TAG = "AFragment-ViewPager";
+    static final String TAG = "AFragment-Tabs";
 
     public static final String SET_INDEX = "org.aisen.android.ui.SET_INDEX";// 默认选择第几个
 
-    @ViewInject
+    @ViewInject(idStr = "viewPager")
     ViewPager mViewPager;
 
     FragmentPagerAdapter mInnerAdapter;
@@ -41,6 +42,11 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
     ArrayList<T> mItems;
     Map<String, Fragment> fragments;
     int mCurrentPosition = 0;
+
+    @Override
+    protected int inflateContentView() {
+        return R.layout.comm_ui_tabs;
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -102,7 +108,7 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
                     if (!TextUtils.isEmpty(type)) {
                         for (int i = 0; i < mItems.size(); i++) {
                             TabItem item = mItems.get(i);
-                            if (item.getType().equals(type)) {
+                            if (type.equals(item.getType())) {
                                 mCurrentPosition = i;
                                 break;
                             }
@@ -199,6 +205,11 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
         return null;
     }
 
+    /**
+     * 标签页，标签不能重复
+     *
+     * @return
+     */
     abstract protected ArrayList<T> generateTabs();
 
     abstract protected Fragment newFragment(T bean);

@@ -1,7 +1,6 @@
 package org.aisen.android.ui.fragment;
 
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 
 import org.aisen.android.R;
@@ -22,7 +21,7 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
 
     @Override
     protected int inflateContentView() {
-        return R.layout.comm_lay_list;
+        return R.layout.comm_ui_list;
     }
 
     @Override

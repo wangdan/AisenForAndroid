@@ -22,7 +22,7 @@ public abstract class AWaterfallSwipeRefreshFragment<T extends Serializable, Ts 
 
     @Override
     protected int inflateContentView() {
-        return R.layout.comm_lay_waterfall_swiperefresh;
+        return R.layout.comm_ui_waterfall_swiperefresh;
     }
 
     @Override

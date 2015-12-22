@@ -24,6 +24,7 @@ import org.aisen.huaban.R;
 import org.aisen.sample.support.utils.SystemBarUtils;
 import org.aisen.sample.ui.fragment.menu.MenuFragment;
 import org.aisen.sample.ui.fragment.huaban.HuabanSpinnerFragment;
+import org.aisen.sample.ui.fragment.news.NewsTabsFragment;
 
 /**
  * Created by wangdan on 15/4/23.
@@ -82,7 +83,11 @@ public class MainActivity extends BaseActivity {
 
         switch (menu.getItemId()) {
         case R.id.drawPics:
-            fragment = HuabanSpinnerFragment.newInstance();
+//            fragment = HuabanSpinnerFragment.newInstance();
+            fragment = NewsTabsFragment.newInstance();
+            break;
+        case R.id.drawNews:
+            fragment = NewsTabsFragment.newInstance();
             break;
         }
 
