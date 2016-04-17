@@ -24,6 +24,10 @@ public abstract class IAction {
         return false;
     }
 
+    public void doInterrupt() {
+
+    }
+
     public void run() {
         if (parent == null || !parent.interrupt()) {
             doAction();
@@ -46,6 +50,10 @@ public abstract class IAction {
         return context;
     }
 
-    abstract public void doAction();
+    public void doAction() {
+        if (getChild() != null) {
+            getChild().run();
+        }
+    }
 
 }

@@ -160,7 +160,7 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         setContentView(View.inflate(this, layoutResID, null));
     }
 
-    View getRootView() {
+    public View getRootView() {
         return rootView;
     }
 
@@ -392,7 +392,7 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
     @Override
     public void finish() {
         // 2014-09-12 解决ATabTitlePagerFragment的destoryFragments方法报错的BUG
-        setMDestory(true);
+        setDestory(true);
 
         super.finish();
 
@@ -401,11 +401,11 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         }
     }
 
-    public boolean mIsDestoryed() {
+    public boolean isDestory() {
         return isDestory;
     }
 
-    public void setMDestory(boolean destory) {
+    public void setDestory(boolean destory) {
         this.isDestory = destory;
     }
 
@@ -436,6 +436,15 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         }
 
         return false;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (mHelper != null) {
+            mHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     public BaseActivityHelper getActivityHelper() {

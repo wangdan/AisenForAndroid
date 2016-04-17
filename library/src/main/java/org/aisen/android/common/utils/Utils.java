@@ -70,7 +70,7 @@ public class Utils {
 		return shareIntent;
 	}
 
-	public static int dip2px(int dipValue) {
+	public static int dip2px(float dipValue) {
 		float reSize = GlobalContext.getInstance().getResources().getDisplayMetrics().density;
 		return (int) ((dipValue * reSize) + 0.5);
 	}
@@ -150,15 +150,6 @@ public class Utils {
             if (d == null && fallback != null)
                 d = fallback;
             return d;
-        } finally {
-            a.recycle();
-        }
-    }
-
-    public static int resolveColor(Context context, @AttrRes int attr, int fallback) {
-        TypedArray a = context.getTheme().obtainStyledAttributes(new int[]{attr});
-        try {
-            return a.getColor(0, fallback);
         } finally {
             a.recycle();
         }

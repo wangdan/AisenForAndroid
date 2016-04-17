@@ -45,11 +45,17 @@ public class AsToolbar extends Toolbar {
 
         return handler;
     }
+
+    public void performDoublcClick() {
+        BaseActivity activity = BaseActivity.getRunningActivity();
+        if (activity != null && activity instanceof OnToolbarDoubleClick)
+            ((OnToolbarDoubleClick) activity).onToolbarDoubleClick();
+    }
     
     public interface OnToolbarDoubleClick {
     	
-    	public boolean onToolbarDoubleClick();
+    	boolean onToolbarDoubleClick();
     	
     }
-    
+
 }

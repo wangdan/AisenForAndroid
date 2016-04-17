@@ -1,39 +1,104 @@
 package org.aisen.android.ui.fragment;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.aisen.android.R;
+import org.aisen.android.ui.fragment.adapter.BasicListAdapter;
+import org.aisen.android.ui.fragment.adapter.IPagingAdapter;
 import org.aisen.android.support.inject.ViewInject;
+import org.aisen.android.ui.fragment.itemview.AFooterItemView;
+import org.aisen.android.ui.fragment.itemview.AHeaderItemViewCreator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * 普通的ListView
+ * 维护ListView
  *
  */
-public abstract class AListFragment<T extends Serializable, Ts extends Serializable> extends ARefreshFragment<T, Ts, ListView> {
+public abstract class AListFragment<T extends Serializable, Ts extends Serializable>
+                                extends APagingFragment<T, Ts, ListView> implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
-	@ViewInject(idStr = "listView")
-	ListView listView;
+    @ViewInject(idStr = "listView")
+    ListView mListView;
 
-	@Override
-	public AbsListView getRefreshView() {
-		return listView;
-	}
+    @Override
+    public int inflateContentView() {
+        return R.layout.comm_ui_list;
+    }
 
-	@Override
-	protected int inflateContentView() {
-		return R.layout.comm_lay_listview;
-	}
+    @Override
+    protected void setupRefreshView(Bundle savedInstanceSate) {
+        super.setupRefreshView(savedInstanceSate);
 
-	protected ListView getListView() {
-		return listView;
-	}
+        // 设置事件
+        getRefreshView().setOnScrollListener(this);
+        getRefreshView().setOnItemClickListener(this);
+    }
 
-	public void setItems(ArrayList<T> items) {
+    @Override
+    public ListView getRefreshView() {
+        return mListView;
+    }
+
+    @Override
+    protected IPagingAdapter<T> newAdapter(ArrayList<T> datas) {
+        return new BasicListAdapter<>(this, datas);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        onScroll(firstVisibleItem, visibleItemCount, totalItemCount);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        onScrollStateChanged(scrollState);
+    }
+
+    @Override
+    public void requestDataOutofdate() {
+        getRefreshView().setSelectionFromTop(0, 0);
+
+        super.requestDataOutofdate();
+    }
+
+    @Override
+    protected int getFirstVisiblePosition() {
+        return getRefreshView().getFirstVisiblePosition();
+    }
+
+    @Override
+    protected void bindAdapter(IPagingAdapter adapter) {
+        if (getRefreshView().getAdapter() == null)
+            getRefreshView().setAdapter((BasicListAdapter) adapter);
+    }
+
+    @Override
+    protected void addFooterViewToRefreshView(AFooterItemView<?> footerItemView) {
+        getRefreshView().addFooterView(footerItemView.getConvertView());
+    }
+
+    @Override
+    protected void addHeaderViewToRefreshView(AHeaderItemViewCreator<?> headerItemViewCreator) {
+        // TODO
+    }
+
+    /**
+     * 初始化ListView
+     *
+     * @param items
+     */
+    public void setItems(ArrayList<T> items) {
         if (items == null)
             return;
 
@@ -48,26 +113,13 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
             setViewVisiable(contentLayout, View.VISIBLE);
         }
         setAdapterItems(items);
-        notifyDataSetChanged();
-        if (listView.getAdapter() == null) {
-            listView.setAdapter(getAdapter());
+        if (mListView.getAdapter() == null) {
+            bindAdapter(getAdapter());
         }
         else {
-            getListView().setSelectionFromTop(0, 0);
+            mListView.setSelectionFromTop(0, 0);
+            getAdapter().notifyDataSetChanged();
         }
-	}
-
-    @Override
-	public boolean setRefreshing() {
-		return false;
-	}
-
-	@Override
-	public void onRefreshViewComplete() {
-	}
-
-	@Override
-	public void onChangedByConfig(RefreshConfig config) {
-	}
+    }
 
 }

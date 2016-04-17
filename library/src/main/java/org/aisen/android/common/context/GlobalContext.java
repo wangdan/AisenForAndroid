@@ -1,7 +1,10 @@
 package org.aisen.android.common.context;
 
 import android.app.Application;
+import android.os.Environment;
 import android.os.Handler;
+
+import com.squareup.okhttp.OkHttpClient;
 
 import org.aisen.android.common.setting.SettingUtility;
 import org.aisen.android.common.utils.ActivityHelper;
@@ -9,16 +12,26 @@ import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.SdcardUtils;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public class GlobalContext extends Application {
 
 	private static GlobalContext _context;
+
+	public final static int CONN_TIMEOUT = 30000;
+	public final static int READ_TIMEOUT = 30000;
+
+	private OkHttpClient mOkHttpClient;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		
 		_context = this;
+
+		// 初始化OkHttpClient
+		mOkHttpClient = new OkHttpClient();
+		configOkHttpClient(CONN_TIMEOUT, READ_TIMEOUT);
 		
 		// 初始化ActivityHelper
 		ActivityHelper.config(this);
@@ -36,7 +49,7 @@ public class GlobalContext extends Application {
 	public Handler getHandler() {
 		return mHandler;
 	}
-	
+
 	Handler mHandler = new Handler() {
 		
 	};
@@ -48,9 +61,16 @@ public class GlobalContext extends Application {
 	 * @return
 	 */
 	public String getAppPath() {
-		if ("android".equals(SettingUtility.getStringSetting("root_path")))
-			return getExternalCacheDir().getAbsolutePath() + File.separator;
-		
+		if ("android".equals(SettingUtility.getStringSetting("root_path"))) {
+			File file = GlobalContext.getInstance().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+			if (file != null) {
+				return file.getAbsolutePath() + File.separator;
+			}
+			else {
+				return getCacheDir().getAbsolutePath() + File.separator;
+			}
+		}
+
 		return SdcardUtils.getSdcardPath() + File.separator + SettingUtility.getStringSetting("root_path") + File.separator;
 	}
 	
@@ -70,6 +90,17 @@ public class GlobalContext extends Application {
 	 */
 	public String getImagePath() {
 		return getAppPath() + SettingUtility.getPermanentSettingAsStr("com_m_common_image", "image") + File.separator;
+	}
+
+	public OkHttpClient getOkHttpClient() {
+		return mOkHttpClient;
+	}
+
+	public void configOkHttpClient(int connTimeout, int socketTimeout) {
+		if (mOkHttpClient != null) {
+			mOkHttpClient.setConnectTimeout(connTimeout, TimeUnit.MILLISECONDS);
+			mOkHttpClient.setReadTimeout(socketTimeout, TimeUnit.MILLISECONDS);
+		}
 	}
 
 }

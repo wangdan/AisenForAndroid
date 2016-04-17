@@ -1,201 +1,203 @@
 package org.aisen.android.network.http;
 
-import android.net.Proxy;
 import android.text.TextUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.MultipartBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
+import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.setting.Setting;
+import org.aisen.android.common.setting.SettingUtility;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.SystemUtils;
 import org.aisen.android.network.biz.ABizLogic;
 import org.aisen.android.network.task.TaskException;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.params.ConnRouteParams;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
+import java.util.Set;
 
 public class DefHttpUtility implements IHttpUtility {
 
-	private static final String TAG = DefHttpUtility.class.getSimpleName();
-
-	@Override
-	public <T> T doGet(HttpConfig config, Setting action, Params params, Class<T> responseCls) throws TaskException {
-		// 是否有网络连接
-		if (SystemUtils.getNetworkType() == SystemUtils.NetWorkType.none)
-			throw new TaskException(TaskException.TaskError.noneNetwork.toString());
-
-		String url = (config.baseUrl + action.getValue() + (params == null ? "" : "?" + ParamsUtil.encodeToURLParams(params))).replaceAll(" ", "");
-		Logger.v(TAG, url);
-
-		HttpGet httpGet = new HttpGet(url);
-		configHttpHeader(httpGet, config);
-
-		return executeClient(httpGet, responseCls);
+	static String getTag(Setting action, String append) {
+		return ABizLogic.getTag(action, append);
 	}
 
 	@Override
-	public <T> T doPost(HttpConfig config, Setting action, Params params, Class<T> responseCls, Object requestObj) throws TaskException {
-		// 是否有网络连接
-		if (SystemUtils.getNetworkType() == SystemUtils.NetWorkType.none)
-			throw new TaskException(TaskException.TaskError.noneNetwork.toString());
+	public <T> T doGet(HttpConfig config, Setting action, Params urlParams, Class<T> responseCls) throws TaskException {
+		Request.Builder builder = createRequestBuilder(config, action, urlParams, "Get");
 
-		String url = (config.baseUrl + action.getValue() + (params == null ? "" : "?" + ParamsUtil.encodeToURLParams(params))).replaceAll(" ", "");
-		Logger.v(TAG, url);
+		Request request = builder.build();
 
-		HttpPost httpPost = new HttpPost(url);
-		configHttpHeader(httpPost, config);
+		return executeRequest(request, responseCls, action, "Get");
+	}
 
-		if (requestObj != null) {
-			String requestBodyStr = null;
-			if (requestObj instanceof Params) {
-				Params p = (Params) requestObj;
-				requestBodyStr = ParamsUtil.encodeToURLParams(p);
-			}
-			else {
-				requestBodyStr = JSON.toJSONString(requestObj);
-			}
-			
-			ByteArrayEntity entity = new ByteArrayEntity(requestBodyStr.getBytes());
-			httpPost.setEntity(entity);
+	@Override
+	public <T> T doPost(HttpConfig config, Setting action, Params urlParams, Params bodyParams, Object requestObj, Class<T> responseCls) throws TaskException {
+		Request.Builder builder = createRequestBuilder(config, action, urlParams, "Post");
+
+		if (bodyParams != null) {
+			String requestBodyStr = ParamsUtil.encodeToURLParams(bodyParams);
+
+			Logger.d(getTag(action, "Post"), requestBodyStr);
+
+			builder.post(RequestBody.create(MediaType.parse("application/x-www-form-urlencoded;charset=UTF-8"), requestBodyStr));
+		}
+		else if (requestObj != null) {
+			String requestBodyStr = JSON.toJSONString(requestObj);
+
+			Logger.d(getTag(action, "Post"), requestBodyStr);
+
+			builder.post(RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), requestBodyStr));
 		}
 
-		return executeClient(httpPost, responseCls);
+		return executeRequest(builder.build(), responseCls, action, "Post");
 	}
 
-	public <T> T uploadFile(HttpConfig config, Setting action, Params params, File file, Params headers, Class<T> responseClazz) throws TaskException {
-//		PostMethod postMethod = new PostMethod((config.baseUrl + action.getValue() + (params == null ? "" : "?"
-//				+ ParamsUtil.encodeToURLParams(params))).replaceAll(" ", ""));
-//
-//		StringPart sp = new StringPart(" TEXT ", " testValue ");
-//		FilePart fp = null;
-//		try {
-//			fp = new FilePart("file", file.getName(), file);
-//		} catch (FileNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//
-//		MultipartRequestEntity mrp = new MultipartRequestEntity(new Part[] { sp, fp }, postMethod.getParams());
-//		postMethod.setRequestEntity(mrp);
-//		postMethod.addRequestHeader("cookie", config.cookie);
-//
-//		if (headers != null)
-//			for (String key : headers.getKeys())
-//				postMethod.addRequestHeader(key, headers.getParameter(key));
-//
-//		// 执行postMethod
-//		org.apache.commons.httpclient.HttpClient httpClient = new org.apache.commons.httpclient.HttpClient();
-//		try {
-//			httpClient.executeMethod(postMethod);
-//			Logger.v(ABaseBizlogic.TAG, String.format("upload file's response body = %s", postMethod.getResponseBodyAsString()));
-////			T result = new ObjectMapper().readValue(postMethod.getResponseBodyAsString(), responseClazz);
-//			T result = JSON.parseObject(postMethod.getResponseBodyAsString(), responseClazz);
-//			return result;
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
+	@Override
+	public <T> T doPostFiles(HttpConfig config, Setting action, Params urlParams, Params bodyParams, MultipartFile[] files, Class<T> responseCls) throws TaskException {
+		String method = "doPostFiles";
 
-		return null;
-	}
+		Request.Builder builder = createRequestBuilder(config, action, urlParams, method);
 
-	@SuppressWarnings("unchecked")
-	private <T> T executeClient(HttpUriRequest request, Class<T> responseCls) throws TaskException {
-		try {
-			HttpClient httpClient = generateHttpClient();
+		MultipartBuilder multipartBuilder = new MultipartBuilder();
+		multipartBuilder.type(MultipartBuilder.FORM);
 
-			HttpResponse httpResponse = httpClient.execute(request);
-			if (httpResponse.getStatusLine().getStatusCode() / 100 == 2) {
-				String responseStr = readResponse(httpResponse);
-				try {
-					if (responseCls.getSimpleName().equals("String"))
-						return (T) responseStr;
-					
-					return JSON.parseObject(responseStr, responseCls);
-				} catch (Exception e) {
-					e.printStackTrace();
-					throw new TaskException(TaskException.TaskError.resultIllegal.toString());
+		// 处理Body参数
+		if (bodyParams != null && bodyParams.getKeys().size() > 0) {
+			for (String key : bodyParams.getKeys()) {
+				String value = bodyParams.getParameter(key);
+				multipartBuilder.addFormDataPart(key, value);
+
+				Logger.d(getTag(action, method), "BodyParam[%s, %s]", key, value);
+			}
+		}
+
+		// 处理文件数据
+		if (files != null && files.length > 0) {
+			for (MultipartFile file : files) {
+				// 普通字节流
+				if (file.getBytes() != null) {
+					multipartBuilder.addFormDataPart(file.getKey(), file.getKey(), RequestBody.create(MediaType.parse("application/octet-stream"), file.getBytes()));
+
+					Logger.d(getTag(action, method), "Multipart bytes, length = " + file.getBytes().length);
 				}
-			} else {
-				Logger.e(ABizLogic.TAG,
-						String.format("Access to the server error, statusCode = %d", httpResponse.getStatusLine().getStatusCode()));
-				Logger.w(ABizLogic.TAG, readResponse(httpResponse));
+				// 文件
+				else if (file.getFile() != null) {
+					multipartBuilder.addFormDataPart(file.getKey(), file.getFile().getName(), RequestBody.create(MediaType.parse(file.getContentType()), file.getFile()));
+
+					Logger.d(getTag(action, method), "Multipart file, name = %s, path = %s", file.getFile().getName(), file.getFile().getAbsolutePath());
+				}
+			}
+
+		}
+
+		RequestBody requestBody = multipartBuilder.build();
+		builder.post(requestBody);
+		return executeRequest(builder.build(), responseCls, action, method);
+	}
+
+	private Request.Builder createRequestBuilder(HttpConfig config, Setting action, Params urlParams, String method) throws TaskException {
+		// 是否有网络连接
+		if (SystemUtils.getNetworkType() == SystemUtils.NetWorkType.none) {
+			Logger.w(getTag(action, method), "没有网络连接");
+
+			throw new TaskException(TaskException.TaskError.noneNetwork.toString());
+		}
+
+		String url = (config.baseUrl + action.getValue() + (urlParams == null ? "" : "?" + ParamsUtil.encodeToURLParams(urlParams))).replaceAll(" ", "");
+		Logger.d(getTag(action, method), url);
+
+		Request.Builder builder = new Request.Builder();
+		builder.url(url);
+
+		// add Cookie
+		if (!TextUtils.isEmpty(config.cookie)) {
+			builder.header("Cookie", config.cookie);
+
+			Logger.d(getTag(action, method), "Cookie = " + config.cookie);
+		}
+		// add header
+		if (config.headerMap.size() > 0) {
+			Set<String> keySet = config.headerMap.keySet();
+			for (String key : keySet) {
+				builder.addHeader(key, config.headerMap.get(key));
+
+				Logger.d(getTag(action, method), "Header[%s, %s]", key, config.headerMap.get(key));
+			}
+		}
+
+		return builder;
+	}
+
+	private <T> T executeRequest(Request request, Class<T> responseCls, Setting action, String method) throws TaskException {
+		try {
+			if (SettingUtility.getPermanentSettingAsInt("http_delay") > 0) {
+				Thread.sleep(SettingUtility.getPermanentSettingAsInt("http_delay"));
+			}
+		} catch (Throwable e) {
+		}
+
+		try {
+			Response response = getOkHttpClient().newCall(request).execute();
+
+			Logger.w(getTag(action, method), "Http-code = %d", response.code());
+			if (!(response.code() == HttpURLConnection.HTTP_OK || response.code() == HttpURLConnection.HTTP_PARTIAL)) {
+				String responseStr = response.body().string();
+
+				if (Logger.DEBUG) {
+					Logger.w(getTag(action, method), responseStr);
+				}
+
+				TaskException.checkResponse(responseStr);
+
 				throw new TaskException(TaskException.TaskError.timeout.toString());
+			} else {
+				String responseStr = response.body().string();
+
+				Logger.v(getTag(action, method), "Response = %s", responseStr);
+
+				return parseResponse(responseStr, responseCls);
 			}
 		} catch (SocketTimeoutException e) {
-			e.printStackTrace();
-			throw new TaskException(TaskException.TaskError.timeout.toString());
-		} catch (ConnectTimeoutException e) {
-			e.printStackTrace();
-			throw new TaskException(TaskException.TaskError.timeout.toString());
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-			throw new TaskException(TaskException.TaskError.timeout.toString());
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			Logger.printExc(DefHttpUtility.class, e);
+			Logger.w(getTag(action, method), e + "");
+
 			throw new TaskException(TaskException.TaskError.timeout.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Logger.printExc(DefHttpUtility.class, e);
+			Logger.w(getTag(action, method), e + "");
+
 			throw new TaskException(TaskException.TaskError.timeout.toString());
+		} catch (TaskException e) {
+			Logger.printExc(DefHttpUtility.class, e);
+			Logger.w(getTag(action, method), e + "");
+
+			throw e;
+		} catch (Exception e) {
+			Logger.printExc(DefHttpUtility.class, e);
+			Logger.w(getTag(action, method), e + "");
+
+			throw new TaskException(TaskException.TaskError.resultIllegal.toString());
 		}
 	}
 
-	private void configHttpHeader(HttpUriRequest request, HttpConfig config) {
-		request.addHeader("Cookie", config.cookie);
-		request.addHeader("Accept-Charset", "utf-8");
-		if (!TextUtils.isEmpty(config.contentType))
-			request.addHeader("Content-Type", config.contentType);
-		else
-			request.addHeader("Content-Type", "application/json");
-	}
+	protected <T> T parseResponse(String resultStr, Class<T> responseCls) throws TaskException  {
+		if (responseCls.getSimpleName().equals("String"))
+			return (T) resultStr;
 
-	private HttpClient generateHttpClient() {
-		BasicHttpParams httpParameters = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(httpParameters, 8 * 1000);
-		HttpConnectionParams.setSoTimeout(httpParameters, 8 * 1000);
-		DefaultHttpClient client = new DefaultHttpClient(httpParameters);
-
-		String host = Proxy.getDefaultHost();
-		if (host != null) {
-			int port = Proxy.getDefaultPort();
-			client.getParams().setParameter(ConnRouteParams.DEFAULT_PROXY, new HttpHost(host, port));
-		}
-		return client;
-	}
-
-	private String readResponse(HttpResponse response) throws IllegalStateException, IOException {
-		String result = "";
-		HttpEntity entity = response.getEntity();
-		InputStream inputStream = entity.getContent();
-
-		ByteArrayOutputStream content = new ByteArrayOutputStream();
-
-		int readBytes = 0;
-		byte[] sBuffer = new byte[1024 * 8];
-		while ((readBytes = inputStream.read(sBuffer)) != -1) {
-			content.write(sBuffer, 0, readBytes);
-		}
-		result = new String(content.toByteArray());
-		
-		Logger.d(ABizLogic.TAG, String.format("response = %s", result));
-		
+		T result = JSON.parseObject(resultStr, responseCls);
 		return result;
+	}
+
+	public synchronized OkHttpClient getOkHttpClient() {
+		return GlobalContext.getInstance().getOkHttpClient();
 	}
 
 }

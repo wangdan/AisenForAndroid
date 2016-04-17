@@ -17,6 +17,8 @@ public class TaskException extends Exception {
 	private static final long serialVersionUID = -6262214243381380676L;
 
 	public enum TaskError {
+		// 网络错误
+		failIOError,
 		// 无网络链接
 		noneNetwork, 
 		// 连接超时
@@ -29,7 +31,7 @@ public class TaskException extends Exception {
 	
 	private String code;
 
-    private String msg;
+    private String msg = "";
 	
 	private static IExceptionDeclare exceptionDeclare;
 	
@@ -49,12 +51,12 @@ public class TaskException extends Exception {
 	@Override
 	public String getMessage() {
         if (!TextUtils.isEmpty(msg))
-            return msg;
+            return msg + "";
 
 		if (!TextUtils.isEmpty(code) && exceptionDeclare != null) {
-			String msg = exceptionDeclare.declareMessage(code);
+			String msg = exceptionDeclare.checkCode(code);
 			if (!TextUtils.isEmpty(msg)) {
-				return msg;
+				return msg + "";
 			}
 		}
 
@@ -62,14 +64,14 @@ public class TaskException extends Exception {
             Resources res = GlobalContext.getInstance().getResources();
 
             TaskError error = TaskError.valueOf(code);
-            if (error == TaskError.noneNetwork)
+            if (error == TaskError.noneNetwork || error == TaskError.failIOError)
                 msg = res.getString(R.string.comm_error_noneNetwork);
             else if (error == TaskError.socketTimeout || error == TaskError.timeout)
                 msg = res.getString(R.string.comm_error_timeout);
             else if (error == TaskError.resultIllegal)
                 msg = res.getString(R.string.comm_error_resultIllegal);
             if (!TextUtils.isEmpty(msg))
-                return msg;
+                return msg + "";
         } catch (Exception e) {
         }
 
@@ -78,6 +80,11 @@ public class TaskException extends Exception {
 	
 	public static void config(IExceptionDeclare declare) {
 		TaskException.exceptionDeclare = declare;
+	}
+
+	public static void checkResponse(String response) throws TaskException {
+		if (TaskException.exceptionDeclare != null)
+			TaskException.exceptionDeclare.checkResponse(response);
 	}
 
 }

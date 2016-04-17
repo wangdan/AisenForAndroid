@@ -1,37 +1,81 @@
 package org.aisen.android.ui.fragment;
 
+import android.os.Bundle;
 import android.view.View;
-import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import org.aisen.android.R;
 import org.aisen.android.support.inject.ViewInject;
+import org.aisen.android.ui.fragment.adapter.BasicListAdapter;
+import org.aisen.android.ui.fragment.adapter.IPagingAdapter;
+import org.aisen.android.ui.fragment.itemview.AFooterItemView;
+import org.aisen.android.ui.fragment.itemview.AHeaderItemViewCreator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by wangdan on 15/4/25.
+ * 维护GridView
+ *
+ * Created by wangdan on 16/1/21.
  */
-public abstract class AGridFragment<T extends Serializable, Ts extends Serializable> extends ARefreshFragment<T, Ts, GridView> {
+public abstract class AGridFragment<T extends Serializable, Ts extends Serializable>
+                        extends APagingFragment<T, Ts, GridView>
+                        implements AdapterView.OnItemClickListener {
 
     @ViewInject(idStr = "gridview")
     private GridView gridView;
 
     @Override
-    public AbsListView getRefreshView() {
+    public int inflateContentView() {
+        return R.layout.comm_ui_gridview;
+    }
+
+    @Override
+    public GridView getRefreshView() {
         return gridView;
     }
 
     @Override
-    protected int inflateContentView() {
-        return R.layout.comm_lay_gridview;
+    protected void setupRefreshView(Bundle savedInstanceSate) {
+        super.setupRefreshView(savedInstanceSate);
+
+        // 设置事件
+        getRefreshView().setOnItemClickListener(this);
     }
 
-    protected GridView getGridView() {
-        return gridView;
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
     }
 
+    @Override
+    protected IPagingAdapter<T> newAdapter(ArrayList<T> datas) {
+        return new BasicListAdapter<>(this, datas);
+    }
+
+    @Override
+    protected void bindAdapter(IPagingAdapter adapter) {
+        if (getRefreshView().getAdapter() == null)
+            getRefreshView().setAdapter((BasicListAdapter) adapter);
+    }
+
+    @Override
+    protected void addFooterViewToRefreshView(AFooterItemView<?> footerItemView) {
+
+    }
+
+    @Override
+    protected void addHeaderViewToRefreshView(AHeaderItemViewCreator<?> headerItemViewCreator) {
+
+    }
+
+    /**
+     * 初始化ListView
+     *
+     * @param items
+     */
     public void setItems(ArrayList<T> items) {
         if (items == null)
             return;
@@ -47,23 +91,13 @@ public abstract class AGridFragment<T extends Serializable, Ts extends Serializa
             setViewVisiable(contentLayout, View.VISIBLE);
         }
         setAdapterItems(items);
-        notifyDataSetChanged();
-        if (gridView.getAdapter() == null) {
-            gridView.setAdapter(getAdapter());
+        if (getRefreshView().getAdapter() == null) {
+            bindAdapter(getAdapter());
         }
-    }
-
-    @Override
-    public boolean setRefreshing() {
-        return false;
-    }
-
-    @Override
-    public void onRefreshViewComplete() {
-    }
-
-    @Override
-    public void onChangedByConfig(RefreshConfig config) {
+        else {
+            getRefreshView().smoothScrollToPosition(0);
+            getAdapter().notifyDataSetChanged();
+        }
     }
 
 }
