@@ -124,7 +124,7 @@ public class SettingsXmlParser {
 				eventType = xmlResParser.next();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.printExc(SettingsXmlParser.class, e);
 		} finally {
 //			if (xmlResParser != null)
 //				xmlResParser.close();

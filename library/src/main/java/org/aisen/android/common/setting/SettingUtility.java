@@ -2,9 +2,7 @@ package org.aisen.android.common.setting;
 
 import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.ActivityHelper;
-import org.aisen.android.common.utils.SdcardUtils;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -19,27 +17,6 @@ public class SettingUtility {
 
 	private SettingUtility() {
 
-	}
-
-	public static void setSettingUtility() {
-		addSettings("actions");
-		addSettings("settings");
-
-        if (SdcardUtils.hasSdcardAndCanWrite()) {
-            File rootFile = new File(GlobalContext.getInstance().getAppPath());
-            if (!rootFile.exists())
-                rootFile.mkdirs();
-
-            // 数据缓存目录设置
-            File jsonFile = new File(rootFile.getAbsolutePath() + File.separator + getPermanentSettingAsStr("com_m_common_json", "files"));
-            if (!jsonFile.exists())
-                jsonFile.mkdirs();
-
-            // 缓存目录设置
-            File imageFile = new File(rootFile.getAbsolutePath() + File.separator + getPermanentSettingAsStr("com_m_common_image", "images"));
-            if (!imageFile.exists())
-                imageFile.mkdirs();
-        }
 	}
 
 	/**

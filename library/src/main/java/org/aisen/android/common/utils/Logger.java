@@ -11,84 +11,162 @@ public class Logger {
 	public static boolean DEBUG = true;
 
 	public static void v(Object o) {
-		if (DEBUG)
-			Log.v(TAG, toJson(o));
+		if (DEBUG) {
+			String log = toJson(o);
+
+			Log.v(TAG, log);
+
+			Logger2File.log2File(TAG, log);
+		}
+
 	}
 
-	public static void v(String tag, Object msg) {
-		if (DEBUG)
-			Log.v(tag, toJson(msg));
+	public static void v(String tag, Object o) {
+		if (DEBUG) {
+			String log = toJson(o);
+
+			Log.v(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
 	}
 
 	public static void v(String tag, String format, Object... args) {
-		if (DEBUG)
-			Log.v(tag, String.format(format, args));
+		if (DEBUG) {
+			String log = String.format(format, args);
+
+			Log.v(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
 	}
 
 	public static void d(Object o) {
-		if (DEBUG)
-			Log.d(TAG, toJson(o));
+		if (DEBUG) {
+			String log = toJson(o);
+
+			Log.d(TAG, log);
+
+			Logger2File.log2File(TAG, log);
+		}
 	}
 
-	public static void d(String tag, Object msg) {
-		if (DEBUG)
-			Log.d(tag, toJson(msg));
+	public static void d(String tag, Object o) {
+		if (DEBUG) {
+			String log = toJson(o);
+
+			Log.d(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
 	}
 
 	public static void d(String tag, String format, Object... args) {
-		if (DEBUG)
-			Log.d(tag, String.format(format, args));
+		if (DEBUG) {
+			String log = String.format(format, args);
+
+			Log.d(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
 	}
 	
 	public static void i(Object o) {
-		if (DEBUG)
-			Log.i(TAG, toJson(o));
+		if (DEBUG) {
+			String log = toJson(o);
+
+			Log.i(TAG, log);
+
+			Logger2File.log2File(TAG, log);
+		}
 	}
 
-	public static void i(String tag, Object msg) {
-		if (DEBUG)
-			Log.i(tag, toJson(msg));
+	public static void i(String tag, Object o) {
+		if (DEBUG) {
+			String log = toJson(o);
+
+			Log.i(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
 	}
 	
 	public static void i(String tag, String format, Object... args) {
-		if (DEBUG)
-			Log.i(tag, String.format(format, args));
+		if (DEBUG) {
+			String log = String.format(format, args);
+
+			Log.i(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
 	}
 
 	public static void w(Object o) {
-		if (DEBUG)
-			Log.w(TAG, toJson(o));
+		if (DEBUG) {
+			String log = toJson(o);
+
+			Log.w(TAG, log);
+
+			Logger2File.log2File(TAG, log);
+		}
 	}
 
-	public static void w(String tag, Object msg) {
-		if (DEBUG)
-			Log.w(tag, toJson(msg));
+	public static void w(String tag, Object o) {
+		if (DEBUG) {
+			String log = toJson(o);
+
+			Log.w(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
 	}
 
-	public static void w(String tag, String format, Object... msg) {
-		if (DEBUG)
-			Log.w(tag, String.format(format, msg));
+	public static void w(String tag, String format, Object... args) {
+		if (DEBUG) {
+			String log = String.format(format, args);
+
+			Log.w(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
 	}
 
 	public static void e(Object o) {
-		if (DEBUG)
-			Log.e(TAG, toJson(o));
+		if (DEBUG) {
+			String log = toJson(o);
+
+			Log.e(TAG, log);
+
+			Logger2File.log2File(TAG, log);
+		}
 	}
 
-	public static void e(String tag, Object msg) {
-		if (DEBUG)
-			Log.e(tag, toJson(msg));
+	public static void e(String tag, Object o) {
+		if (DEBUG) {
+			String log = toJson(o);
+
+			Log.e(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
 	}
 	
-	public static void e(String tag, String format, Object... msg) {
-		if (DEBUG)
-			Log.e(tag, String.format(format, msg));
+	public static void e(String tag, String format, Object... args) {
+		if (DEBUG) {
+			String log = String.format(format, args);
+
+			Log.e(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
 	}
 
 	// 这个日志会打印，不会因为release版本屏蔽
 	public static void sysout(String msg) {
 		try {
 			Log.v(TAG, msg);
+
+			Logger2File.log2File(TAG, msg);
 		} catch (Throwable e) {
 		}
 	}
@@ -97,6 +175,8 @@ public class Logger {
 		try {
 			if (DEBUG) {
 				e.printStackTrace();
+
+				Logger2File.log2File(TAG, e);
 			}
 			else {
 				String clazzName = clazz == null ? "Unknow" : clazz.getSimpleName();
