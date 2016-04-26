@@ -462,7 +462,8 @@ ViewTreeObserver.OnGlobalLayoutListener, ViewTreeObserver.OnTouchModeChangeListe
                     View.class.getDeclaredMethod("initializeScrollbars",
                             TypedArray.class);
             initializeScrollbars.invoke(this, a);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (Exception e) {
+            // NoSuchMethodException | InvocationTargetException | IllegalAccessException
             e.printStackTrace();
         }
 

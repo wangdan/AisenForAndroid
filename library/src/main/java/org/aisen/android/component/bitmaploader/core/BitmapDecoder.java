@@ -25,7 +25,7 @@ import java.io.FileDescriptor;
 
 public class BitmapDecoder {
 	
-	private static final Bitmap.Config config = Bitmap.Config.ARGB_8888;;
+	private static final Bitmap.Config config = Bitmap.Config.ARGB_8888;
 	
 	private BitmapDecoder() {
 	}

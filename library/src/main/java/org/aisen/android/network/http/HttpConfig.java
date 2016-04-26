@@ -13,6 +13,7 @@ public class HttpConfig {
 	
 	@Override
 	public HttpConfig clone() throws CloneNotSupportedException {
+		super.clone();
 		HttpConfig httpConfig = new HttpConfig();
 		httpConfig.cookie = cookie;
 		httpConfig.baseUrl = baseUrl;

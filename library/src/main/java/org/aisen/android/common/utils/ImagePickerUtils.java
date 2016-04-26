@@ -1,5 +1,6 @@
 package org.aisen.android.common.utils;
 
+import android.annotation.SuppressLint;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,6 +15,7 @@ import android.provider.MediaStore;
  */
 public class ImagePickerUtils {
 
+    @SuppressLint("NewApi")
     public static String getPath(final Context context, final Uri uri) {
 
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;

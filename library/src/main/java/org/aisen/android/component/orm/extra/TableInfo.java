@@ -102,7 +102,10 @@ public class TableInfo {
 			// 不包括序列划字段
 			if ("serialVersionUID".equals(field.getName()))
 				continue;
-			
+			// Gradle编译自动产生的字段
+			if ("$change".equals(field.getName()))
+				continue;
+
 			// 添加到字段集合
 			TableColumn column = new TableColumn();
 			column.setColumn(field.getName());

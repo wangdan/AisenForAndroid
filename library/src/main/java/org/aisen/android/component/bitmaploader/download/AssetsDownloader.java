@@ -48,6 +48,6 @@ public class AssetsDownloader implements Downloader {
 				config.getProgress().sendException(e);
 			throw new Exception(e.getCause());
 		}
-	};
+	}
 
 }
