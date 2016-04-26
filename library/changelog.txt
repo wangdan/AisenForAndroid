@@ -1,0 +1,3 @@
+version 1.0.1
+1、新增一个本地文件保存工具类Logger2File
+2、新增一个CrashHandler，保存Crash日志，OOM输入Hprof文件
