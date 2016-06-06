@@ -379,7 +379,7 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
      * @param msg
      */
     public void showMessage(CharSequence msg) {
-        ViewUtils.showMessage(msg.toString());
+        ViewUtils.showMessage(this, msg.toString());
     }
 
     /**

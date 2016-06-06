@@ -338,7 +338,7 @@ public class BitmapLoader {
 
 				if (!isCancelled() && checkImageBinding()) {
 					// 如果图片不是拉取至二级缓存，判断是否需要处理
-					MyBitmap bitmap = bitmapProcess.compressBitmap(bitmapBytes, imageUrl, flag, config);
+					MyBitmap bitmap = bitmapProcess.compressBitmap(mContext, bitmapBytes, imageUrl, flag, config);
 
 					if (bitmap != null && bitmap.getBitmap() != null) {
 						mImageCache.addBitmapToMemCache(imageUrl, config, bitmap);
@@ -366,7 +366,7 @@ public class BitmapLoader {
 			super.onTaskFailed(exception);
 
 			if (config.getLoadfaildRes() > 0)
-				setImageBitmap(new MyBitmap(config.getLoadfaildRes()));
+				setImageBitmap(new MyBitmap(mContext, config.getLoadfaildRes()));
 		}
 
 		private boolean checkImageBinding() {
@@ -445,7 +445,7 @@ public class BitmapLoader {
 
 		// 网络加载
 		if (bitmapBytes == null) {
-			bitmapBytes = config.getDownloaderClass().newInstance().downloadBitmap(imageUrl, config);
+			bitmapBytes = config.getDownloaderClass().newInstance().downloadBitmap(mContext, imageUrl, config);
 			if (bitmapBytes != null) {
 				Logger.v(TAG, "load the data through the network, url = " + imageUrl);
 				Logger.v(TAG, "downloader = " + config.getDownloaderClass().getSimpleName());
@@ -507,9 +507,9 @@ public class BitmapLoader {
 		}
 	}
 
-	public static Drawable getLoadingDrawable(ImageView imageView) {
+	public static Drawable getLoadingDrawable(Context context, ImageView imageView) {
 		Drawable drawable = imageView.getDrawable();
-		if (drawable != null) {
+		if (drawable != null && context != null) {
 			if (drawable instanceof TransitionDrawable) {
 				TransitionDrawable transitionDrawable = (TransitionDrawable) drawable;
 				drawable = transitionDrawable.getDrawable(1);
@@ -519,7 +519,7 @@ public class BitmapLoader {
 				ImageConfig config = myDrawable.getConfig();
 				if (config != null) {
 					if (config.getLoadingRes() > 0)
-						return new BitmapDrawable(GlobalContext.getInstance().getResources(), new MyBitmap(config.getLoadingRes()).getBitmap());
+						return new BitmapDrawable(context.getResources(), new MyBitmap(context, config.getLoadingRes()).getBitmap());
 				}
 			}
 		}
@@ -530,13 +530,13 @@ public class BitmapLoader {
 	private void setImageFaild(ImageView imageView, ImageConfig imageConfig) {
 		if (imageView != null && imageConfig.getLoadfaildRes() > 0)
 			imageView.setImageDrawable(
-						new MyDrawable(mContext.getResources(), new MyBitmap(imageConfig.getLoadfaildRes()), imageConfig, null));
+						new MyDrawable(mContext.getResources(), new MyBitmap(mContext, imageConfig.getLoadfaildRes()), imageConfig, null));
 	}
 	
 	private void setImageLoading(ImageView imageView, String url, ImageConfig imageConfig) {
 		if (imageView != null && imageConfig.getLoadingRes() > 0)
 			imageView.setImageDrawable(
-						new MyDrawable(mContext.getResources(), new MyBitmap(imageConfig.getLoadingRes(), url), imageConfig, null));
+						new MyDrawable(mContext.getResources(), new MyBitmap(mContext, imageConfig.getLoadingRes(), url), imageConfig, null));
 	}
 
 }

@@ -1,5 +1,6 @@
 package org.aisen.android.component.bitmaploader.core;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -29,7 +30,7 @@ public class MyBitmap {
 		cacheMap = new HashMap<String, WeakReference<Bitmap>>();
 	}
 	
-	static Bitmap getCacheBitmap(int resId) {
+	static Bitmap getCacheBitmap(Context context, int resId) {
 		String key = String.valueOf(resId);
 		Bitmap bitmap = null;
 		
@@ -39,7 +40,7 @@ public class MyBitmap {
 
 		if (bitmap == null) {
 			try {
-				bitmap = BitmapFactory.decodeResource(GlobalContext.getInstance().getResources(), resId);
+				bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
 				cacheMap.put(key, new WeakReference<Bitmap>(bitmap));
 			} catch (Error e) {
 				return Bitmap.createBitmap(0, 0, Config.ARGB_4444);
@@ -56,14 +57,14 @@ public class MyBitmap {
 		Logger.v(TAG, createdCount + "");
 	}
 
-    public MyBitmap(int resId) {
+    public MyBitmap(Context context, int resId) {
         this();
-        this.bitmap = getCacheBitmap(resId);
+        this.bitmap = getCacheBitmap(context, resId);
     }
 	
-	public MyBitmap(int resId, String url) {
+	public MyBitmap(Context context, int resId, String url) {
         this();
-		this.bitmap = getCacheBitmap(resId);
+		this.bitmap = getCacheBitmap(context, resId);
         this.url = url;
 	}
 

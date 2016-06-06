@@ -1,5 +1,7 @@
 package org.aisen.android.component.bitmaploader.download;
 
+import android.content.Context;
+
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
@@ -15,7 +17,7 @@ import java.net.HttpURLConnection;
 public class WebDownloader implements Downloader {
 
 	@Override
-	public byte[] downloadBitmap(String url, ImageConfig config) throws Exception {
+	public byte[] downloadBitmap(Context context, String url, ImageConfig config) throws Exception {
 		Logger.v(url);
 
 		try {
@@ -29,7 +31,7 @@ public class WebDownloader implements Downloader {
 			Request request = new Request.Builder().url(url).build();
 //			httpGet.addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:27.0) Gecko/20100101 Firefox/27.0");
 
-			Response response = GlobalContext.getInstance().getOkHttpClient().newCall(request).execute();
+			Response response = GlobalContext.getOkHttpClient().newCall(request).execute();
 			if (!(response.code() == HttpURLConnection.HTTP_OK || response.code() == HttpURLConnection.HTTP_PARTIAL)) {
 				throw new TaskException(String.valueOf(TaskException.TaskError.failIOError));
 			}

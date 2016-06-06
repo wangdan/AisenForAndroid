@@ -1,10 +1,10 @@
 package org.aisen.android.ui.fragment.itemview;
 
+import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
 import org.aisen.android.R;
-import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.network.task.TaskException;
 import org.aisen.android.support.inject.InjectUtility;
 import org.aisen.android.support.inject.ViewInject;
@@ -29,12 +29,12 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
     @ViewInject(idStr = "txtLoading")
     TextView txtLoading;
 
-    public BasicFooterView(View itemView, OnFooterViewCallback callback) {
-        super(itemView, callback);
+    public BasicFooterView(Context context, View itemView, OnFooterViewCallback callback) {
+        super(context, itemView, callback);
 
         this.footerView = itemView;
 
-        InjectUtility.initInjectedView(this, getConvertView());
+        InjectUtility.initInjectedView(getContext(), this, getConvertView());
 
         btnMore.setVisibility(View.VISIBLE);
         layLoading.setVisibility(View.GONE);
@@ -111,19 +111,19 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
     }
 
     protected String moreText() {
-        return GlobalContext.getInstance().getString(R.string.comm_footer_more);
+        return getContext().getString(R.string.comm_footer_more);
     }
 
     protected String loadingText() {
-        return GlobalContext.getInstance().getString(R.string.comm_footer_loading);
+        return getContext().getString(R.string.comm_footer_loading);
     }
 
     protected String endpagingText() {
-        return GlobalContext.getInstance().getString(R.string.comm_footer_pagingend);
+        return getContext().getString(R.string.comm_footer_pagingend);
     }
 
     protected String faildText() {
-        return GlobalContext.getInstance().getString(R.string.comm_footer_faild);
+        return getContext().getString(R.string.comm_footer_faild);
     }
 
 }

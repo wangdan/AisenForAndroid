@@ -1,5 +1,8 @@
 package org.aisen.android.component.bitmaploader.download;
 
+import android.content.Context;
+
+import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.BitmapUtil;
 import org.aisen.android.component.bitmaploader.core.ImageConfig;
 
@@ -9,7 +12,7 @@ import java.io.InputStream;
 public class DrawableDownloader implements Downloader {
 
 	@Override
-	public byte[] downloadBitmap(String url, ImageConfig config) throws Exception {
+	public byte[] downloadBitmap(Context context, String url, ImageConfig config) throws Exception {
 		try {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -20,7 +23,7 @@ public class DrawableDownloader implements Downloader {
 
 			try {
 //			in = GlobalContext.getInstance().getResources().openRawResource(id)
-				in = BitmapUtil.getFromDrawableAsStream(url);
+				in = BitmapUtil.getFromDrawableAsStream(context, url);
 			} catch (OutOfMemoryError e) {
 				e.printStackTrace();
 			}

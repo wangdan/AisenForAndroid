@@ -15,10 +15,12 @@
  */
 package org.aisen.android.component.bitmaploader.core;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.SystemUtils;
 
 import java.io.FileDescriptor;
@@ -64,13 +66,13 @@ public class BitmapDecoder {
 		return BitmapFactory.decodeResource(res, resId, options);
 	}
 	
-	public static Bitmap decodeSampledBitmapFromByte(byte[] data) {
+	public static Bitmap decodeSampledBitmapFromByte(Context context, byte[] data) {
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeByteArray(data, 0, data.length, options);
 		
-		final int screenWidth = SystemUtils.getScreenWidth();
-		final int screenHeight = SystemUtils.getScreenHeight();
+		final int screenWidth = SystemUtils.getScreenWidth(context);
+		final int screenHeight = SystemUtils.getScreenHeight(context);
 		float reqWidth = screenWidth;
 		float reqHeight = screenHeight;
 		if(reqWidth > options.outWidth)
@@ -131,13 +133,13 @@ public class BitmapDecoder {
 		return BitmapFactory.decodeFile(filename, options);
 	}
 	
-	public static Bitmap decodeSampledBitmapFromDescriptor(FileDescriptor fileDescriptor) {
+	public static Bitmap decodeSampledBitmapFromDescriptor(Context context, FileDescriptor fileDescriptor) {
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		BitmapFactory.decodeFileDescriptor(fileDescriptor, null, options);
 		
-		final int screenWidth = SystemUtils.getScreenWidth();
-		final int screenHeight = SystemUtils.getScreenHeight();
+		final int screenWidth = SystemUtils.getScreenWidth(context);
+		final int screenHeight = SystemUtils.getScreenHeight(context);
 		float reqWidth = screenWidth * 1.5f;
 		float reqHeight = screenHeight;
 		if(reqWidth > options.outWidth)

@@ -1,5 +1,7 @@
 package org.aisen.android.common.setting;
 
+import android.content.Context;
+
 import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.ActivityHelper;
 
@@ -24,8 +26,8 @@ public class SettingUtility {
 	 * 
 	 * @param settingsXmlName
 	 */
-	public static void addSettings(String settingsXmlName) {
-		Map<String, Setting> newSettingMap = SettingsXmlParser.parseSettings(GlobalContext.getInstance(), settingsXmlName);
+	public static void addSettings(Context context, String settingsXmlName) {
+		Map<String, Setting> newSettingMap = SettingsXmlParser.parseSettings(context, settingsXmlName);
 
 		Set<String> keySet = newSettingMap.keySet();
 		for (String key : keySet)

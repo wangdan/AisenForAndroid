@@ -160,9 +160,8 @@ public class BitmapUtil {
 		return result;
 	}
 
-	public static Bitmap getFromDrawableAsBitmap(String resName) {
+	public static Bitmap getFromDrawableAsBitmap(Context context, String resName) {
 		try {
-			Context context = GlobalContext.getInstance();
 			String packageName = context.getPackageName();
 			Resources resources = context.getPackageManager().getResourcesForApplication(packageName);
 
@@ -189,9 +188,8 @@ public class BitmapUtil {
 	 * @param resName
 	 * @return
 	 */
-	public static InputStream getFromDrawableAsStream(String resName) {
+	public static InputStream getFromDrawableAsStream(Context context, String resName) {
 		try {
-			Context context = GlobalContext.getInstance();
 			String packageName = context.getPackageName();
 			Resources resources = context.getPackageManager().getResourcesForApplication(packageName);
 
@@ -259,9 +257,9 @@ public class BitmapUtil {
 	}
 
 	// InputStream转换成Drawable
-	public static Drawable InputStream2Drawable(InputStream is) {
+	public static Drawable InputStream2Drawable(Context context, InputStream is) {
 		Bitmap bitmap = InputStream2Bitmap(is);
-		return bitmap2Drawable(bitmap);
+		return bitmap2Drawable(context, bitmap);
 	}
 
 	// Drawable转换成byte[]
@@ -271,9 +269,9 @@ public class BitmapUtil {
 	}
 
 	// byte[]转换成Drawable
-	public static Drawable Bytes2Drawable(byte[] b) {
+	public static Drawable Bytes2Drawable(Context context, byte[] b) {
 		Bitmap bitmap = Bytes2Bitmap(b);
-		return bitmap2Drawable(bitmap);
+		return bitmap2Drawable(context, bitmap);
 	}
 
 	// Bitmap转换成byte[]
@@ -302,8 +300,8 @@ public class BitmapUtil {
 	}
 
 	// Bitmap转换成Drawable
-	public static Drawable bitmap2Drawable(Bitmap bitmap) {
-		BitmapDrawable bd = new BitmapDrawable(GlobalContext.getInstance().getResources(), bitmap);
+	public static Drawable bitmap2Drawable(Context context, Bitmap bitmap) {
+		BitmapDrawable bd = new BitmapDrawable(context.getResources(), bitmap);
 		Drawable d = (Drawable) bd;
 		return d;
 	}

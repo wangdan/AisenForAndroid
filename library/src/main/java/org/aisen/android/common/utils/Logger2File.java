@@ -1,5 +1,8 @@
 package org.aisen.android.common.utils;
 
+import android.app.Application;
+import android.content.Context;
+
 import org.aisen.android.common.context.GlobalContext;
 
 import java.io.File;
@@ -31,9 +34,11 @@ public class Logger2File {
             return;
         }
 
-        LoggerThread thread = getThread();
-        if (thread != null) {
-            thread.addLog(new Log(tag, log));
+        if (GlobalContext.getInstance() != null) {
+            LoggerThread thread = getThread(GlobalContext.getInstance());
+            if (thread != null) {
+                thread.addLog(new Log(tag, log));
+            }
         }
     }
 
@@ -45,7 +50,7 @@ public class Logger2File {
         log2File(tag, sw.toString());
     }
 
-    private static LoggerThread getThread() {
+    private static LoggerThread getThread(Context context) {
         if (mCal == null) {
             mCal = Calendar.getInstance();
         }
@@ -54,7 +59,7 @@ public class Logger2File {
                 mCal.get(Calendar.DAY_OF_MONTH), mCal.get(Calendar.HOUR_OF_DAY));
 
         if (mThread == null || !mThread.fileName.equals(fileName)) {
-            mThread = new LoggerThread(fileName);
+            mThread = new LoggerThread(context, fileName);
             mThread.start();
         }
 
@@ -67,8 +72,8 @@ public class Logger2File {
         String fileName;
         DateFormat formatter;
 
-        public LoggerThread(String fileName) {
-            String filePath = GlobalContext.getInstance().getExternalFilesDir("logs").getAbsolutePath() + File.separator;
+        public LoggerThread(Context context, String fileName) {
+            String filePath = context.getExternalFilesDir("logs").getAbsolutePath() + File.separator;
             this.fileName = fileName;
             File file = new File(filePath);
             if (!file.exists()) {

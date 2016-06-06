@@ -70,18 +70,18 @@ public class Utils {
 		return shareIntent;
 	}
 
-	public static int dip2px(float dipValue) {
-		float reSize = GlobalContext.getInstance().getResources().getDisplayMetrics().density;
+	public static int dip2px(Context context, float dipValue) {
+		float reSize = context.getResources().getDisplayMetrics().density;
 		return (int) ((dipValue * reSize) + 0.5);
 	}
 
-	public static int px2dip(int pxValue) {
-		float reSize = GlobalContext.getInstance().getResources().getDisplayMetrics().density;
+	public static int px2dip(Context context, int pxValue) {
+		float reSize = context.getResources().getDisplayMetrics().density;
 		return (int) ((pxValue / reSize) + 0.5);
 	}
 
-	public static float sp2px(int spValue) {
-		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spValue, GlobalContext.getInstance().getResources().getDisplayMetrics());
+	public static float sp2px(Context context, int spValue) {
+		return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, spValue, context.getResources().getDisplayMetrics());
 	}
 
 	public static int length(String paramString) {

@@ -21,10 +21,10 @@ import java.lang.reflect.Field;
 
 public class ViewUtils {
 
-	public static int getResId(String resName, String defType) {
+	public static int getResId(Context context, String resName, String defType) {
 		try {
-			String packageName = GlobalContext.getInstance().getPackageName();
-			Resources resources = GlobalContext.getInstance().getPackageManager().getResourcesForApplication(packageName);
+			String packageName = context.getPackageName();
+			Resources resources = context.getPackageManager().getResourcesForApplication(packageName);
 
 			int resId = resources.getIdentifier(resName, defType, packageName);
 
@@ -34,12 +34,12 @@ public class ViewUtils {
 		return 0;
 	}
 
-	public static int getStringResId(String resName) {
-		return getResId(resName, "string");
+	public static int getStringResId(Context context, String resName) {
+		return getResId(context, resName, "string");
 	}
 
-	public static int getDrawableResId(String resName) {
-		return getResId(resName, "drawable");
+	public static int getDrawableResId(Context context, String resName) {
+		return getResId(context, resName, "drawable");
 	}
 
 	public static void setTextViewValue(Activity context, int txtId, String content) {
@@ -75,14 +75,14 @@ public class ViewUtils {
 		((ImageView) container.findViewById(imgId)).setImageBitmap(source);
 	}
 
-	public static void showMessage(String message) {
+	public static void showMessage(Context context, String message) {
 //		MToast.showMessage(message);
-		Toast.makeText(GlobalContext.getInstance(), message, Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
 	}
 
-	public static void showMessage(int messageId) {
+	public static void showMessage(Context context, int messageId) {
 //		MToast.showMessage(messageId);
-		Toast.makeText(GlobalContext.getInstance(), messageId, Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, messageId, Toast.LENGTH_SHORT).show();
 	}
 
 	public static ProgressDialog progressDialog2;

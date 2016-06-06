@@ -1,5 +1,6 @@
 package org.aisen.android.component.bitmaploader.download;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 import org.aisen.android.common.utils.Logger;
@@ -14,7 +15,7 @@ import java.io.InputStream;
 public class SdcardDownloader implements Downloader {
 
 	@Override
-	public byte[] downloadBitmap(String url, ImageConfig config) throws Exception {
+	public byte[] downloadBitmap(Context context, String url, ImageConfig config) throws Exception {
 		try {
 			File imgFile = new File(url);
 			if (imgFile.exists()) {

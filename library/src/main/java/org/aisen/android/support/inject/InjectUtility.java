@@ -17,10 +17,10 @@ public class InjectUtility {
 	static final String TAG = "InjectUtility";
 
     public static void initInjectedView(Activity sourceActivity) {
-		initInjectedView(sourceActivity, sourceActivity.getWindow().getDecorView());
+		initInjectedView(sourceActivity, sourceActivity, sourceActivity.getWindow().getDecorView());
 	}
 
-    public static void initInjectedView(Object injectedSource, View sourceView) {
+    public static void initInjectedView(Context context, Object injectedSource, View sourceView) {
 		Class<?> clazz = injectedSource.getClass();
 		for (; clazz != Object.class; clazz = clazz.getSuperclass()) {
 			Field[] fields = clazz.getDeclaredFields();
@@ -34,7 +34,6 @@ public class InjectUtility {
 							String idStr = viewInject.idStr();
 							if (!TextUtils.isEmpty(idStr)) {
 								try {
-									Context context = GlobalContext.getInstance();
 									String packageName = context.getPackageName();
 									Resources resources = context.getPackageManager().getResourcesForApplication(packageName);
 

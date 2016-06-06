@@ -15,6 +15,7 @@
  */
 package org.aisen.android.component.bitmaploader.core;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
@@ -162,7 +163,7 @@ public class BitmapProcess {
 	 * @return
 	 * @throws Exception
 	 */
-	public MyBitmap compressBitmap(byte[] bitmapBytes, String url, int flag, ImageConfig config) throws Exception {
+	public MyBitmap compressBitmap(Context context, byte[] bitmapBytes, String url, int flag, ImageConfig config) throws Exception {
 		boolean writeToComp = config.getCorner() > 0;
 
 		final BitmapFactory.Options options = new BitmapFactory.Options();
@@ -175,7 +176,7 @@ public class BitmapProcess {
 
 		// 如果图片取自压缩目录，则不再对图片做压缩或者其他处理，直接返回
 		if ((flag & 0x01) != 0) {
-			myBitmap = new MyBitmap(BitmapDecoder.decodeSampledBitmapFromByte(bitmapBytes), url);
+			myBitmap = new MyBitmap(BitmapDecoder.decodeSampledBitmapFromByte(context, bitmapBytes), url);
 			return myBitmap;
 		}
 
@@ -184,7 +185,7 @@ public class BitmapProcess {
 		Bitmap bitmap = bitmapCompress.compress(bitmapBytes, getOirgFile(url), url, config, options.outWidth, options.outHeight);
 		if (bitmap == null) {
 			// 如果没压缩，就原始解析图片
-			bitmap = BitmapDecoder.decodeSampledBitmapFromByte(bitmapBytes);
+			bitmap = BitmapDecoder.decodeSampledBitmapFromByte(context, bitmapBytes);
 		} else {
 			// 如果图片做了压缩处理，则需要写入二级缓存
 			writeToComp = true;
@@ -214,7 +215,7 @@ public class BitmapProcess {
 			if (bitmapType == BitmapType.gif) {
 				Logger.v(TAG, String.format("parse gif image[url=%s,key=%s]", url, key));
 				bitmap.recycle();
-				bitmap = BitmapDecoder.decodeSampledBitmapFromByte(bytes);
+				bitmap = BitmapDecoder.decodeSampledBitmapFromByte(context, bytes);
 			}
 		}
 

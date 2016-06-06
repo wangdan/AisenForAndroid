@@ -1,6 +1,7 @@
 package org.aisen.android.component.bitmaploader.download;
 
-import org.aisen.android.common.context.GlobalContext;
+import android.content.Context;
+
 import org.aisen.android.component.bitmaploader.core.ImageConfig;
 
 import java.io.ByteArrayOutputStream;
@@ -9,7 +10,7 @@ import java.io.InputStream;
 public class AssetsDownloader implements Downloader {
 
 	@Override
-	public byte[] downloadBitmap(String url, ImageConfig config) throws Exception {
+	public byte[] downloadBitmap(Context context, String url, ImageConfig config) throws Exception {
 		try {
 			DownloadProcess progress = config.getProgress();
 
@@ -19,7 +20,7 @@ public class AssetsDownloader implements Downloader {
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 			// 加载assets目录
-			InputStream in = GlobalContext.getInstance().getAssets().open(url);
+			InputStream in = context.getAssets().open(url);
 
 			if (progress != null)
 				progress.receiveLength(in.available());

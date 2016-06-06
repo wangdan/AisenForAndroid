@@ -16,7 +16,13 @@ public class GlobalContext extends Application {
 	public final static int CONN_TIMEOUT = 30000;
 	public final static int READ_TIMEOUT = 30000;
 
-	private OkHttpClient mOkHttpClient;
+	private static OkHttpClient mOkHttpClient;
+
+	static {
+		// 初始化OkHttpClient
+		mOkHttpClient = new OkHttpClient();
+		configOkHttpClient(CONN_TIMEOUT, READ_TIMEOUT);
+	}
 
 	@Override
 	public void onCreate() {
@@ -24,10 +30,6 @@ public class GlobalContext extends Application {
 		
 		_context = this;
 
-		// 初始化OkHttpClient
-		mOkHttpClient = new OkHttpClient();
-		configOkHttpClient(CONN_TIMEOUT, READ_TIMEOUT);
-		
 		// 初始化ActivityHelper
 		ActivityHelper.config(this);
 	}
@@ -44,11 +46,11 @@ public class GlobalContext extends Application {
 		
 	};
 	
-	public OkHttpClient getOkHttpClient() {
+	public static OkHttpClient getOkHttpClient() {
 		return mOkHttpClient;
 	}
 
-	public void configOkHttpClient(int connTimeout, int socketTimeout) {
+	public static void configOkHttpClient(int connTimeout, int socketTimeout) {
 		if (mOkHttpClient != null) {
 			mOkHttpClient.setConnectTimeout(connTimeout, TimeUnit.MILLISECONDS);
 			mOkHttpClient.setReadTimeout(socketTimeout, TimeUnit.MILLISECONDS);

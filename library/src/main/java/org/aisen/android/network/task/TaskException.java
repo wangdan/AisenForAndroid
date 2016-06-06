@@ -61,17 +61,19 @@ public class TaskException extends Exception {
 		}
 
         try {
-            Resources res = GlobalContext.getInstance().getResources();
+			if (GlobalContext.getInstance() != null) {
+				Resources res = GlobalContext.getInstance().getResources();
 
-            TaskError error = TaskError.valueOf(code);
-            if (error == TaskError.noneNetwork || error == TaskError.failIOError)
-                msg = res.getString(R.string.comm_error_noneNetwork);
-            else if (error == TaskError.socketTimeout || error == TaskError.timeout)
-                msg = res.getString(R.string.comm_error_timeout);
-            else if (error == TaskError.resultIllegal)
-                msg = res.getString(R.string.comm_error_resultIllegal);
-            if (!TextUtils.isEmpty(msg))
-                return msg + "";
+				TaskError error = TaskError.valueOf(code);
+				if (error == TaskError.noneNetwork || error == TaskError.failIOError)
+					msg = res.getString(R.string.comm_error_noneNetwork);
+				else if (error == TaskError.socketTimeout || error == TaskError.timeout)
+					msg = res.getString(R.string.comm_error_timeout);
+				else if (error == TaskError.resultIllegal)
+					msg = res.getString(R.string.comm_error_resultIllegal);
+				if (!TextUtils.isEmpty(msg))
+					return msg + "";
+			}
         } catch (Exception e) {
         }
 

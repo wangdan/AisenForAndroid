@@ -1,5 +1,6 @@
 package org.aisen.android.ui.widget;
 
+import android.content.Context;
 import android.widget.Toast;
 
 import org.aisen.android.common.context.GlobalContext;
@@ -9,8 +10,8 @@ import org.aisen.android.common.context.GlobalContext;
  */
 public class MToast {
 
-    public static void showMessage(String text) {
-        Toast.makeText(GlobalContext.getInstance(), text, Toast.LENGTH_SHORT).show();
+    public static void showMessage(Context context, String text) {
+        Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 
 }

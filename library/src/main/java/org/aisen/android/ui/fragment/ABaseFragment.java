@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.aisen.android.R;
+import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.ViewUtils;
 import org.aisen.android.component.bitmaploader.BitmapLoader;
@@ -208,7 +209,7 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
      * @param savedInstanceSate
      */
     void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
-        InjectUtility.initInjectedView(this, getContentView());
+        InjectUtility.initInjectedView(getActivity(), this, getContentView());
 
         if (emptyLayout != null) {
             View reloadView = emptyLayout.findViewById(R.id.layoutReload);
@@ -347,8 +348,8 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
     }
 
     public void showMessage(CharSequence msg) {
-        if (!TextUtils.isEmpty(msg))
-            ViewUtils.showMessage(msg.toString());
+        if (!TextUtils.isEmpty(msg) && getActivity() != null)
+            ViewUtils.showMessage(getActivity(), msg.toString());
     }
 
     public void showMessage(int msgId) {

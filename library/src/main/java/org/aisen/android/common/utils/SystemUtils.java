@@ -77,24 +77,24 @@ import java.util.List;
 		none, mobile, wifi
 	}
 
-	private static void setScreenInfo() {
+	private static void setScreenInfo(Context context) {
 		DisplayMetrics dm = new DisplayMetrics();
-		WindowManager windowManager = (WindowManager) GlobalContext.getInstance().getSystemService(Context.WINDOW_SERVICE);
+		WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 		windowManager.getDefaultDisplay().getMetrics(dm);
 		screenWidth = dm.widthPixels;
 		screenHeight = dm.heightPixels;
 		density = dm.density;
 	}
 
-	public static int getScreenWidth() {
+	public static int getScreenWidth(Context context) {
 		if (screenWidth == 0)
-			setScreenInfo();
+			setScreenInfo(context);
 		return screenWidth;
 	}
 
-	public static int getScreenHeight() {
+	public static int getScreenHeight(Context context) {
 		if (screenHeight == 0)
-			setScreenInfo();
+			setScreenInfo(context);
 		return screenHeight;
 	}
 	
@@ -106,9 +106,9 @@ import java.util.List;
 		return titleBarHeight;
 	}
 
-	public static float getDensity() {
+	public static float getDensity(Context context) {
 		if (density == 0.0f)
-			setScreenInfo();
+			setScreenInfo(context);
 		return density;
 	}
 
@@ -163,9 +163,9 @@ import java.util.List;
 		return 0;
 	}
 
-	public static NetWorkType getNetworkType() {
+	public static NetWorkType getNetworkType(Context context) {
 
-		ConnectivityManager connMgr = (ConnectivityManager) GlobalContext.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
@@ -184,11 +184,10 @@ import java.util.List;
 	/**
 	 * mac地址
 	 * 
-	 * @param mContext
 	 * @return
 	 */
-	public static String getMacAddress() {
-		WifiManager wifiManager = (WifiManager) GlobalContext.getInstance().getSystemService(Context.WIFI_SERVICE);
+	public static String getMacAddress(Context context) {
+		WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 		WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 		if (wifiInfo != null && wifiInfo.getMacAddress() != null)
 			return wifiInfo.getMacAddress().replace(":", "");
@@ -196,9 +195,8 @@ import java.util.List;
 			return "0022f420d03f";// 00117f29d23a
 	}
 	
-	public static String getUDPIP() {
-		Context context = GlobalContext.getInstance();
-		
+	public static String getUDPIP(Context context) {
+
         WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         DhcpInfo dhcpInfo = wifi.getDhcpInfo();
         int IpAddress =dhcpInfo.ipAddress;
@@ -211,9 +209,7 @@ import java.util.List;
                 + "." + (i >> 24 & 0xFF);
     }
 	
-	public static String getIP() {
-		Context context = GlobalContext.getInstance();
-		
+	public static String getIP(Context context) {
         WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
         return transformIp(wifi.getConnectionInfo().getIpAddress());
 	}
@@ -248,24 +244,24 @@ import java.util.List;
 		return "";
 	}
 	
-	public static void scanPhoto(File file) {
+	public static void scanPhoto(Context context, File file) {
 		 Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
 		 Uri uri = Uri.fromFile(file);
 		 intent.setData(uri);
-		 GlobalContext.getInstance().sendBroadcast(intent);
+		 context.sendBroadcast(intent);
 	}
 	
-	public static void hideSoftInput(View paramEditText) {
-		((InputMethodManager) GlobalContext.getInstance().getSystemService("input_method"))
+	public static void hideSoftInput(Context context, View paramEditText) {
+		((InputMethodManager) context.getSystemService("input_method"))
 				.hideSoftInputFromWindow(paramEditText.getWindowToken(), 0);
 	}
 
-	public static void showKeyBoard(final View paramEditText) {
+	public static void showKeyBoard(final Context context, final View paramEditText) {
 		paramEditText.requestFocus();
 		paramEditText.post(new Runnable() {
 			@Override
 			public void run() {
-				((InputMethodManager) GlobalContext.getInstance().getSystemService("input_method")).showSoftInput(paramEditText, 0);
+				((InputMethodManager) context.getSystemService("input_method")).showSoftInput(paramEditText, 0);
 			}
 		});
 	}

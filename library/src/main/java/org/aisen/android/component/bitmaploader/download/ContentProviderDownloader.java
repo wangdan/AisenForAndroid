@@ -1,5 +1,6 @@
 package org.aisen.android.component.bitmaploader.download;
 
+import android.content.Context;
 import android.net.Uri;
 
 import org.aisen.android.common.context.GlobalContext;
@@ -11,10 +12,10 @@ import java.io.InputStream;
 public class ContentProviderDownloader implements Downloader {
 
 	@Override
-	public byte[] downloadBitmap(String url, ImageConfig config) throws Exception {
+	public byte[] downloadBitmap(Context context, String url, ImageConfig config) throws Exception {
 		
 		try {
-			InputStream is = GlobalContext.getInstance().getContentResolver().openInputStream(Uri.parse(url));
+			InputStream is = context.getContentResolver().openInputStream(Uri.parse(url));
 			byte[] datas = FileUtils.readStreamToBytes(is);
 			return datas;
 		} catch (Exception e) {

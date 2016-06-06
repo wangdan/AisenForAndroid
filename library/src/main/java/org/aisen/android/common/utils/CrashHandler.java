@@ -1,5 +1,6 @@
 package org.aisen.android.common.utils;
 
+import android.content.Context;
 import android.view.InflateException;
 
 import org.aisen.android.common.context.GlobalContext;
@@ -21,18 +22,19 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private Thread.UncaughtExceptionHandler mDefHandler;
 
     private static CrashHandler mCrashHandler;
+    private Context context;
 
-    private CrashHandler() {
-
+    private CrashHandler(Context context) {
+        this.context = context;
     }
 
-    public static void setupCrashHandler() {
+    public static void setupCrashHandler(Context context) {
         // 如果初始化在Application中，防止初始化两次创建两个
         if (mCrashHandler != null) {
             return;
         }
 
-        mCrashHandler = new CrashHandler();
+        mCrashHandler = new CrashHandler(context);
         mCrashHandler.mDefHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler(mCrashHandler);
     }
@@ -40,7 +42,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
         if (isOOM(ex)) {
-            HprofUtils.dumpHprof(GlobalContext.getInstance().getExternalFilesDir("logs").getAbsolutePath() + File.separator + "crash" + File.separator);
+            HprofUtils.dumpHprof(context.getExternalFilesDir("logs").getAbsolutePath() + File.separator + "crash" + File.separator);
         }
 
         Logger.printExc(CrashHandler.class, ex);
@@ -60,7 +62,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
             String crashLog = sw.toString();
 
-            String filePath = GlobalContext.getInstance().getExternalFilesDir("logs").getAbsolutePath() + File.separator + "crash" + File.separator;
+            String filePath = context.getExternalFilesDir("logs").getAbsolutePath() + File.separator + "crash" + File.separator;
             File file = new File(filePath + File.separator + new SimpleDateFormat("yyyyMMdd_HH-mm-ss-SSS").format(Calendar.getInstance().getTime()) + ".txt");
             if (!file.getParentFile().exists()) {
                 file.mkdirs();

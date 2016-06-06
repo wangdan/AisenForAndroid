@@ -82,7 +82,8 @@ public class MyURLSpan extends ClickableSpan {
 			if (!TextUtils.isEmpty(newValue)) {
 				ClipboardManager cm = (ClipboardManager) widget.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
 				cm.setPrimaryClip(ClipData.newPlainText("ui", newValue));
-				MToast.showMessage(String.format(widget.getContext().getString(R.string.comm_hint_copied), newValue));
+
+				MToast.showMessage(widget.getContext(), String.format(widget.getContext().getString(R.string.comm_hint_copied), newValue));
 			}
 		}
 	}

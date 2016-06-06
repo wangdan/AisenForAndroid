@@ -53,20 +53,20 @@ public class PhotoChoice {
 		bitmapType, byteType, uriType
 	}
 
-	private PhotoChoice() {
-		picMaxDecodeWidth = SystemUtils.getScreenWidth() * 5;
-		picMaxDecodeHeight = SystemUtils.getScreenHeight() * 3;
+	private PhotoChoice(Activity context) {
+		this.mContext = context;
+		picMaxDecodeWidth = SystemUtils.getScreenWidth(mContext) * 5;
+		picMaxDecodeHeight = SystemUtils.getScreenHeight(mContext) * 3;
 	}
 
 	public PhotoChoice(Activity context, PhotoChoiceListener choiceListener) {
-		this();
-		this.mContext = context;
+		this(context);
 		this.choiceListener = choiceListener;
 		setPhotoChoice();
 	}
 
 	public PhotoChoice(Activity context, PhotoChoiceListener choiceListener, String tempFilePath) {
-		this();
+		this(context);
 		this.mContext = context;
 		this.tempFilePath = tempFilePath;
 		this.choiceListener = choiceListener;
@@ -131,7 +131,7 @@ public class PhotoChoice {
 					try {
 						InputStream is = mContext.getContentResolver().openInputStream(data.getData());
 						byte[] datas = FileUtils.readStreamToBytes(is);
-						bitmap = BitmapDecoder.decodeSampledBitmapFromByte(datas);
+						bitmap = BitmapDecoder.decodeSampledBitmapFromByte(mContext, datas);
 					} catch (Exception e) {
 					}
 					choiceListener.choiceBitmap(bitmap);
@@ -156,7 +156,7 @@ public class PhotoChoice {
 					Bitmap bitmap = null;
 					try {
 						byte[] datas = FileUtils.readStreamToBytes(new FileInputStream(tempFilePath + tempFileName));
-						bitmap = BitmapDecoder.decodeSampledBitmapFromByte(datas);
+						bitmap = BitmapDecoder.decodeSampledBitmapFromByte(mContext, datas);
 					} catch (Exception e) {
 						e.printStackTrace();
 					} finally {

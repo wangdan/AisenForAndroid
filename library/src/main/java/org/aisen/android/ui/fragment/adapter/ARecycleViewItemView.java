@@ -1,5 +1,6 @@
 package org.aisen.android.ui.fragment.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -19,15 +20,18 @@ public abstract class ARecycleViewItemView<T extends Serializable> extends Recyc
 
     private View convertView;
 
-    public ARecycleViewItemView(View itemView) {
+    private Context context;
+
+    public ARecycleViewItemView(Context context, View itemView) {
         super(itemView);
 
+        this.context = context;
         this.convertView = itemView;
     }
 
     @Override
     public void onBindView(View convertView) {
-        InjectUtility.initInjectedView(this, convertView);
+        InjectUtility.initInjectedView(getContext(), this, convertView);
     }
 
     @Override
@@ -49,6 +53,10 @@ public abstract class ARecycleViewItemView<T extends Serializable> extends Recyc
     @Override
     public View getConvertView() {
         return convertView;
+    }
+
+    public Context getContext() {
+        return context;
     }
 
 }

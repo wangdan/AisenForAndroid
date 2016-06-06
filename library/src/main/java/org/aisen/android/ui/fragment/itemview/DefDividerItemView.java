@@ -1,11 +1,13 @@
 package org.aisen.android.ui.fragment.itemview;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.Utils;
 
 /**
@@ -31,14 +33,15 @@ public class DefDividerItemView extends RecyclerView.ItemDecoration {
     // 分割线颜色
     private int color;
     // 分割线尺寸
-    private int size = Utils.dip2px(1);
+    private int size;
 
-    public DefDividerItemView(int color) {
-        this(color, VERTICAL);
+    public DefDividerItemView(Context context, int color) {
+        this(context, color, VERTICAL);
     }
 
-    public DefDividerItemView(int color, int orientation) {
+    public DefDividerItemView(Context context, int color, int orientation) {
         this.orientation = orientation;
+        this.size = Utils.dip2px(context, 1);
 
         paint = new Paint();
 

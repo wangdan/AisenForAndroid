@@ -567,7 +567,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 
 			@Override
 			public IITemView<T> newItemView(View convertView, int viewType) {
-				return new BasicFooterView<>(convertView, APagingFragment.this);
+				return new BasicFooterView<>(getActivity(), convertView, APagingFragment.this);
 			}
 
 		};

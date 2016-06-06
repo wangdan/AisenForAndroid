@@ -105,7 +105,7 @@ public class DefHttpUtility implements IHttpUtility {
 
 	private Request.Builder createRequestBuilder(HttpConfig config, Setting action, Params urlParams, String method) throws TaskException {
 		// 是否有网络连接
-		if (SystemUtils.getNetworkType() == SystemUtils.NetWorkType.none) {
+		if (GlobalContext.getInstance() != null && SystemUtils.getNetworkType(GlobalContext.getInstance()) == SystemUtils.NetWorkType.none) {
 			Logger.w(getTag(action, method), "没有网络连接");
 
 			throw new TaskException(TaskException.TaskError.noneNetwork.toString());
@@ -197,7 +197,7 @@ public class DefHttpUtility implements IHttpUtility {
 	}
 
 	public synchronized OkHttpClient getOkHttpClient() {
-		return GlobalContext.getInstance().getOkHttpClient();
+		return GlobalContext.getOkHttpClient();
 	}
 
 }
