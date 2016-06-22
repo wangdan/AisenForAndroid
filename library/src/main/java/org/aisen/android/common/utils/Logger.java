@@ -4,6 +4,10 @@ import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.net.UnknownHostException;
+
 public class Logger {
 
 	public final static String TAG = "Logger";
@@ -24,6 +28,16 @@ public class Logger {
 	public static void v(String tag, Object o) {
 		if (DEBUG) {
 			String log = toJson(o);
+
+			Log.v(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
+	}
+
+	public static void v(String tag, String msg, Throwable tr) {
+		if (DEBUG) {
+			String log = msg + '\n' + getStackTraceString(tr);
 
 			Log.v(tag, log);
 
@@ -61,6 +75,16 @@ public class Logger {
 		}
 	}
 
+	public static void d(String tag, String msg, Throwable tr) {
+		if (DEBUG) {
+			String log = msg + '\n' + getStackTraceString(tr);
+
+			Log.d(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
+	}
+
 	public static void d(String tag, String format, Object... args) {
 		if (DEBUG) {
 			String log = String.format(format, args);
@@ -84,6 +108,16 @@ public class Logger {
 	public static void i(String tag, Object o) {
 		if (DEBUG) {
 			String log = toJson(o);
+
+			Log.i(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
+	}
+
+	public static void i(String tag, String msg, Throwable tr) {
+		if (DEBUG) {
+			String log = msg + '\n' + getStackTraceString(tr);
 
 			Log.i(tag, log);
 
@@ -121,6 +155,16 @@ public class Logger {
 		}
 	}
 
+	public static void w(String tag, String msg, Throwable tr) {
+		if (DEBUG) {
+			String log = msg + '\n' + getStackTraceString(tr);
+
+			Log.w(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
+	}
+
 	public static void w(String tag, String format, Object... args) {
 		if (DEBUG) {
 			String log = String.format(format, args);
@@ -144,6 +188,16 @@ public class Logger {
 	public static void e(String tag, Object o) {
 		if (DEBUG) {
 			String log = toJson(o);
+
+			Log.e(tag, log);
+
+			Logger2File.log2File(tag, log);
+		}
+	}
+
+	public static void e(String tag, String msg, Throwable tr) {
+		if (DEBUG) {
+			String log = msg + '\n' + getStackTraceString(tr);
 
 			Log.e(tag, log);
 
@@ -197,6 +251,28 @@ public class Logger {
 			json = json.substring(0, 500);
 
 		return json;
+	}
+
+	static String getStackTraceString(Throwable tr) {
+		if (tr == null) {
+			return "";
+		}
+
+		// This is to reduce the amount of log spew that apps do in the non-error
+		// condition of the network being unavailable.
+		Throwable t = tr;
+		while (t != null) {
+			if (t instanceof UnknownHostException) {
+				return "";
+			}
+			t = t.getCause();
+		}
+
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		tr.printStackTrace(pw);
+		pw.flush();
+		return sw.toString();
 	}
 
 }

@@ -5,8 +5,6 @@ import android.os.Handler;
 
 import com.squareup.okhttp.OkHttpClient;
 
-import org.aisen.android.common.utils.ActivityHelper;
-
 import java.util.concurrent.TimeUnit;
 
 public class GlobalContext extends Application {
@@ -16,11 +14,10 @@ public class GlobalContext extends Application {
 	public final static int CONN_TIMEOUT = 30000;
 	public final static int READ_TIMEOUT = 30000;
 
-	private static OkHttpClient mOkHttpClient;
+	private final static OkHttpClient mOkHttpClient = new OkHttpClient();;
 
 	static {
 		// 初始化OkHttpClient
-		mOkHttpClient = new OkHttpClient();
 		configOkHttpClient(CONN_TIMEOUT, READ_TIMEOUT);
 	}
 
@@ -29,9 +26,6 @@ public class GlobalContext extends Application {
 		super.onCreate();
 		
 		_context = this;
-
-		// 初始化ActivityHelper
-		ActivityHelper.config(this);
 	}
 
 	public static GlobalContext getInstance() {

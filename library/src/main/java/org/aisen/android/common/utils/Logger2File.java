@@ -34,11 +34,15 @@ public class Logger2File {
             return;
         }
 
-        if (GlobalContext.getInstance() != null) {
-            LoggerThread thread = getThread(GlobalContext.getInstance());
-            if (thread != null) {
-                thread.addLog(new Log(tag, log));
+        try {
+            if (GlobalContext.getInstance() != null) {
+                LoggerThread thread = getThread(GlobalContext.getInstance());
+                if (thread != null) {
+                    thread.addLog(new Log(tag, log));
+                }
             }
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 

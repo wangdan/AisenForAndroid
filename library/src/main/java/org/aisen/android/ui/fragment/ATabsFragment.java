@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 
 import org.aisen.android.R;
+import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.ActivityHelper;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.ui.fragment.adapter.FragmentPagerAdapter;
@@ -99,7 +100,7 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
             else {
                 if (configLastPositionKey() != null) {
                     // 记录了最后阅读的标签
-                    String type = ActivityHelper.getShareData("PagerLastPosition" + configLastPositionKey(), "");
+                    String type = ActivityHelper.getShareData(GlobalContext.getInstance(), "PagerLastPosition" + configLastPositionKey(), "");
                     if (!TextUtils.isEmpty(type)) {
                         for (int i = 0; i < mItems.size(); i++) {
                             TabItem item = mItems.get(i);
@@ -176,7 +177,7 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
         mCurrentPosition = position;
 
         if (configLastPositionKey() != null) {
-            ActivityHelper.putShareData("PagerLastPosition" + configLastPositionKey(), mItems.get(position).getType());
+            ActivityHelper.putShareData(GlobalContext.getInstance(), "PagerLastPosition" + configLastPositionKey(), mItems.get(position).getType());
         }
 
         // 查看是否需要拉取数据

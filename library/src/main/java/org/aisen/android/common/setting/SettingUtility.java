@@ -63,29 +63,29 @@ public class SettingUtility {
 	}
 
 	public static void setPermanentSetting(String type, boolean value) {
-		ActivityHelper.putBooleanShareData(type, value);
+		ActivityHelper.putBooleanShareData(GlobalContext.getInstance(), type, value);
 	}
 
 	public static boolean getPermanentSettingAsBool(String type, boolean def) {
-		return ActivityHelper.getBooleanShareData(type,
+		return ActivityHelper.getBooleanShareData(GlobalContext.getInstance(), type,
 				settingMap.containsKey(type) ? Boolean.parseBoolean(settingMap.get(type).getValue()) : def);
 	}
 
 	public static void setPermanentSetting(String type, int value) {
-		ActivityHelper.putIntShareData(type, value);
+		ActivityHelper.putIntShareData(GlobalContext.getInstance(), type, value);
 	}
 
 	public static int getPermanentSettingAsInt(String type) {
-		return ActivityHelper.getIntShareData(type,
+		return ActivityHelper.getIntShareData(GlobalContext.getInstance(), type,
 				settingMap.containsKey(type) ? Integer.parseInt(settingMap.get(type).getValue()) : -1);
 	}
 
 	public static void setPermanentSetting(String type, String value) {
-		ActivityHelper.putShareData(type, value);
+		ActivityHelper.putShareData(GlobalContext.getInstance(), type, value);
 	}
 
 	public static String getPermanentSettingAsStr(String type, String def) {
-		return ActivityHelper.getShareData(type, settingMap.containsKey(type) ? settingMap.get(type).getValue() : def);
+		return ActivityHelper.getShareData(GlobalContext.getInstance(), type, settingMap.containsKey(type) ? settingMap.get(type).getValue() : def);
 	}
 
 }

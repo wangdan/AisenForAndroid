@@ -9,6 +9,7 @@ import android.widget.AbsListView;
 import android.widget.ListView;
 
 import org.aisen.android.R;
+import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.ActivityHelper;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.ViewUtils;
@@ -689,21 +690,21 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 	}
 
 	protected int getLastReadPosition() {
-		return ActivityHelper.getIntShareData(refreshConfig.positionKey + "Position", 0);
+		return ActivityHelper.getIntShareData(GlobalContext.getInstance(), refreshConfig.positionKey + "Position", 0);
 	}
 
 	protected void putLastReadPosition(int position) {
 		if (!TextUtils.isEmpty(refreshConfig.positionKey))
-			ActivityHelper.putIntShareData(refreshConfig.positionKey + "Position", position);
+			ActivityHelper.putIntShareData(GlobalContext.getInstance(), refreshConfig.positionKey + "Position", position);
 	}
 
 	protected int getLastReadTop() {
-		return ActivityHelper.getIntShareData(refreshConfig.positionKey + "Top", 0);
+		return ActivityHelper.getIntShareData(GlobalContext.getInstance(), refreshConfig.positionKey + "Top", 0);
 	}
 
 	protected void putLastReadTop(int top) {
 		if (!TextUtils.isEmpty(refreshConfig.positionKey))
-			ActivityHelper.putIntShareData(refreshConfig.positionKey + "Top", top);
+			ActivityHelper.putIntShareData(GlobalContext.getInstance(), refreshConfig.positionKey + "Top", top);
 	}
 
 	protected int getFirstVisiblePosition() {

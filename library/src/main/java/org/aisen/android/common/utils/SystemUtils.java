@@ -278,10 +278,10 @@ import java.util.List;
 		int height = SystemUtils.getScreenHeight(paramActivity) - SystemUtils.getStatusBarHeight(paramActivity)
 				- SystemUtils.getAppHeight(paramActivity);
 		if (height == 0) {
-			height = ActivityHelper.getIntShareData("KeyboardHeight", 400);
+			height = ActivityHelper.getIntShareData(GlobalContext.getInstance(), "KeyboardHeight", 400);
 		}
 		else {
-			ActivityHelper.putIntShareData("KeyboardHeight", height);
+			ActivityHelper.putIntShareData(GlobalContext.getInstance(), "KeyboardHeight", height);
 		}
 		
 
