@@ -26,7 +26,7 @@ public class CacheTimeUtils {
         try {
             long saveTime = getSaveTime(context, key);
 
-            boolean expired = (System.currentTimeMillis() / 1000 - saveTime) * 1000 >= refreshInterval;
+            boolean expired = Math.abs((System.currentTimeMillis() / 1000 - saveTime) * 1000) >= refreshInterval;
 
             Logger.d("CacheTimeUtils", String.format("缓存有效性 %s, expired = %s", key, String.valueOf(expired)));
 
