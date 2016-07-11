@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.aisen.android.R;
-import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.ViewUtils;
 import org.aisen.android.component.bitmaploader.BitmapLoader;
@@ -45,16 +43,6 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
         none, prepare, falid, success, finished, canceled
     }
 
-    // 非UI线程
-    private final static HandlerThread nuiHandlerThread;
-
-    static {
-        nuiHandlerThread = new HandlerThread(TAG);
-        nuiHandlerThread.start();
-
-        Logger.w(TAG, "启动非UI的HandlerThread");
-    }
-
     private TaskManager taskManager;// 管理线程
 
     ViewGroup rootView;// 根视图
@@ -76,11 +64,6 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
 
     // UI线程的Handler
     Handler mHandler = new Handler(Looper.getMainLooper()) {
-
-    };
-
-    // 非UI线程的Handler
-    Handler nuiHandler = new Handler(nuiHandlerThread.getLooper()) {
 
     };
 
@@ -557,20 +540,6 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
         }
         else {
             mHandler.post(runnable);
-        }
-    }
-
-    public void runNUIRunnable(Runnable runnable) {
-        runNUIRunnable(runnable, 0);
-    }
-
-    public void runNUIRunnable(Runnable runnable, long delay) {
-        if (delay > 0) {
-            nuiHandler.removeCallbacks(runnable);
-            nuiHandler.postDelayed(runnable, delay);
-        }
-        else {
-            nuiHandler.post(runnable);
         }
     }
 

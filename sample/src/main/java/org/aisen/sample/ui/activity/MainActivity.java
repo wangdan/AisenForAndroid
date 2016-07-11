@@ -156,7 +156,7 @@ public class MainActivity extends BaseActivity {
         menuDialog.setCanceledOnTouchOutside(true);
         menuDialog.getWindow().setGravity(Gravity.LEFT | Gravity.TOP);
         if (items.length > 5) {
-            menuDialog.getWindow().setLayout(params.width, SystemUtils.getScreenHeight() * 3 / 5);
+            menuDialog.getWindow().setLayout(params.width, SystemUtils.getScreenHeight(activity) * 3 / 5);
         }
         else {
             menuDialog.getWindow().setLayout(params.width, WindowManager.LayoutParams.WRAP_CONTENT);
@@ -166,9 +166,9 @@ public class MainActivity extends BaseActivity {
 
     public interface MainSpinnerNavigation extends AdapterView.OnItemSelectedListener {
 
-        public String[] generateItems();
+        String[] generateItems();
 
-        public int initPosition();
+        int initPosition();
 
     }
 

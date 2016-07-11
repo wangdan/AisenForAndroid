@@ -18,7 +18,7 @@ public class BaseFragmentSample extends ABaseFragment {
     }
 
     @Override
-    protected int inflateContentView() {
+    public int inflateContentView() {
         return R.layout.ui_a_base;
     }
 

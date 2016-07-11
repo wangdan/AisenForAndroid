@@ -1,16 +1,21 @@
 package org.aisen.sample.ui.fragment;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.aisensample.R;
-import org.aisen.sample.support.bean.MenuBean;
-import org.aisen.sample.ui.activity.MainActivity;
 
-import org.aisen.android.support.adapter.ABaseAdapter;
 import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.fragment.AListFragment;
+import org.aisen.android.ui.fragment.adapter.ARecycleViewItemView;
+import org.aisen.android.ui.fragment.itemview.IITemView;
+import org.aisen.android.ui.fragment.itemview.IItemViewCreator;
+import org.aisen.sample.support.bean.MenuBean;
+import org.aisen.sample.ui.activity.MainActivity;
 
 import java.util.ArrayList;
 
@@ -24,20 +29,39 @@ public class MenuFragment extends AListFragment<MenuBean, ArrayList<MenuBean>> {
     }
 
     @Override
-    protected ABaseAdapter.AbstractItemView<MenuBean> newItemView() {
-        return new MainItemView();
+    protected void setupRefreshConfig(RefreshConfig config) {
+        super.setupRefreshConfig(config);
+
+        config.footerMoreEnable = false;
+    }
+
+    @Override
+    public IItemViewCreator<MenuBean> configItemViewCreator() {
+        return new IItemViewCreator<MenuBean>() {
+
+            @Override
+            public View newContentView(LayoutInflater inflater, ViewGroup parent, int viewType) {
+                return inflater.inflate(R.layout.item_main, parent, false);
+            }
+
+            @Override
+            public IITemView<MenuBean> newItemView(View convertView, int viewType) {
+                return new MainItemView(getActivity(), convertView);
+            }
+
+        };
+    }
+
+    @Override
+    public void requestData(RefreshMode mode) {
+        setItems(generateItems());
+
+        onItemClick(getRefreshView(), null, 0, 0);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         ((MainActivity) getActivity()).onMenuSelected(getAdapterItems().get(position));
-    }
-
-    @Override
-    protected void requestData(RefreshMode mode) {
-        setItems(generateItems());
-
-        onItemClick(getRefreshView(), null, 0, 0);
     }
 
     private ArrayList<MenuBean> generateItems() {
@@ -48,18 +72,17 @@ public class MenuFragment extends AListFragment<MenuBean, ArrayList<MenuBean>> {
         return items;
     }
 
-    class MainItemView extends ABaseAdapter.AbstractItemView<MenuBean> {
+    class MainItemView extends ARecycleViewItemView<MenuBean> {
 
         @ViewInject(id = R.id.txtTitle)
         TextView txtTitle;
 
-        @Override
-        public int inflateViewId() {
-            return R.layout.item_main;
+        public MainItemView(Context context, View itemView) {
+            super(context, itemView);
         }
 
         @Override
-        public void bindingData(View convertView, MenuBean data) {
+        public void onBindData(View convertView, MenuBean data, int position) {
             txtTitle.setText(data.getTitleRes());
         }
 

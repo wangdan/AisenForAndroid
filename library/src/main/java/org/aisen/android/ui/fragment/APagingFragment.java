@@ -635,14 +635,9 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 		// 保存最后浏览位置
 		if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
 			if (!TextUtils.isEmpty(refreshConfig.positionKey) && getRefreshView() != null) {
-				runNUIRunnable(new Runnable() {
-					@Override
-					public void run() {
-						putLastReadPosition(getFirstVisiblePosition());
+				putLastReadPosition(getFirstVisiblePosition());
 
-						putLastReadTop(getRefreshView().getChildAt(0).getTop());
-					}
-				});
+				putLastReadTop(getRefreshView().getChildAt(0).getTop());
 			}
 		}
 	}

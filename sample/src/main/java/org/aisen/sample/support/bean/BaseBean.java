@@ -9,18 +9,20 @@ import java.io.Serializable;
  */
 public class BaseBean implements IResult, Serializable {
 
+    private static final long serialVersionUID = 5953570312045069353L;
+
     @Override
-    public boolean expired() {
+    public boolean outofdate() {
         return false;
     }
 
     @Override
-    public boolean isCache() {
+    public boolean fromCache() {
         return false;
     }
 
     @Override
-    public boolean noMore() {
+    public boolean endPaging() {
         return false;
     }
 
@@ -28,4 +30,5 @@ public class BaseBean implements IResult, Serializable {
     public String[] pagingIndex() {
         return new String[0];
     }
+
 }
