@@ -11,7 +11,7 @@ import java.io.File;
 public class BitmapCompress implements IBitmapCompress {
 
 	@Override
-	public Bitmap compress(byte[] bitmapBytes, File file, String url, ImageConfig config, int origW, int origH) throws Exception {
+	public MyBitmap compress(byte[] bitmapBytes, File file, String url, ImageConfig config, int origW, int origH) throws Exception {
 		Bitmap bitmap = null;
 		try {
 			if (config.getMaxHeight() > 0 && config.getMaxWidth() > 0) {
@@ -32,7 +32,7 @@ public class BitmapCompress implements IBitmapCompress {
 		
 		Logger.d(BitmapLoader.TAG, String.format("原始尺寸是%dX%d, 压缩后尺寸是%dX%d", origW, origH, bitmap.getWidth(), bitmap.getHeight()));
 		
-		return bitmap;
+		return new MyBitmap(bitmap, url);
 	}
 
 }

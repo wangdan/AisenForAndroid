@@ -1,5 +1,6 @@
 package org.aisen.android.support.textspan;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -92,8 +93,12 @@ public class MyURLSpan extends ClickableSpan {
 	public void updateDrawState(TextPaint tp) {
 		if (color == 0) {
 			int[] attrs = new int[] { R.attr.colorPrimary };
-			TypedArray ta = BaseActivity.getRunningActivity().obtainStyledAttributes(attrs);
-			tp.setColor(ta.getColor(0, Color.BLUE));
+			Activity activity = BaseActivity.getRunningActivity();
+			if (activity != null) {
+				TypedArray ta = activity.obtainStyledAttributes(attrs);
+				tp.setColor(ta.getColor(0, Color.BLUE));
+			}
+
 		}
 		else {
 			tp.setColor(color);

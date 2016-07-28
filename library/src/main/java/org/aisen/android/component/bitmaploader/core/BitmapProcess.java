@@ -182,7 +182,8 @@ public class BitmapProcess {
 
 		// 判断是否需要压缩图片
 		IBitmapCompress bitmapCompress = config.getBitmapCompress().newInstance();
-		Bitmap bitmap = bitmapCompress.compress(bitmapBytes, getOirgFile(url), url, config, options.outWidth, options.outHeight);
+		myBitmap = bitmapCompress.compress(bitmapBytes, getOirgFile(url), url, config, options.outWidth, options.outHeight);
+		Bitmap bitmap = myBitmap.getBitmap();
 		if (bitmap == null) {
 			// 如果没压缩，就原始解析图片
 			bitmap = BitmapDecoder.decodeSampledBitmapFromByte(context, bitmapBytes);
@@ -202,7 +203,7 @@ public class BitmapProcess {
 			writeToComp = true;
 
 		// 当图片做了圆角、压缩处理后，将图片放置二级缓存
-		if (writeToComp && config.isCacheEnable()) {
+		if (writeToComp && config.isCompressCacheEnable()) {
 			String key = KeyGenerator.generateMD5(BitmapLoader.getKeyByConfig(url, config));
 
 			// PNG以外其他格式，都压缩成JPG格式
@@ -219,7 +220,8 @@ public class BitmapProcess {
 			}
 		}
 
-		return new MyBitmap(bitmap, url);
+		myBitmap.setBitmap(bitmap);
+		return myBitmap;
 	}
 
 }

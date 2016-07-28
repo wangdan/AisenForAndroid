@@ -24,6 +24,6 @@ public interface IBitmapCompress {
 	 * @return null-不压缩
 	 * @throws Exception
 	 */
-	public Bitmap compress(byte[] bitmapBytes, File file, String url, ImageConfig config, int origW, int origH) throws Exception;
+	public MyBitmap compress(byte[] bitmapBytes, File file, String url, ImageConfig config, int origW, int origH) throws Exception;
 
 }

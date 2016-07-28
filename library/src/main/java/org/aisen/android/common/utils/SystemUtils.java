@@ -97,12 +97,12 @@ import java.util.List;
 			setScreenInfo(context);
 		return screenHeight;
 	}
-	
+
 	public static int getTitleBarHeight(Activity activity) {
-		int contentTop = activity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();  
+		int contentTop = activity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
 		//statusBarHeight是上面所求的状态栏的高度  
 		int titleBarHeight = contentTop - getStatusBarHeight(activity);
-		
+
 		return titleBarHeight;
 	}
 
@@ -141,7 +141,7 @@ import java.util.List;
 
 	/**
 	 * 获取SDCARD的可用大小,单位字节
-	 * 
+	 *
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
@@ -171,10 +171,10 @@ import java.util.List;
 
 		if (networkInfo != null) {
 			switch (networkInfo.getType()) {
-			case ConnectivityManager.TYPE_MOBILE:
-				return NetWorkType.mobile;
-			case ConnectivityManager.TYPE_WIFI:
-				return NetWorkType.wifi;
+				case ConnectivityManager.TYPE_MOBILE:
+					return NetWorkType.mobile;
+				case ConnectivityManager.TYPE_WIFI:
+					return NetWorkType.wifi;
 			}
 		}
 
@@ -183,7 +183,7 @@ import java.util.List;
 
 	/**
 	 * mac地址
-	 * 
+	 *
 	 * @return
 	 */
 	public static String getMacAddress(Context context) {
@@ -194,24 +194,24 @@ import java.util.List;
 		else
 			return "0022f420d03f";// 00117f29d23a
 	}
-	
+
 	public static String getUDPIP(Context context) {
 
-        WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-        DhcpInfo dhcpInfo = wifi.getDhcpInfo();
-        int IpAddress =dhcpInfo.ipAddress;
-        int subMask = dhcpInfo.netmask;
-        return transformIp((~subMask) | IpAddress);
-    }
-	
+		WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+		DhcpInfo dhcpInfo = wifi.getDhcpInfo();
+		int IpAddress =dhcpInfo.ipAddress;
+		int subMask = dhcpInfo.netmask;
+		return transformIp((~subMask) | IpAddress);
+	}
+
 	private static String transformIp(int i) {
-        return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "." + ((i >> 16) & 0xFF)
-                + "." + (i >> 24 & 0xFF);
-    }
-	
+		return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "." + ((i >> 16) & 0xFF)
+				+ "." + (i >> 24 & 0xFF);
+	}
+
 	public static String getIP(Context context) {
-        WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-        return transformIp(wifi.getConnectionInfo().getIpAddress());
+		WifiManager wifi = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+		return transformIp(wifi.getConnectionInfo().getIpAddress());
 	}
 
 	public static String getVersionName(Context context) {
@@ -233,7 +233,7 @@ import java.util.List;
 		}
 		return 0;
 	}
-	
+
 	public static String getPackage(Context context) {
 		try {
 			PackageManager packageManager = context.getPackageManager();
@@ -243,14 +243,14 @@ import java.util.List;
 		}
 		return "";
 	}
-	
+
 	public static void scanPhoto(Context context, File file) {
-		 Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-		 Uri uri = Uri.fromFile(file);
-		 intent.setData(uri);
-		 context.sendBroadcast(intent);
+		Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+		Uri uri = Uri.fromFile(file);
+		intent.setData(uri);
+		context.sendBroadcast(intent);
 	}
-	
+
 	public static void hideSoftInput(Context context, View paramEditText) {
 		((InputMethodManager) context.getSystemService("input_method"))
 				.hideSoftInputFromWindow(paramEditText.getWindowToken(), 0);
@@ -283,7 +283,7 @@ import java.util.List;
 		else {
 			ActivityHelper.putIntShareData(GlobalContext.getInstance(), "KeyboardHeight", height);
 		}
-		
+
 
 		return height;
 	}

@@ -16,7 +16,7 @@ public class FadeInDisplayer implements Displayer {
 		if (imageView.getDrawable() != null) {
 			final TransitionDrawable td = new TransitionDrawable(new Drawable[] { imageView.getDrawable(), drawable });
 			imageView.setImageDrawable(td);
-			td.startTransition(300);			
+			td.startTransition(300);
 		}
 		else {
 			imageView.setImageDrawable(drawable);

@@ -29,6 +29,8 @@ public class ImageConfig {
 	private int loadfaildRes;
 
     private boolean cacheEnable = true;// 是否保存图片文件到缓存文件，当加载自sd卡或者contentprovider时，可配置这个属性
+
+	private boolean compressCacheEnable = true;// 是否保存图片文件到压缩缓存文件，当加载自sd卡或者contentprovider时，可配置这个属性
 	
 	public ImageConfig() {
 		downloaderClass = WebDownloader.class;
@@ -120,7 +122,16 @@ public class ImageConfig {
         return cacheEnable;
     }
 
-    public void setCacheEnable(boolean cacheEnable) {
+	public void setCacheEnable(boolean cacheEnable) {
         this.cacheEnable = cacheEnable;
+		this.compressCacheEnable = cacheEnable;
     }
+
+	public boolean isCompressCacheEnable() {
+		return compressCacheEnable;
+	}
+
+	public void setCompressCacheEnable(boolean compressCacheEnable) {
+		this.compressCacheEnable = compressCacheEnable;
+	}
 }

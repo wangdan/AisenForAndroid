@@ -287,6 +287,14 @@ public class BitmapLoader {
         return null;
     }
 
+	public MyBitmap getMyBitmapFromMemory(String url, ImageConfig config) {
+		MyBitmap bitmap = mImageCache.getBitmapFromMemCache(url, config);
+		if (bitmap != null)
+			return bitmap;
+
+		return null;
+	}
+
 	public static String getKeyByConfig(String url, ImageConfig config) {
 		String path = url;
 		
@@ -467,7 +475,7 @@ public class BitmapLoader {
 			return bitmapBytesAndFlag;
 		}
 
-		throw new Exception("download faild");
+		throw new Exception("download faild : " + imageUrl);
 	}
 
 	public static class BitmapBytesAndFlag {

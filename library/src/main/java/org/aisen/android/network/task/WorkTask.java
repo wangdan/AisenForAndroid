@@ -1,6 +1,7 @@
 package org.aisen.android.network.task;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 
@@ -124,7 +125,7 @@ public abstract class WorkTask<Params, Progress, Result> {
 		 */
 		RUNNING,
 		/**
-		 * Indicates that {@link SyswealTask#onPostExecute} has finished.
+		 * Indicates that {@link WorkTask#onPostExecute} has finished.
 		 */
 		FINISHED,
 	}
@@ -358,7 +359,19 @@ public abstract class WorkTask<Params, Progress, Result> {
 
 		mStatus = Status.RUNNING;
 
-		onPreExecute();
+		if (Looper.myLooper() == Looper.getMainLooper()) {
+			onPreExecute();
+		}
+		else {
+			sHandler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					onPreExecute();
+				}
+
+			});
+		}
 
 		mWorker.mParams = params;
 		exec.execute(mFuture);
@@ -386,6 +399,11 @@ public abstract class WorkTask<Params, Progress, Result> {
 	}
 
 	private static class InternalHandler extends Handler {
+
+		InternalHandler() {
+			super(Looper.getMainLooper());
+		}
+
 		@SuppressWarnings({ "unchecked" })
 		@Override
 		public void handleMessage(Message msg) {
