@@ -116,18 +116,18 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
 
         Logger.d(TAG, "CurrentPosition " + mCurrentPosition);
 
-        fragments = new HashMap<String, Fragment>();
+        fragments = new HashMap<>();
 
         // 初始化的时候，移除一下Fragment
-        if (savedInstanceSate != null) {
-            for (int i = 0; i < mItems.size(); i++) {
-                Fragment fragment = getActivity().getFragmentManager().findFragmentByTag(makeFragmentName(i));
-                if (fragment != null) {
-                    getActivity().getFragmentManager().beginTransaction()
-                            .remove(fragment).commit();
-                }
-            }
-        }
+//        if (savedInstanceSate != null) {
+//            for (int i = 0; i < mItems.size(); i++) {
+//                Fragment fragment = getActivity().getFragmentManager().findFragmentByTag(makeFragmentName(i));
+//                if (fragment != null) {
+//                    getActivity().getFragmentManager().beginTransaction()
+//                            .remove(fragment).commit();
+//                }
+//            }
+//        }
 
         setupViewPager(savedInstanceSate);
     }
@@ -143,28 +143,28 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
     }
 
     protected void destoryFragments() {
-        if (getActivity() != null) {
-            if (getActivity() instanceof BaseActivity) {
-                BaseActivity mainActivity = (BaseActivity) getActivity();
-                if (mainActivity.isDestory())
-                    return;
-            }
-
-            try {
-                FragmentTransaction trs = getFragmentManager().beginTransaction();
-                Set<String> keySet = fragments.keySet();
-                for (String key : keySet) {
-                    if (fragments.get(key) != null) {
-                        trs.remove(fragments.get(key));
-
-                        Logger.d(TAG, "remove fragment , key = " + key);
-                    }
-                }
-                trs.commit();
-            } catch (Throwable e) {
-                Logger.printExc(getClass(), e);
-            }
-        }
+//        if (getActivity() != null) {
+//            if (getActivity() instanceof BaseActivity) {
+//                BaseActivity mainActivity = (BaseActivity) getActivity();
+//                if (mainActivity.isDestory())
+//                    return;
+//            }
+//
+//            try {
+//                FragmentTransaction trs = getFragmentManager().beginTransaction();
+//                Set<String> keySet = fragments.keySet();
+//                for (String key : keySet) {
+//                    if (fragments.get(key) != null) {
+//                        trs.remove(fragments.get(key));
+//
+//                        Logger.d(TAG, "remove fragment , key = " + key);
+//                    }
+//                }
+//                trs.commit();
+//            } catch (Throwable e) {
+//                Logger.printExc(getClass(), e);
+//            }
+//        }
     }
 
     @Override

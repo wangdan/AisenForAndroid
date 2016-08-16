@@ -33,7 +33,7 @@ public class DefDividerItemView extends RecyclerView.ItemDecoration {
     // 分割线颜色
     private int color;
     // 分割线尺寸
-    private int size;
+    private float size;
 
     public DefDividerItemView(Context context, int color) {
         this(context, color, VERTICAL);
@@ -74,7 +74,7 @@ public class DefDividerItemView extends RecyclerView.ItemDecoration {
      *
      * @param size 尺寸
      */
-    public void setSize(int size) {
+    public void setSize(float size) {
         this.size = size;
     }
 
@@ -87,8 +87,8 @@ public class DefDividerItemView extends RecyclerView.ItemDecoration {
         for (int i = 0; i < childCount; i++) {
             final View child = parent.getChildAt(i);
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
-            final int left = child.getRight() + params.rightMargin;
-            final int right = left + size;
+            final float left = child.getRight() + params.rightMargin;
+            final float right = left + size;
 
             c.drawRect(left, top, right, bottom, paint);
         }
@@ -104,7 +104,7 @@ public class DefDividerItemView extends RecyclerView.ItemDecoration {
             final View child = parent.getChildAt(i);
             final RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
             final int top = child.getBottom() + params.bottomMargin;
-            final int bottom = top + size;
+            final float bottom = top + size;
 
             c.drawRect(left, top, right, bottom, paint);
         }
