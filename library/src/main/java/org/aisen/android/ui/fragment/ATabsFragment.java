@@ -44,6 +44,8 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
     Map<String, Fragment> fragments;
     int mCurrentPosition = 0;
 
+    private boolean isRetainFragments = false;// 如果系统先调用onSaveInstanceState方法，说明添加的Fragments是需要保留的
+
     @Override
     public int inflateContentView() {
         return R.layout.comm_ui_tabs;
@@ -56,6 +58,8 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
         mCurrentPosition = mViewPager.getCurrentItem();
         outState.putSerializable("items", mItems);
         outState.putInt("current", mCurrentPosition);
+
+        isRetainFragments = true;
     }
 
     @Override
@@ -119,15 +123,15 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
         fragments = new HashMap<>();
 
         // 初始化的时候，移除一下Fragment
-//        if (savedInstanceSate != null) {
-//            for (int i = 0; i < mItems.size(); i++) {
-//                Fragment fragment = getActivity().getFragmentManager().findFragmentByTag(makeFragmentName(i));
-//                if (fragment != null) {
-//                    getActivity().getFragmentManager().beginTransaction()
-//                            .remove(fragment).commit();
-//                }
-//            }
-//        }
+        if (savedInstanceSate == null) {
+            for (int i = 0; i < mItems.size(); i++) {
+                Fragment fragment = getActivity().getFragmentManager().findFragmentByTag(makeFragmentName(i));
+                if (fragment != null) {
+                    getActivity().getFragmentManager().beginTransaction()
+                            .remove(fragment).commit();
+                }
+            }
+        }
 
         setupViewPager(savedInstanceSate);
     }
@@ -143,28 +147,28 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
     }
 
     protected void destoryFragments() {
-//        if (getActivity() != null) {
-//            if (getActivity() instanceof BaseActivity) {
-//                BaseActivity mainActivity = (BaseActivity) getActivity();
-//                if (mainActivity.isDestory())
-//                    return;
-//            }
-//
-//            try {
-//                FragmentTransaction trs = getFragmentManager().beginTransaction();
-//                Set<String> keySet = fragments.keySet();
-//                for (String key : keySet) {
-//                    if (fragments.get(key) != null) {
-//                        trs.remove(fragments.get(key));
-//
-//                        Logger.d(TAG, "remove fragment , key = " + key);
-//                    }
-//                }
-//                trs.commit();
-//            } catch (Throwable e) {
-//                Logger.printExc(getClass(), e);
-//            }
-//        }
+        if (getActivity() != null) {
+            if (getActivity() instanceof BaseActivity) {
+                BaseActivity mainActivity = (BaseActivity) getActivity();
+                if (mainActivity.isDestory())
+                    return;
+            }
+
+            try {
+                FragmentTransaction trs = getFragmentManager().beginTransaction();
+                Set<String> keySet = fragments.keySet();
+                for (String key : keySet) {
+                    if (fragments.get(key) != null) {
+                        trs.remove(fragments.get(key));
+
+                        Logger.d(TAG, "remove fragment , key = " + key);
+                    }
+                }
+                trs.commit();
+            } catch (Throwable e) {
+                Logger.printExc(getClass(), e);
+            }
+        }
     }
 
     @Override
@@ -218,7 +222,9 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
     @Override
     public void onDestroy() {
         try {
-            destoryFragments();
+            if (!isRetainFragments) {
+                destoryFragments();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -305,7 +311,7 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
     // 当每次onPagerSelected的时候，再调用这个接口初始化数据
     public interface ITabInitData {
 
-        public void onTabRequestData();
+        void onTabRequestData();
 
     }
 
