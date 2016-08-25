@@ -20,8 +20,8 @@ import java.util.ArrayList;
  * 维护一个瀑布流
  *
  */
-public abstract class AWaterfallFragment<T extends Serializable, Ts extends Serializable>
-                                extends APagingFragment<T, Ts, PLAMultiColumnListView>
+public abstract class AWaterfallFragment<T extends Serializable, Ts extends Serializable, Header extends Serializable>
+                                extends APagingFragment<T, Ts, Header, PLAMultiColumnListView>
                                 implements PLAAbsListView.OnScrollListener, PLAMultiColumnListView.OnItemClickListener {
 
     @ViewInject(idStr = "plaMultiColumnList")

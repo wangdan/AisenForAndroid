@@ -20,8 +20,8 @@ import java.util.ArrayList;
  *
  * Created by wangdan on 16/1/21.
  */
-public abstract class AGridFragment<T extends Serializable, Ts extends Serializable>
-                        extends APagingFragment<T, Ts, GridView>
+public abstract class AGridFragment<T extends Serializable, Ts extends Serializable, Header extends Serializable>
+                        extends APagingFragment<T, Ts, Header, GridView>
                         implements AdapterView.OnItemClickListener {
 
     @ViewInject(idStr = "gridview")

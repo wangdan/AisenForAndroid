@@ -1,6 +1,7 @@
 package org.aisen.android.ui.fragment.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -100,6 +101,23 @@ public class BasicRecycleViewAdapter<T extends Serializable> extends RecyclerVie
             itemView = footerItemView;
 
             convertView = itemView.getConvertView();
+
+            if (holderFragment.getRefreshView() instanceof RecyclerView) {
+                RecyclerView recyclerView = (RecyclerView) holderFragment.getRefreshView();
+                if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
+                    StaggeredGridLayoutManager.LayoutParams layoutParams;
+                    if (convertView.getLayoutParams() == null || !(convertView.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams)) {
+                        layoutParams = new StaggeredGridLayoutManager.LayoutParams(StaggeredGridLayoutManager.LayoutParams.MATCH_PARENT, StaggeredGridLayoutManager.LayoutParams.WRAP_CONTENT);
+                        convertView.setLayoutParams(layoutParams);
+                    }
+                    else {
+                        layoutParams = (StaggeredGridLayoutManager.LayoutParams) convertView.getLayoutParams();
+                    }
+                    if (!layoutParams.isFullSpan()) {
+                        layoutParams.setFullSpan(true);
+                    }
+                }
+            }
         }
         else if (isHeaderType(viewType)) {
             convertView = headerItemViewCreator.newContentView(holderFragment.getActivity().getLayoutInflater(), parent, viewType);

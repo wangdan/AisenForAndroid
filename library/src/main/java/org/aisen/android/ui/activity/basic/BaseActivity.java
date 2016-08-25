@@ -40,6 +40,7 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
 
     static final String TAG = "Activity-Base";
 
+    private static Class<? extends BaseActivityHelper> mHelperClass;
     private BaseActivityHelper mHelper;
 
     private int theme = 0;// 当前界面设置的主题
@@ -67,6 +68,10 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         runningActivity = activity;
     }
 
+    public static void setHelper(Class<? extends BaseActivityHelper> clazz) {
+        mHelperClass = clazz;
+    }
+
     protected int configTheme() {
         if (mHelper != null) {
             int theme = mHelper.configTheme();
@@ -81,12 +86,12 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
     protected void onCreate(Bundle savedInstanceState) {
         if (mHelper == null) {
             try {
-                if (SettingUtility.getStringSetting("activity_helper") != null) {
-                    mHelper = (BaseActivityHelper) Class.forName(SettingUtility.getStringSetting("activity_helper")).newInstance();
+                if (mHelperClass != null) {
+                    mHelper = mHelperClass.newInstance();
                     mHelper.bindActivity(this);
                 }
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
         }
 

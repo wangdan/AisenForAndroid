@@ -12,8 +12,8 @@ import java.io.Serializable;
  * 维护瀑布流的SwipeRefreshLayout控件
  *
  */
-public abstract class AWaterfallSwipeRefreshFragment<T extends Serializable, Ts extends Serializable>
-                                    extends AWaterfallFragment<T, Ts>
+public abstract class AWaterfallSwipeRefreshFragment<T extends Serializable, Ts extends Serializable, Header extends Serializable>
+                                    extends AWaterfallFragment<T, Ts, Header>
                                     implements SwipeRefreshLayout.OnRefreshListener {
 
     @ViewInject(idStr = "swipeRefreshLayout")

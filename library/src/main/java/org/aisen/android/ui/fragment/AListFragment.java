@@ -20,8 +20,8 @@ import java.util.ArrayList;
  * 维护ListView
  *
  */
-public abstract class AListFragment<T extends Serializable, Ts extends Serializable>
-                                extends APagingFragment<T, Ts, ListView> implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
+public abstract class AListFragment<T extends Serializable, Ts extends Serializable, Header extends Serializable>
+                                extends APagingFragment<T, Ts, Header, ListView> implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
     @ViewInject(idStr = "listView")
     ListView mListView;

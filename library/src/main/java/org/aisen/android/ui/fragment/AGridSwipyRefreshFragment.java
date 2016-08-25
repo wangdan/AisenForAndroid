@@ -16,8 +16,8 @@ import java.io.Serializable;
  *
  * Created by wangdan on 16/1/21.
  */
-public abstract class AGridSwipyRefreshFragment<T extends Serializable, Ts extends Serializable>
-                                            extends AGridFragment<T, Ts>
+public abstract class AGridSwipyRefreshFragment<T extends Serializable, Ts extends Serializable, Header extends Serializable>
+                                            extends AGridFragment<T, Ts, Header>
                                             implements SwipyRefreshLayout.OnRefreshListener  {
 
     @ViewInject(idStr = "swipyRefreshLayout")

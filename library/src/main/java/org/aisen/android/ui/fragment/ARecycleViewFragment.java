@@ -1,8 +1,11 @@
 package org.aisen.android.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -21,8 +24,8 @@ import java.util.ArrayList;
  *
  * Created by wangdan on 16/1/4.
  */
-public abstract class ARecycleViewFragment<T extends Serializable, Ts extends Serializable>
-                            extends APagingFragment<T, Ts, RecyclerView>
+public abstract class ARecycleViewFragment<T extends Serializable, Ts extends Serializable, Header extends Serializable>
+                            extends APagingFragment<T, Ts, Header, RecyclerView>
                             implements AdapterView.OnItemClickListener {
 
     @ViewInject(idStr = "recycleview")

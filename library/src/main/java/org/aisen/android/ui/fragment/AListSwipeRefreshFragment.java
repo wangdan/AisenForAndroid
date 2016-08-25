@@ -13,8 +13,8 @@ import java.io.Serializable;
  * 维护ListView的SwipeRefreshLayout控件
  *
  */
-public abstract class AListSwipeRefreshFragment<T extends Serializable, Ts extends Serializable>
-                                            extends AListFragment<T, Ts>
+public abstract class AListSwipeRefreshFragment<T extends Serializable, Ts extends Serializable, Header extends Serializable>
+                                            extends AListFragment<T, Ts, Header>
                                             implements SwipeRefreshLayout.OnRefreshListener {
 
     @ViewInject(idStr = "swipeRefreshLayout")

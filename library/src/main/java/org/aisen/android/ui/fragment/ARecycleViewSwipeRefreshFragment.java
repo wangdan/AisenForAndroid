@@ -11,8 +11,8 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/1/6.
  */
-public abstract class ARecycleViewSwipeRefreshFragment<T extends Serializable, Ts extends Serializable>
-                                                extends ARecycleViewFragment<T, Ts>
+public abstract class ARecycleViewSwipeRefreshFragment<T extends Serializable, Ts extends Serializable, Header extends Serializable>
+                                                extends ARecycleViewFragment<T, Ts, Header>
                                                 implements SwipeRefreshLayout.OnRefreshListener {
 
     @ViewInject(idStr = "swipeRefreshLayout")

@@ -42,7 +42,8 @@ import java.util.List;
  * @param <Ts>
  * @param <V>
  */
-public abstract class APagingFragment<T extends Serializable, Ts extends Serializable, V extends ViewGroup> extends ABaseFragment
+public abstract class APagingFragment<T extends Serializable, Ts extends Serializable, Header extends Serializable, V extends ViewGroup>
+															extends ABaseFragment
 															implements AsToolbar.OnToolbarDoubleClick, OnFooterViewListener, AFooterItemView.OnFooterViewCallback {
 
 	private static final String TAG = "AFragment-Paging";
@@ -64,7 +65,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 	IItemViewCreator<T> mFooterItemViewCreator;
 	AFooterItemView<T> mFooterItemView;// FooterView，滑动到底部时，自动加载更多数据
 
-	AHeaderItemViewCreator<T> mHeaderItemViewCreator;
+	AHeaderItemViewCreator<Header> mHeaderItemViewCreator;
 
 	public enum RefreshMode {
 		/**
@@ -554,7 +555,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 
 	/*********************************************开始FooterView************************************************/
 
-	protected AHeaderItemViewCreator<T> configHeaderViewCreator() {
+	protected AHeaderItemViewCreator<Header> configHeaderViewCreator() {
 		return null;
 	}
 

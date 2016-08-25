@@ -139,7 +139,7 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
 			Log.v(TAG, "Detaching item #" + getItemId(position) + ": f=" + object + " v=" + ((Fragment) object).getView());
 //		mCurTransaction.detach((Fragment) object);
 		if (object instanceof APagingFragment)
-			((APagingFragment<Serializable, Serializable, ViewGroup>) object).releaseImageViewByIds();
+			((APagingFragment) object).releaseImageViewByIds();
 		if (object instanceof FragmentPagerChangeListener)
 			((FragmentPagerChangeListener) object).destroy(makeFragmentName(position));
 
