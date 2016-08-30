@@ -209,34 +209,60 @@ public class SqliteUtility {
 
         TableInfo tableInfo = checkTable(entityList.get(0).getClass());
 
-        long start = System.currentTimeMillis();
-        db.beginTransaction();
-        try {
-            String sql = SqlUtils.createSqlInsert(insertInto, tableInfo);
+        synchronized (tableInfo) {
+            long start = System.currentTimeMillis();
+            db.beginTransaction();
+            try {
+                String sql = SqlUtils.createSqlInsert(insertInto, tableInfo);
 
-            Logger.v(TAG, insertInto + " sql = %s", sql);
+                Logger.v(TAG, insertInto + " sql = %s", sql);
 
-            SQLiteStatement insertStatement = db.compileStatement(sql);
-            long bindTime = 0;
-            long startTime = System.currentTimeMillis();
-            for (T entity : entityList) {
-                bindInsertValues(extra, insertStatement, tableInfo, entity);
-                bindTime += (System.currentTimeMillis() - startTime);
-                startTime = System.currentTimeMillis();
-                insertStatement.execute();
+                SQLiteStatement insertStatement = db.compileStatement(sql);
+                long bindTime = 0;
+                long startTime = System.currentTimeMillis();
+                for (T entity : entityList) {
+                    bindInsertValues(extra, insertStatement, tableInfo, entity);
+                    bindTime += (System.currentTimeMillis() - startTime);
+                    startTime = System.currentTimeMillis();
+                    insertStatement.execute();
+                }
+                Logger.d(TAG, "bindvalues 耗时 %s ms", bindTime + "");
+
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
             }
-            Logger.d(TAG, "bindvalues 耗时 %s ms", bindTime + "");
+            Logger.d(TAG, "表 %s %s 数据 %d 条， 执行时间 %s ms",
+                    tableInfo.getTableName(),
+                    insertInto,
+                    entityList.size(),
+                    String.valueOf(System.currentTimeMillis() - start));
 
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
+            // 只有一条数据，且主键为自增主键
+            if (entityList.size() == 1 && tableInfo.getPrimaryKey() instanceof AutoIncrementTableColumn) {
+                Cursor cursor = null;
+                try {
+                    cursor = db.rawQuery("select last_insert_rowid() from " + tableInfo.getTableName(), null);
+                    if(cursor.moveToFirst()) {
+                        int newId = cursor.getInt(0);
+
+                        Logger.d(TAG, "表%s自增主键[%d]", tableInfo.getTableName(), newId);
+
+                        T bean = entityList.get(0);
+                        try {
+                            tableInfo.getPrimaryKey().getField().setAccessible(true);
+                            tableInfo.getPrimaryKey().getField().set(bean, newId);
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } finally {
+                    if (cursor != null) {
+                        cursor.close();
+                    }
+                }
+            }
         }
-
-        Logger.d(TAG, "表 %s %s 数据 %d 条， 执行时间 %s ms",
-                            tableInfo.getTableName(),
-                            insertInto,
-                            entityList.size(),
-                            String.valueOf(System.currentTimeMillis() - start));
     }
 
     /*******************************************开始Update系列方法****************************************************/

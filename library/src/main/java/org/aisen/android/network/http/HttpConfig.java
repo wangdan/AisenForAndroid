@@ -24,5 +24,5 @@ public class HttpConfig {
 	public void addHeader(String key, String value) {
 		headerMap.put(key, value);
 	}
-	
+
 }

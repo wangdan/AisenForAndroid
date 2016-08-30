@@ -43,7 +43,7 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
 
             @Override
             public void onClick(View v) {
-                if (getCallback() != null) {
+                if (getCallback() != null && getCallback().canLoadMore()) {
                     getCallback().onLoadMore();
                 }
             }

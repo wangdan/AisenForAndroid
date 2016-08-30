@@ -645,12 +645,14 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 
 	@Override
 	public boolean canLoadMore() {
-		return !refreshConfig.pagingEnd;
+		return refreshConfig == null || !refreshConfig.pagingEnd;
 	}
 
 	@Override
 	public void onLoadMore() {
-		onPullUpToRefresh();
+		if (canLoadMore()) {
+			onPullUpToRefresh();
+		}
 	}
 
 	protected void onScroll(int firstVisibleItem, int visibleItemCount, int totalItemCount) {

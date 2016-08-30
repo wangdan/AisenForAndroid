@@ -1,5 +1,7 @@
 package org.aisen.android.network.http;
 
+import android.text.TextUtils;
+
 import org.aisen.android.common.setting.Setting;
 import org.aisen.android.network.task.TaskException;
 
@@ -15,56 +17,52 @@ public interface IHttpUtility {
 
 	class MultipartFile {
 
-		private String contentType;
+		private final String contentType;// "application/octet-stream"
 
-		private File file;
+		private final File file;
 
-		private String key;
+		private final String key;
 
-		private byte[] bytes;
+		private final byte[] bytes;
+
+		private OnFileProgress callback;
 
 		public MultipartFile(String contentType, String key, File file) {
 			this.key = key;
 			this.contentType = contentType;
 			this.file = file;
+			this.bytes = null;
 		}
 
 		public MultipartFile(String contentType, String key, byte[] bytes) {
 			this.key = key;
 			this.contentType = contentType;
 			this.bytes = bytes;
+			this.file = null;
 		}
 
 		public String getContentType() {
 			return contentType;
 		}
 
-		public void setContentType(String contentType) {
-			this.contentType = contentType;
-		}
-
 		public File getFile() {
 			return file;
-		}
-
-		public void setFile(File file) {
-			this.file = file;
 		}
 
 		public byte[] getBytes() {
 			return bytes;
 		}
 
-		public void setBytes(byte[] bytes) {
-			this.bytes = bytes;
-		}
-
 		public String getKey() {
 			return key;
 		}
 
-		public void setKey(String key) {
-			this.key = key;
+		public void setOnProgress(OnFileProgress callback) {
+			this.callback = callback;
+		}
+
+		public OnFileProgress getOnProgress() {
+			return callback;
 		}
 
 	}

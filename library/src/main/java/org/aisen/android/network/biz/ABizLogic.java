@@ -52,7 +52,6 @@ public abstract class ABizLogic implements IHttpUtility {
 		 * 每次拉取数据，都优先拉取缓存
 		 */
 		cachePriority,
-        CacheMode,
 		/**
 		 * 只拉取服务数据
 		 */

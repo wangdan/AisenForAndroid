@@ -9,6 +9,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.internal.Util;
 
 import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.setting.Setting;
@@ -18,10 +19,17 @@ import org.aisen.android.common.utils.SystemUtils;
 import org.aisen.android.network.biz.ABizLogic;
 import org.aisen.android.network.task.TaskException;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.util.Set;
+
+import okio.Buffer;
+import okio.BufferedSink;
+import okio.Okio;
+import okio.Source;
 
 public class DefHttpUtility implements IHttpUtility {
 
@@ -84,13 +92,14 @@ public class DefHttpUtility implements IHttpUtility {
 			for (MultipartFile file : files) {
 				// 普通字节流
 				if (file.getBytes() != null) {
-					multipartBuilder.addFormDataPart(file.getKey(), file.getKey(), RequestBody.create(MediaType.parse("application/octet-stream"), file.getBytes()));
+
+					multipartBuilder.addFormDataPart(file.getKey(), file.getKey(), createRequestBody(file));
 
 					Logger.d(getTag(action, method), "Multipart bytes, length = " + file.getBytes().length);
 				}
 				// 文件
 				else if (file.getFile() != null) {
-					multipartBuilder.addFormDataPart(file.getKey(), file.getFile().getName(), RequestBody.create(MediaType.parse(file.getContentType()), file.getFile()));
+					multipartBuilder.addFormDataPart(file.getKey(), file.getFile().getName(), createRequestBody(file));
 
 					Logger.d(getTag(action, method), "Multipart file, name = %s, path = %s", file.getFile().getName(), file.getFile().getAbsolutePath());
 				}
@@ -198,6 +207,63 @@ public class DefHttpUtility implements IHttpUtility {
 
 	public synchronized OkHttpClient getOkHttpClient() {
 		return GlobalContext.getOkHttpClient();
+	}
+
+	static RequestBody createRequestBody(final MultipartFile file) {
+		return new RequestBody() {
+
+			@Override
+			public MediaType contentType() {
+				return MediaType.parse(file.getContentType());
+			}
+
+			@Override
+			public long contentLength() throws IOException {
+				return file.getBytes() != null ? file.getBytes().length : file.getFile().length();
+			}
+
+			@Override
+			public void writeTo(BufferedSink sink) throws IOException {
+				Source source;
+				if (file.getFile() != null) {
+					source = Okio.source(file.getFile());
+				}
+				else {
+					source = Okio.source(new ByteArrayInputStream(file.getBytes()));
+				}
+
+				OnFileProgress onFileProgress = file.getOnProgress();
+				if (onFileProgress != null) {
+					try {
+						long contentLength = contentLength();
+						long writeLen = 0;
+						long readLen = -1;
+						Buffer buffer = new Buffer();
+						while ((readLen = source.read(buffer, 8 * 1024)) != -1) {
+							sink.write(buffer, readLen);
+							writeLen += readLen;
+							onFileProgress.onProgress(writeLen, contentLength);
+						}
+					} catch (IOException e) {
+						Logger.printExc(DefHttpUtility.class, e);
+						throw e;
+					} finally {
+						Util.closeQuietly(source);
+					}
+				}
+				else {
+					try {
+						sink.writeAll(source);
+					} catch (IOException e) {
+						Logger.printExc(DefHttpUtility.class, e);
+						throw e;
+					} finally {
+						Util.closeQuietly(source);
+					}
+				}
+			}
+
+		};
 	}
 
 }
