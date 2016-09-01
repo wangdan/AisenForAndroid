@@ -13,6 +13,7 @@ import org.aisen.android.component.orm.extra.AutoIncrementTableColumn;
 import org.aisen.android.component.orm.extra.Extra;
 import org.aisen.android.component.orm.extra.TableColumn;
 import org.aisen.android.component.orm.extra.TableInfo;
+import org.aisen.android.component.orm.utils.FieldUtils;
 import org.aisen.android.component.orm.utils.SqlUtils;
 import org.aisen.android.component.orm.utils.TableInfoUtils;
 
@@ -162,7 +163,7 @@ public class SqliteUtility {
             if (entities != null && entities.length > 0)
                 insert(extra, Arrays.asList(entities));
             else
-                Logger.d(TAG, "method[insert(Extra extra, T... entities)], entities is null or empty");
+                Logger.d(TAG, "method[insert(Extra extra, T... entities)], entities is empty");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -179,7 +180,7 @@ public class SqliteUtility {
             if (entities != null && entities.length > 0)
                 insert(extra, Arrays.asList(entities), "INSERT OR REPLACE INTO ");
             else
-                Logger.d(TAG, "method[insertOrReplace(Extra extra, T... entities)], entities is null or empty");
+                Logger.d(TAG, "method[insertOrReplace(Extra extra, T... entities)], entities is empty");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -203,7 +204,7 @@ public class SqliteUtility {
 
     private <T> void insert(Extra extra, List<T> entityList, String insertInto) {
         if (entityList == null || entityList.size() == 0) {
-            Logger.d(TAG, "method[insert(Extra extra, List<T> entityList)], entityList is null or empty");
+            Logger.d(TAG, "method[insert(Extra extra, List<T> entityList)], entityList is empty");
             return;
         }
 
@@ -268,22 +269,52 @@ public class SqliteUtility {
     /*******************************************开始Update系列方法****************************************************/
 
     public <T> void update(Extra extra, T... entities) {
-        try {
-            if (entities != null && entities.length > 0)
-                insertOrReplace(extra, entities);
-            else
-                Logger.d(TAG, "method[update(Extra extra, T... entities)], entities is null or empty");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        innerUpdate(extra, Arrays.asList(entities));
     }
 
     public <T> void update(Extra extra, List<T> entityList) {
+        innerUpdate(extra, entityList);
+    }
+
+    private  <T> void innerUpdate(Extra extra, List<T> entityList) {
         try {
-            if (entityList != null && entityList.size() > 0)
-                insertOrReplace(extra, entityList);
-            else
-                Logger.d(TAG, "method[update(Extra extra, T... entities)], entities is null or empty");
+            if (entityList != null && entityList.size() > 0) {
+                TableInfo tableInfo = checkTable(entityList.get(0).getClass());
+
+                for (int i = 0; i < entityList.size(); i++) {
+                    T t = entityList.get(i);
+
+                    tableInfo.getPrimaryKey().getField().setAccessible(true);
+                    Object id = tableInfo.getPrimaryKey().getField().get(t);
+
+                    String whereClause = String.format(" %s = ? ", tableInfo.getPrimaryKey().getColumn());
+                    String extraSelection = SqlUtils.appendExtraWhereClause(extra);
+                    if (!TextUtils.isEmpty(extraSelection))
+                        whereClause = String.format("%s and %s", whereClause, extraSelection);
+
+                    List<String> selectionArgList = new ArrayList<>();
+                    selectionArgList.add(String.valueOf(id));
+                    String[] extraSelectionArgs = SqlUtils.appendExtraWhereArgs(extra);
+                    if (extraSelectionArgs != null && extraSelectionArgs.length > 0)
+                        selectionArgList.addAll(Arrays.asList(extraSelectionArgs));
+                    String[] whereArgs = selectionArgList.toArray(new String[0]);
+
+                    ContentValues values = new ContentValues();
+
+                    for (TableColumn colunm : tableInfo.getColumns()) {
+                        bindValue(values, colunm, t);
+                    }
+
+                    int rowId = db.update(tableInfo.getTableName(), values, whereClause, whereArgs);
+                    if (Logger.DEBUG) {
+                        Logger.d(TAG, " method[update], table[%s], whereClause[%s], whereArgs[%s], rowId[%d]",
+                                tableInfo.getTableName(), whereClause, JSON.toJSON(whereArgs), rowId);
+                    }
+                }
+            }
+            else {
+                Logger.d(TAG, "method[update(Extra extra, T... entities)], entities is empty");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -436,18 +467,29 @@ public class SqliteUtility {
 
     /*******************************************系列绑定数据的方法****************************************************/
 
+    private <T> void bindUpdateValues(ContentValues values, TableInfo tableInfo, T entity) {
+        for (int i = 0; i < tableInfo.getColumns().size(); i++) {
+            TableColumn column = tableInfo.getColumns().get(i);
+            bindValue(values, column, entity);
+        }
+
+        // createAt
+        long createAt = System.currentTimeMillis();
+        values.put(FieldUtils.CREATEAT, createAt);
+    }
+
     private <T> void bindInsertValues(Extra extra, SQLiteStatement insertStatement, TableInfo tableInfo, T entity) {
         int index = 1;
 
         // 如果是自增主键，不设置值
         if (tableInfo.getPrimaryKey() instanceof AutoIncrementTableColumn)
-        	;
+            ;
         else
-        	bindInsertValue(insertStatement, index++, tableInfo.getPrimaryKey(), entity);
+            bindValue(insertStatement, index++, tableInfo.getPrimaryKey(), entity);
 
         for (int i = 0; i < tableInfo.getColumns().size(); i++) {
             TableColumn column = tableInfo.getColumns().get(i);
-            bindInsertValue(insertStatement, index++, column, entity);
+            bindValue(insertStatement, index++, column, entity);
         }
 
         // owner
@@ -461,7 +503,42 @@ public class SqliteUtility {
         insertStatement.bindLong(index, createAt);
     }
 
-    private <T> void bindInsertValue(SQLiteStatement insertStatement, int index, TableColumn column, T entity) {
+    private <T> void bindValue(ContentValues values, TableColumn column, T entity) {
+        // 通过反射绑定数据
+        try {
+            column.getField().setAccessible(true);
+            Object value = column.getField().get(entity);
+            if (value == null) {
+                return;
+            }
+
+            if (Logger.DEBUG) {
+                Logger.v(TAG, " method[bindValue_ContentValues], key[%s], value[%s]", column.getColumn(), value + "");
+            }
+
+            if ("object".equalsIgnoreCase(column.getDataType())) {
+                values.put(column.getColumn(), JSON.toJSONString(value));
+            }
+            else if ("INTEGER".equalsIgnoreCase(column.getColumnType())) {
+                values.put(column.getColumn(), Long.parseLong(value.toString()));
+            }
+            else if ("REAL".equalsIgnoreCase(column.getColumnType())) {
+                values.put(column.getColumn(), Double.parseDouble(value.toString()));
+            }
+            else if ("BLOB".equalsIgnoreCase(column.getColumnType())) {
+                values.put(column.getColumn(), (byte[]) value);
+            }
+            else if ("TEXT".equalsIgnoreCase(column.getColumnType())) {
+                values.put(column.getColumn(), value.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            Logger.w(TAG, "属性 %s bindvalue 异常", column.getField().getName());
+        }
+    }
+
+    private <T> void bindValue(SQLiteStatement insertStatement, int index, TableColumn column, T entity) {
         // 通过反射绑定数据
         try {
             column.getField().setAccessible(true);
@@ -469,6 +546,10 @@ public class SqliteUtility {
             if (value == null) {
                 insertStatement.bindNull(index);
                 return;
+            }
+
+            if (Logger.DEBUG) {
+                Logger.v(TAG, " method[bindValue_SQLiteStatement], key[%s], value[%s]", column.getColumn(), value + "");
             }
 
             if ("object".equalsIgnoreCase(column.getDataType())) {
