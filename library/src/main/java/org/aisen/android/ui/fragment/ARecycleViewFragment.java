@@ -1,11 +1,9 @@
 package org.aisen.android.ui.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.AttributeSet;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -107,6 +105,33 @@ public abstract class ARecycleViewFragment<T extends Serializable, Ts extends Se
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+    }
+
+    @Override
+    protected void toLastReadPosition() {
+        super.toLastReadPosition();
+        if (getRefreshView() == null || TextUtils.isEmpty(refreshConfig.positionKey) ||
+                getLastReadPosition() < 0)
+            return;
+
+        if (getRefreshView().getLayoutManager() instanceof LinearLayoutManager) {
+            final LinearLayoutManager manager = (LinearLayoutManager) getRefreshView().getLayoutManager();
+
+            if (getAdapterItems().size() > getLastReadPosition()) {
+                manager.scrollToPositionWithOffset(getLastReadPosition(), getLastReadTop() + getRefreshView().getPaddingTop());
+            }
+        }
+    }
+
+    @Override
+    protected int getFirstVisiblePosition() {
+        if (getRefreshView().getLayoutManager() instanceof LinearLayoutManager) {
+            final LinearLayoutManager manager = (LinearLayoutManager) getRefreshView().getLayoutManager();
+
+            return manager.findFirstVisibleItemPosition();
+        }
+
+        return 0;
     }
 
 }

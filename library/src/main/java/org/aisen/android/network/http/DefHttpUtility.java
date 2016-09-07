@@ -239,10 +239,25 @@ public class DefHttpUtility implements IHttpUtility {
 						long writeLen = 0;
 						long readLen = -1;
 						Buffer buffer = new Buffer();
+
+						long MIN_PROGRESS_STEP = 65536;
+						long MIN_PROGRESS_TIME = 300;
+
+						long mLastUpdateBytes = 0;
+						long mLastUpdateTime = 0l;
 						while ((readLen = source.read(buffer, 8 * 1024)) != -1) {
 							sink.write(buffer, readLen);
 							writeLen += readLen;
-							onFileProgress.onProgress(writeLen, contentLength);
+
+							long now = System.currentTimeMillis();
+							if (((writeLen - mLastUpdateBytes) > MIN_PROGRESS_STEP &&
+									(now - mLastUpdateTime) > MIN_PROGRESS_TIME) ||
+									writeLen == contentLength) {
+								onFileProgress.onProgress(writeLen, contentLength);
+
+								mLastUpdateBytes = writeLen;
+								mLastUpdateTime = now;
+							}
 						}
 					} catch (IOException e) {
 						Logger.printExc(DefHttpUtility.class, e);

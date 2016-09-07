@@ -473,8 +473,12 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 				if (iResult.fromCache() && !iResult.outofdate())
 					toLastReadPosition();
 
-				if (iResult.endPaging())
-					refreshConfig.pagingEnd = true;
+				if (mode == RefreshMode.reset || mode == RefreshMode.update) {
+					if (iResult.endPaging())
+						refreshConfig.pagingEnd = true;
+					else
+						refreshConfig.pagingEnd = false;
+				}
 			}
 
 			if (mode == RefreshMode.reset && getTaskCount(getTaskId()) > 1)
@@ -707,6 +711,10 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 
 	protected int getFirstVisiblePosition() {
 		return 0;
+	}
+
+	final protected IPaging getPaging() {
+		return mPaging;
 	}
 
 	/*********************************************结束阅读位置历史************************************************/
