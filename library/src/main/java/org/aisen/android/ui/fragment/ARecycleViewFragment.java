@@ -43,7 +43,7 @@ public abstract class ARecycleViewFragment<T extends Serializable, Ts extends Se
     protected void setupRefreshConfig(RefreshConfig config) {
         super.setupRefreshConfig(config);
 
-        mRecycleView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        getRefreshView().addOnScrollListener(new RecyclerView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -59,7 +59,7 @@ public abstract class ARecycleViewFragment<T extends Serializable, Ts extends Se
             }
 
         });
-        mRecycleView.setLayoutManager(configLayoutManager());
+        getRefreshView().setLayoutManager(configLayoutManager());
     }
 
     @Override
@@ -78,8 +78,8 @@ public abstract class ARecycleViewFragment<T extends Serializable, Ts extends Se
 
     @Override
     protected void bindAdapter(IPagingAdapter adapter) {
-        if (mRecycleView.getAdapter() == null) {
-            mRecycleView.setAdapter((BasicRecycleViewAdapter) adapter);
+        if (getRefreshView().getAdapter() == null) {
+            getRefreshView().setAdapter((BasicRecycleViewAdapter) adapter);
         }
 
         if (((BasicRecycleViewAdapter) getAdapter()).getOnItemClickListener() != this) {

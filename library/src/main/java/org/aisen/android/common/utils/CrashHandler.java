@@ -65,7 +65,7 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             String filePath = context.getExternalFilesDir("logs").getAbsolutePath() + File.separator + "crash" + File.separator;
             File file = new File(filePath + File.separator + new SimpleDateFormat("yyyyMMdd_HH-mm-ss-SSS").format(Calendar.getInstance().getTime()) + ".txt");
             if (!file.getParentFile().exists()) {
-                file.mkdirs();
+                file.getParentFile().mkdirs();
             }
             if (!file.exists()) {
                 file.createNewFile();
