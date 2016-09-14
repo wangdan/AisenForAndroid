@@ -7,6 +7,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v7.view.menu.BaseMenuPresenter;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuItemImpl;
+import android.support.v7.view.menu.MenuPopupHelper;
 import android.support.v7.view.menu.MenuView;
 import android.support.v7.view.menu.SubMenuBuilder;
 import android.view.MenuItem;
@@ -21,16 +22,26 @@ public class CardMenuPresenter extends BaseMenuPresenter {
 
     private OverflowPopup mOverflowPopup;
 
+    private ActionButtonSubmenu mActionButtonPopup;
+
     private View anchorView;
+
+    int mOpenSubMenuId;
+
+    CardMenuBuilder cardMenuBuilder;
+
+    private final int popupStyleAttr;
 
     /**
      * Construct a new BaseMenuPresenter.
      *
      * @param context       Context for generating system-supplied views
      */
-    public CardMenuPresenter(Context context, View anchorView) {
-        super(context, android.support.v7.appcompat.R.layout.abc_action_menu_layout, android.support.v7.appcompat.R.layout.abc_action_menu_item_layout);
+    public CardMenuPresenter(Context context, View anchorView, CardMenuBuilder cardMenuBuilder, CardMenuOptions options) {
+        super(context, options.actionMenuLayoutRes, options.actionMenuItemLayoutRes);
         this.anchorView = anchorView;
+        this.cardMenuBuilder = cardMenuBuilder;
+        this.popupStyleAttr = options.popupStyleAttr;
     }
 
     @Override
@@ -47,9 +58,40 @@ public class CardMenuPresenter extends BaseMenuPresenter {
 //        actionItemView.setPopupCallback(mPopupCallback);
     }
 
+    public boolean onSubMenuSelected(SubMenuBuilder subMenu) {
+        if (!subMenu.hasVisibleItems()) return false;
+
+        SubMenuBuilder topSubMenu = subMenu;
+        while (topSubMenu.getParentMenu() != mMenu) {
+            topSubMenu = (SubMenuBuilder) topSubMenu.getParentMenu();
+        }
+
+
+        mOpenSubMenuId = subMenu.getItem().getItemId();
+
+        boolean preserveIconSpacing = false;
+        final int count = subMenu.size();
+        for (int i = 0; i < count; i++) {
+            MenuItem childItem = subMenu.getItem(i);
+            if (childItem.isVisible() && childItem.getIcon() != null) {
+                preserveIconSpacing = true;
+                break;
+            }
+        }
+
+        subMenu.addMenuPresenter(this, mContext);
+        mActionButtonPopup = new ActionButtonSubmenu(mContext, subMenu, anchorView);
+        mActionButtonPopup.setForceShowIcon(preserveIconSpacing);
+        mActionButtonPopup.show();
+
+        super.onSubMenuSelected(subMenu);
+        return true;
+    }
+
     @Override
     public Parcelable onSaveInstanceState() {
         SavedState state = new SavedState();
+        state.openSubMenuId = mOpenSubMenuId;
         return state;
     }
 
@@ -70,7 +112,7 @@ public class CardMenuPresenter extends BaseMenuPresenter {
         // && mMenuView != null
         if (!isOverflowMenuShowing() && mMenu != null &&
                 mPostedOpenRunnable == null && !mMenu.getNonActionItems().isEmpty()) {
-            OverflowPopup popup = new OverflowPopup(mContext, (CardMenuBuilder) mMenu, anchorView, true);
+            OverflowPopup popup = new OverflowPopup(mContext, mMenu, anchorView, true, popupStyleAttr);
             mPostedOpenRunnable = new OpenOverflowRunnable(popup);
             // Post this for later; we might still need a layout for the anchor to be right.
 //            ((View) mMenuView).post(mPostedOpenRunnable);
@@ -100,7 +142,7 @@ public class CardMenuPresenter extends BaseMenuPresenter {
             return true;
         }
 
-        CardMenuPopupHelper popup = mOverflowPopup;
+        MenuPopupHelper popup = mOverflowPopup;
         if (popup != null) {
             popup.dismiss();
             return true;
@@ -114,17 +156,57 @@ public class CardMenuPresenter extends BaseMenuPresenter {
      */
     public boolean dismissPopupMenus() {
         boolean result = hideOverflowMenu();
-//        result |= hideSubMenus();
+        result |= hideSubMenus();
         return result;
     }
 
-    private class OverflowPopup extends CardMenuPopupHelper {
+    /**
+     * Dismiss all submenu popups.
+     *
+     * @return true if popups were dismissed, false otherwise. (This can be because none were open.)
+     */
+    public boolean hideSubMenus() {
+        if (mActionButtonPopup != null) {
+            mActionButtonPopup.dismiss();
+            return true;
+        }
+        return false;
+    }
 
-        OverflowPopup(Context context, CardMenuBuilder menu, View anchorView,
-                             boolean overflowOnly) {
-            super(context, menu, anchorView, overflowOnly);
+    private class ActionButtonSubmenu extends MenuPopupHelper {
+        public ActionButtonSubmenu(Context context, SubMenuBuilder subMenu, View anchorView) {
+            super(context, subMenu, anchorView, false, popupStyleAttr);
+//            super(context, subMenu, cardMenuBuilder.getOptions(), anchorView, false);
 
-            setGravity(GravityCompat.END);
+            if (cardMenuBuilder.getOptions().dropDownGravity != -1) {
+                setGravity(cardMenuBuilder.getOptions().dropDownGravity);
+            }
+            else {
+                setGravity(GravityCompat.END);
+            }
+        }
+
+        @Override
+        public void onDismiss() {
+            mActionButtonPopup = null;
+            mOpenSubMenuId = 0;
+
+            super.onDismiss();
+        }
+    }
+
+    private class OverflowPopup extends MenuPopupHelper {
+
+        OverflowPopup(Context context, MenuBuilder menu, View anchorView,
+                             boolean overflowOnly, int popupStyleAttr) {
+            super(context, menu, anchorView, overflowOnly, popupStyleAttr);
+
+            if (cardMenuBuilder.getOptions().dropDownGravity != -1) {
+                setGravity(cardMenuBuilder.getOptions().dropDownGravity);
+            }
+            else {
+                setGravity(GravityCompat.END);
+            }
         }
 
         @Override

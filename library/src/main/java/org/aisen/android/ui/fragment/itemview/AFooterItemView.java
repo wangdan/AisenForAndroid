@@ -1,5 +1,6 @@
 package org.aisen.android.ui.fragment.itemview;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
@@ -17,7 +18,7 @@ public abstract class AFooterItemView<T extends Serializable> extends ARecycleVi
 
     private OnFooterViewCallback onFooterViewCallback;
 
-    public AFooterItemView(Context context, View itemView, OnFooterViewCallback callback) {
+    public AFooterItemView(Activity context, View itemView, OnFooterViewCallback callback) {
         super(context, itemView);
 
         this.onFooterViewCallback = callback;

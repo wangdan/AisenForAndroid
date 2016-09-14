@@ -1,6 +1,6 @@
 package org.aisen.android.ui.fragment.itemview;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,7 +29,7 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
     @ViewInject(idStr = "txtLoading")
     TextView txtLoading;
 
-    public BasicFooterView(Context context, View itemView, OnFooterViewCallback callback) {
+    public BasicFooterView(Activity context, View itemView, OnFooterViewCallback callback) {
         super(context, itemView, callback);
 
         this.footerView = itemView;

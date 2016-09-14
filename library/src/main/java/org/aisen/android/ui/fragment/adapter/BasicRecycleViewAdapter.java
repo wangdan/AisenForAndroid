@@ -1,5 +1,6 @@
 package org.aisen.android.ui.fragment.adapter;
 
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -7,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import org.aisen.android.R;
-import org.aisen.android.ui.fragment.APagingFragment;
 import org.aisen.android.ui.fragment.itemview.AHeaderItemViewCreator;
 import org.aisen.android.ui.fragment.itemview.IITemView;
 import org.aisen.android.ui.fragment.itemview.IItemViewCreator;
@@ -21,9 +21,8 @@ import java.util.ArrayList;
  *
  * Created by wangdan on 16/1/5.
  */
-public class BasicRecycleViewAdapter<T extends Serializable> extends RecyclerView.Adapter implements IPagingAdapter {
+public class BasicRecycleViewAdapter<T extends Serializable, RefreshView extends View> extends RecyclerView.Adapter implements IPagingAdapter {
 
-    private APagingFragment holderFragment;
     private IItemViewCreator<T> itemViewCreator;
     private ArrayList<T> datas;
     private IITemView<T> footerItemView;
@@ -34,10 +33,14 @@ public class BasicRecycleViewAdapter<T extends Serializable> extends RecyclerVie
     private AdapterView.OnItemClickListener onItemClickListener;
     private AdapterView.OnItemLongClickListener onItemLongClickListener;
 
-    public BasicRecycleViewAdapter(APagingFragment holderFragment, IItemViewCreator<T> itemViewCreator, ArrayList<T> datas) {
+    private final Activity activity;
+    private final RefreshView refreshView;
+
+    public BasicRecycleViewAdapter(Activity activity, RefreshView refreshView, IItemViewCreator<T> itemViewCreator, ArrayList<T> datas) {
+        this.activity = activity;
+        this.refreshView = refreshView;
         if (datas == null)
             datas = new ArrayList<T>();
-        this.holderFragment = holderFragment;
         this.itemViewCreator = itemViewCreator;
         this.datas = datas;
     }
@@ -102,8 +105,8 @@ public class BasicRecycleViewAdapter<T extends Serializable> extends RecyclerVie
 
             convertView = itemView.getConvertView();
 
-            if (holderFragment.getRefreshView() instanceof RecyclerView) {
-                RecyclerView recyclerView = (RecyclerView) holderFragment.getRefreshView();
+            if (refreshView instanceof RecyclerView) {
+                RecyclerView recyclerView = (RecyclerView) refreshView;
                 if (recyclerView.getLayoutManager() instanceof StaggeredGridLayoutManager) {
                     StaggeredGridLayoutManager.LayoutParams layoutParams;
                     if (convertView.getLayoutParams() == null || !(convertView.getLayoutParams() instanceof StaggeredGridLayoutManager.LayoutParams)) {
@@ -120,13 +123,13 @@ public class BasicRecycleViewAdapter<T extends Serializable> extends RecyclerVie
             }
         }
         else if (isHeaderType(viewType)) {
-            convertView = headerItemViewCreator.newContentView(holderFragment.getActivity().getLayoutInflater(), parent, viewType);
+            convertView = headerItemViewCreator.newContentView(activity.getLayoutInflater(), parent, viewType);
 
             itemView = headerItemViewCreator.newItemView(convertView, viewType);
             convertView.setTag(R.id.itemview, itemView);
         }
         else {
-            convertView = itemViewCreator.newContentView(holderFragment.getActivity().getLayoutInflater(), parent, viewType);
+            convertView = itemViewCreator.newContentView(activity.getLayoutInflater(), parent, viewType);
 
             itemView = itemViewCreator.newItemView(convertView, viewType);
             convertView.setTag(R.id.itemview, itemView);
@@ -211,6 +214,10 @@ public class BasicRecycleViewAdapter<T extends Serializable> extends RecyclerVie
     @Override
     public ArrayList<T> getDatas() {
         return datas;
+    }
+
+    public T getData(int position) {
+        return datas.get(position);
     }
 
     public AdapterView.OnItemClickListener getOnItemClickListener() {

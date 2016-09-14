@@ -1,70 +1,67 @@
 package org.aisen.android.component.cardmenu;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuItemImpl;
-import android.view.Gravity;
+import android.view.ContextThemeWrapper;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 
 /**
  * Created by wangdan on 16/9/13.
  */
-public class CardMenuBuilder extends MenuBuilder {
+public class CardMenuBuilder {
 
-    int dropDownGravity = -1;
-    // 设置ListPopup的Offset
-    int dropDownHorizontalOffset;
-    int dropDownVerticalOffset;
+    private final Activity mContext;
+    private final CardMenuPresenter mPresenter;
+    private final MenuBuilder mMenuBuilder;
+    private final CardMenuOptions options;
 
-    private CardMenuPresenter mPresenter;
     private OnCardMenuCallback onCardMenuCallback;
 
-    public CardMenuBuilder(Activity context, View anchorView) {
-        super(context);
-
-        mPresenter = new CardMenuPresenter(context, anchorView);
-        mPresenter.initForMenu(context, this);
-        addMenuPresenter(mPresenter);
+    public CardMenuBuilder(Activity context, View anchorView, CardMenuOptions options) {
+        mContext = context;
+        this.options = options;
+        mMenuBuilder = new MenuBuilder(context);
+        mPresenter = new CardMenuPresenter(context, anchorView, this, options);
+        mMenuBuilder.addMenuPresenter(mPresenter, new ContextThemeWrapper(context, options.themeRes));
     }
 
-    @Override
     public MenuItem add(int group, int id, int categoryOrder, CharSequence title) {
-        MenuItem item = super.add(group, id, categoryOrder, title);
+        MenuItem item = mMenuBuilder.add(group, id, categoryOrder, title);
 
-        if (item instanceof MenuItemImpl) {
-            ((MenuItemImpl) item).setOnMenuItemClickListener(onMenuItemClickListener);
-        }
+        item.setOnMenuItemClickListener(onMenuItemClickListener);
 
         return item;
     }
 
-    public CardMenuBuilder setGravity(int gravity) {
-        dropDownGravity = gravity;
-        return this;
+    public SubMenu addSubMenu(int group, int id, int categoryOrder, CharSequence title) {
+        SubMenu subMenu = mMenuBuilder.addSubMenu(group, id, categoryOrder, title);
+
+        if (subMenu.getItem() instanceof MenuItemImpl) {
+            subMenu.getItem().setOnMenuItemClickListener(onMenuItemClickListener);
+        }
+
+        return subMenu;
     }
 
-    public CardMenuBuilder setDropDownHorizontalOffset(int offset) {
-        dropDownHorizontalOffset = offset;
-        return this;
-    }
+    public MenuItem addSubMenuItem(SubMenu subMenu, int groupId, int itemId, int order, CharSequence title) {
+        MenuItem item = subMenu.add(groupId, itemId, order, title);
 
-    public CardMenuBuilder setDropDownVerticalOffset(int offset) {
-        dropDownVerticalOffset = offset;
-        return this;
+        item.setOnMenuItemClickListener(onMenuItemClickListener);
+
+        return item;
     }
 
     public CardMenuBuilder inflate(int menuRes) {
-        if (getContext() instanceof Activity) {
-            ((Activity) getContext()).getMenuInflater().inflate(menuRes, this);
-        }
+        mContext.getMenuInflater().inflate(menuRes, mMenuBuilder);
 
         return this;
     }
 
     public CardMenuBuilder add(int id, int titleRes) {
-        add(1, id, 1, titleRes);
+        add(1, id, 1, mContext.getString(titleRes));
 
         return this;
     }
@@ -82,8 +79,11 @@ public class CardMenuBuilder extends MenuBuilder {
     }
 
     public void show() {
-
         mPresenter.showCardMenu();
+    }
+
+    public CardMenuOptions getOptions() {
+        return options;
     }
 
     private MenuItem.OnMenuItemClickListener onMenuItemClickListener = new MenuItem.OnMenuItemClickListener() {

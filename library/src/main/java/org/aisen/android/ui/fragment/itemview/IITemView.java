@@ -3,7 +3,6 @@ package org.aisen.android.ui.fragment.itemview;
 import android.view.View;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * Created by wangdan on 16/1/5.

@@ -7,7 +7,6 @@ import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.view.menu.MenuItemImpl;
 import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.ListPopupWindow;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -57,9 +56,12 @@ class CardMenuPopupHelper implements AdapterView.OnItemClickListener, View.OnKey
     /** Cached content width from {@link #measureContentWidth}. */
     private int mContentWidth;
 
-    private final CardMenuBuilder mMenu;
+    private final MenuBuilder mMenu;
 
-    CardMenuPopupHelper(Context context, CardMenuBuilder menu, View anchorView, boolean overflowOnly) {
+    private CardMenuOptions cardMenuOptions;
+
+    CardMenuPopupHelper(Context context, MenuBuilder menu, CardMenuOptions cardMenuOptions,
+                                View anchorView, boolean overflowOnly) {
         mContext = context;
         mMenu = menu;
         mInflater = LayoutInflater.from(context);
@@ -71,6 +73,11 @@ class CardMenuPopupHelper implements AdapterView.OnItemClickListener, View.OnKey
         mPopupMaxWidth = Math.max(res.getDisplayMetrics().widthPixels / 2,
                 res.getDimensionPixelSize(R.dimen.abc_config_prefDialogWidth));
         mAnchorView = anchorView;
+    }
+
+    public void show() {
+        if (!tryShow()) {
+        }
     }
 
     final public boolean tryShow() {
@@ -86,17 +93,23 @@ class CardMenuPopupHelper implements AdapterView.OnItemClickListener, View.OnKey
             mTreeObserver = anchor.getViewTreeObserver(); // Refresh to latest
             if (addGlobalListener) mTreeObserver.addOnGlobalLayoutListener(this);
             mPopup.setAnchorView(anchor);
-            if (mMenu.dropDownGravity != -1) {
-                mPopup.setDropDownGravity(mMenu.dropDownGravity);
+
+            if (cardMenuOptions != null) {
+                if (cardMenuOptions.dropDownGravity != -1) {
+                    mPopup.setDropDownGravity(cardMenuOptions.dropDownGravity);
+                }
+                else {
+                    mPopup.setDropDownGravity(mDropDownGravity);
+                }
+                if (cardMenuOptions.dropDownHorizontalOffset > 0) {
+                    mPopup.setHorizontalOffset(cardMenuOptions.dropDownHorizontalOffset);
+                }
+                if (cardMenuOptions.dropDownVerticalOffset > 0) {
+                    mPopup.setVerticalOffset(cardMenuOptions.dropDownVerticalOffset);
+                }
             }
             else {
                 mPopup.setDropDownGravity(mDropDownGravity);
-            }
-            if (mMenu.dropDownHorizontalOffset > 0) {
-                mPopup.setHorizontalOffset(mMenu.dropDownHorizontalOffset);
-            }
-            if (mMenu.dropDownVerticalOffset > 0) {
-                mPopup.setVerticalOffset(mMenu.dropDownVerticalOffset);
             }
         } else {
             return false;
@@ -199,12 +212,17 @@ class CardMenuPopupHelper implements AdapterView.OnItemClickListener, View.OnKey
         }
     }
 
+    public void setForceShowIcon(boolean forceShow) {
+        mForceShowIcon = forceShow;
+    }
+
     private class MenuAdapter extends BaseAdapter {
         private MenuBuilder mAdapterMenu;
         private int mExpandedIndex = -1;
 
         public MenuAdapter(MenuBuilder menu) {
             mAdapterMenu = menu;
+            findExpandedIndex();
         }
 
         public int getCount() {
@@ -242,6 +260,22 @@ class CardMenuPopupHelper implements AdapterView.OnItemClickListener, View.OnKey
             }
             itemView.initialize(getItem(position), 0);
             return convertView;
+        }
+
+        void findExpandedIndex() {
+            final MenuItemImpl expandedItem = mMenu.getExpandedItem();
+            if (expandedItem != null) {
+                final ArrayList<MenuItemImpl> items = mMenu.getNonActionItems();
+                final int count = items.size();
+                for (int i = 0; i < count; i++) {
+                    final MenuItemImpl item = items.get(i);
+                    if (item == expandedItem) {
+                        mExpandedIndex = i;
+                        return;
+                    }
+                }
+            }
+            mExpandedIndex = -1;
         }
 
     }

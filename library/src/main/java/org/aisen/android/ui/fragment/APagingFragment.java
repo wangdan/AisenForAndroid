@@ -210,7 +210,7 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
      * @param config
      */
     protected void setupRefreshConfig(RefreshConfig config) {
-
+		config.emptyHint = getString(R.string.comm_content_empty);
     }
 
     /**

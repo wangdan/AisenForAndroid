@@ -60,6 +60,7 @@ public class BasicListAdapter<T extends Serializable> extends BaseAdapter implem
         }
 
         itemView.reset(datas.size(), position);
+
         itemView.onBindData(convertView, datas.get(position), position);
 
         return convertView;

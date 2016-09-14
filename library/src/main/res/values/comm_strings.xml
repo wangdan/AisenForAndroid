@@ -6,6 +6,7 @@
     <string name="comm_footer_faild">加载失败，重新加载</string>
     <string name="comm_footer_pagingend">全部加载完了</string>
     <string name="comm_reload_hint">刷新看看</string>
+    <string name="comm_content_empty">数据为空</string>
     <string name="comm_hint_copied">已经复制 %s</string>
 
     <string-array name="prefValues">
