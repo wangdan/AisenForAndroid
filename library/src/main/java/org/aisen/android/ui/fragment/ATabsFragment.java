@@ -5,6 +5,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import org.aisen.android.ui.activity.basic.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -200,6 +202,14 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
         return mItems.get(position).getTitle();
     }
 
+    public List<T> getTabItems() {
+        return mItems;
+    }
+
+    public PagerAdapter getPageAdapter() {
+        return mInnerAdapter;
+    }
+
     // 是否保留最后阅读的标签
     protected String configLastPositionKey() {
         return null;
@@ -287,7 +297,12 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
         }
 
         @Override
-        protected void freshUI(Fragment fragment) {
+        protected void freshUI(int position, Fragment fragment) {
+            super.freshUI(position, fragment);
+
+            if (!fragments.containsValue(fragment)) {
+                fragments.put(makeFragmentName(position), fragment);
+            }
         }
 
         @Override

@@ -1,6 +1,6 @@
 package org.aisen.sample.ui.fragment;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +17,13 @@ import org.aisen.android.ui.fragment.itemview.IItemViewCreator;
 import org.aisen.sample.support.bean.MenuBean;
 import org.aisen.sample.ui.activity.MainActivity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by wangdan on 15/4/23.
  */
-public class MenuFragment extends AListFragment<MenuBean, ArrayList<MenuBean>> {
+public class MenuFragment extends AListFragment<MenuBean, ArrayList<MenuBean>, Serializable> {
 
     public static MenuFragment newInstance() {
         return new MenuFragment();
@@ -77,7 +78,7 @@ public class MenuFragment extends AListFragment<MenuBean, ArrayList<MenuBean>> {
         @ViewInject(id = R.id.txtTitle)
         TextView txtTitle;
 
-        public MainItemView(Context context, View itemView) {
+        public MainItemView(Activity context, View itemView) {
             super(context, itemView);
         }
 
