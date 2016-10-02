@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * Created by wangdan on 15-1-16.
  */
-public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITaskManager, AsToolbar.OnToolbarDoubleClick {
+public class BaseActivity extends AppCompatActivity implements BitmapOwner, ITaskManager, AsToolbar.OnToolbarDoubleClick {
 
     static final String TAG = "Activity-Base";
 

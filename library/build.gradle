@@ -26,11 +26,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.alibaba:fastjson:1.2.6'
-    //    compile 'com.nineoldandroids:library:2.4.0'
-    //    compile 'asia.ivity.android:drag-sort-listview:1.0'
-    //    compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
-    //    compile 'com.nhaarman.listviewanimations:lib-manipulation:3.1.0@aar'
-    //    compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
     compile 'com.android.support:appcompat-v7:24.2.0'
     compile 'com.android.support:design:24.2.0'
     compile 'com.squareup.okhttp:okhttp:2.6.0'
