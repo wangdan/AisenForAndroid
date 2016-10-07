@@ -382,6 +382,11 @@ public class BaseActivity extends AppCompatActivity implements BitmapOwner, ITas
     }
 
     @Override
+    final public void clearTaskCount(String taskId) {
+        taskManager.clearTaskCount(taskId);
+    }
+
+    @Override
     final public int getTaskCount(String taskId) {
         return taskManager.getTaskCount(taskId);
     }

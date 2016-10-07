@@ -88,7 +88,7 @@ public class TaskManager implements ITaskManager {
 	}
 	
 	public void restore(Bundle savedInstanceState) {
-		if (savedInstanceState.getSerializable("map") != null) {
+		if (savedInstanceState != null && savedInstanceState.getSerializable("map") != null) {
 			taskCountMap = (HashMap<String, Integer>) savedInstanceState.getSerializable("map");
 		}
 	}

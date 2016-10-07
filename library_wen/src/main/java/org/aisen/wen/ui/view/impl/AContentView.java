@@ -1,6 +1,5 @@
 package org.aisen.wen.ui.view.impl;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,17 +10,17 @@ import org.aisen.wen.R;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.inject.InjectUtility;
 import org.aisen.wen.support.inject.ViewInject;
+import org.aisen.wen.support.utils.Logger;
 import org.aisen.wen.ui.view.IContentView;
 
 /**
  * Created by wangdan on 16/9/30.
  */
-public abstract class AContentView implements IContentView {
+public abstract class AContentView extends IContentView {
 
-    private Activity context;
+    static final String TAG = "AContentView";
 
     private View mContentView;
-    ViewGroup rootView;// 根视图
     @ViewInject(idStr = "layoutLoading")
     View loadingLayout;// 加载中视图
     @ViewInject(idStr = "layoutLoadFailed")
@@ -35,27 +34,16 @@ public abstract class AContentView implements IContentView {
     private boolean contentEmpty = true;
 
     @Override
-    public void onCreate(LayoutInflater inflater) {
-        mContentView = inflater.inflate(layoutId(), null);
-    }
+    public void onBridgeCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onBridgeCreateView(inflater, container, savedInstanceState);
 
-    @Override
-    public void onActivityCreate(Activity activity, Bundle savedInstanceState) {
-        context = activity;
-    }
-
-    @Override
-    public void onDestory() {
-
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-
+        mContentView = inflater.inflate(contentViewResId(), null);
     }
 
     @Override
     public void bindView() {
+        super.bindView();
+
         InjectUtility.initInjectedView(getContext(), this, getContentView());
     }
 
@@ -66,7 +54,7 @@ public abstract class AContentView implements IContentView {
 
     @Override
     public boolean isContentLayoutEmpty() {
-        return contentEmpty && loadingLayout == null;
+        return contentEmpty;
     }
 
     @Override
@@ -77,28 +65,36 @@ public abstract class AContentView implements IContentView {
     @Override
     public void setLoadingLayoutVisibility(int visibility) {
         if (loadingLayout != null) {
-            loadingLayout.setVisibility(View.VISIBLE);
+            loadingLayout.setVisibility(visibility);
+
+            Logger.v(TAG, "setLoadingLayoutVisibility[%d]", visibility);
         }
     }
 
     @Override
     public void setEmptyLayoutVisibility(int visibility) {
         if (emptyLayout != null) {
-            emptyLayout.setVisibility(View.VISIBLE);
+            emptyLayout.setVisibility(visibility);
+
+            Logger.v(TAG, "setEmptyLayoutVisibility[%d]", visibility);
         }
     }
 
     @Override
     public void setContentLayoutVisibility(int visibility) {
         if (contentLayout != null) {
-            contentLayout.setVisibility(View.VISIBLE);
+            contentLayout.setVisibility(visibility);
+
+            Logger.v(TAG, "setContentLayoutVisibility[%d]", visibility);
         }
     }
 
     @Override
     public void setFailureLayoutVisibility(int visibility, TaskException e) {
         if (loadFailureLayout != null) {
-            loadFailureLayout.setVisibility(View.VISIBLE);
+            loadFailureLayout.setVisibility(visibility);
+
+            Logger.v(TAG, "setFailureLayoutVisibility[%d]", visibility);
 
             if (e != null) {
                 TextView txtLoadFailed = (TextView) loadFailureLayout.findViewById(R.id.txtLoadFailed);
@@ -110,10 +106,6 @@ public abstract class AContentView implements IContentView {
         } else {
             setEmptyLayoutVisibility(View.VISIBLE);
         }
-    }
-
-    public Activity getContext() {
-        return context;
     }
 
     public View getContentView() {

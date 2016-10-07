@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import org.aisen.wen.component.network.biz.IResult;
@@ -14,17 +13,17 @@ import org.aisen.wen.component.network.task.TaskManager;
 import org.aisen.wen.component.network.task.WorkTask;
 import org.aisen.wen.support.utils.Logger;
 import org.aisen.wen.ui.model.impl.AContentModel;
-import org.aisen.wen.ui.presenter.ILifecycleBridge;
-import org.aisen.wen.ui.presenter.IPresenter;
-import org.aisen.wen.ui.view.IContentView;
+import org.aisen.wen.ui.presenter.ABridgePresenter;
+import org.aisen.wen.ui.view.impl.AContentView;
 
 import java.io.Serializable;
 
 /**
  * Created by wangdan on 16/9/30.
  */
-public abstract class AContentPresenter<Params, Progress, Result extends Serializable>
-                                                        implements IPresenter<Progress, Result>, ITaskManager, ILifecycleBridge {
+public abstract class AContentPresenter<ContentMode extends AContentModel<Progress, Result>, ContentView extends AContentView, Progress, Result extends Serializable>
+                                                        extends ABridgePresenter<ContentMode, ContentView, Progress, Result>
+                                                        implements ITaskManager {
 
     private final static String TAG = "ContentPresenter";
 
@@ -36,38 +35,31 @@ public abstract class AContentPresenter<Params, Progress, Result extends Seriali
 
     private final TaskManager taskManager;// 管理线程
 
-    private final IContentView mView;
-    private AContentModel<Params, Progress, Result> mModel;
-
     // UI线程的Handler
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
     };
 
-    public AContentPresenter(IContentView view) {
-        this.mView = view;
+    public AContentPresenter(ContentMode mode, ContentView view) {
+        super(mode, view);
+
         this.taskManager = new TaskManager();
     }
 
     @Override
-    public void onCreate(LayoutInflater inflater) {
-        mView.onCreate(inflater);
-        mView.bindView();
-        mView.bindEvent();
-    }
-
-    @Override
-    public void onActivityCreate(Activity activity, Bundle savedInstanceState) {
-        taskManager.restore(savedInstanceState);
+    public void onBridgeActivityCreate(Activity activity, Bundle savedInstanceState) {
+        super.onBridgeActivityCreate(activity, savedInstanceState);
 
         if (savedInstanceState != null) {
-            if (mView.isContentLayoutEmpty()) {
+            taskManager.restore(savedInstanceState);
+
+            if (getView().isContentLayoutEmpty()) {
                 requestData();
             }
             else {
-                mView.setContentLayoutVisibility(View.VISIBLE);
-                mView.setEmptyLayoutVisibility(View.GONE);
-                mView.setFailureLayoutVisibility(View.GONE, null);
-                mView.setLoadingLayoutVisibility(View.GONE);
+                getView().setContentLayoutVisibility(android.view.View.VISIBLE);
+                getView().setEmptyLayoutVisibility(android.view.View.GONE);
+                getView().setFailureLayoutVisibility(android.view.View.GONE, null);
+                getView().setLoadingLayoutVisibility(android.view.View.GONE);
             }
         }
         else {
@@ -76,9 +68,17 @@ public abstract class AContentPresenter<Params, Progress, Result extends Seriali
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onBridgeSaveInstanceState(Bundle outState) {
+        super.onBridgeSaveInstanceState(outState);
+
         taskManager.save(outState);
-        mView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onBridgeDestory() {
+        super.onBridgeDestory();
+
+        removeAllTask(true);
     }
 
     @Override
@@ -93,7 +93,7 @@ public abstract class AContentPresenter<Params, Progress, Result extends Seriali
     @Override
     public void onSuccess(Result result) {
         // 默认加载数据成功，且ContentView有数据展示
-        mView.setContentLayoutEmpty(mModel.resultIsEmpty(result));
+        getView().setContentLayoutEmpty(getMode().resultIsEmpty(result));
 
         onTaskStateChanged(TaskState.success, null);
 
@@ -127,11 +127,6 @@ public abstract class AContentPresenter<Params, Progress, Result extends Seriali
     @Override
     public void onFinished() {
         onTaskStateChanged(TaskState.finished, null);
-    }
-
-    @Override
-    public void onDestory() {
-        removeAllTask(true);
     }
 
     @Override
@@ -182,64 +177,54 @@ public abstract class AContentPresenter<Params, Progress, Result extends Seriali
     protected void onTaskStateChanged(TaskState state, TaskException exception) {
         // 开始Task
         if (state == TaskState.prepare) {
-            if (mView.isContentLayoutEmpty()) {
-                mView.setLoadingLayoutVisibility(View.VISIBLE);
+            if (getView().isContentLayoutEmpty()) {
+                getView().setLoadingLayoutVisibility(View.VISIBLE);
 
-                mView.setContentLayoutVisibility(View.GONE);
+                getView().setContentLayoutVisibility(View.GONE);
             }
             else {
-                mView.setLoadingLayoutVisibility(View.GONE);
+                getView().setLoadingLayoutVisibility(View.GONE);
 
-                mView.setContentLayoutVisibility(View.VISIBLE);
+                getView().setContentLayoutVisibility(View.VISIBLE);
             }
 
-            mView.setEmptyLayoutVisibility(View.GONE);
-            if (mView.isContentLayoutEmpty()) {
-                mView.setContentLayoutVisibility(View.VISIBLE);
+            getView().setEmptyLayoutVisibility(View.GONE);
+            if (getView().isContentLayoutEmpty()) {
+                getView().setFailureLayoutVisibility(View.GONE, null);
             }
-
-            mView.setFailureLayoutVisibility(View.GONE, null);
         }
         // Task成功
         else if (state == TaskState.success) {
-            mView.setLoadingLayoutVisibility(View.GONE);
+            getView().setLoadingLayoutVisibility(View.GONE);
 
-            if (mView.isContentLayoutEmpty()) {
-                mView.setEmptyLayoutVisibility(View.VISIBLE);
-                mView.setContentLayoutVisibility(View.GONE);
+            if (getView().isContentLayoutEmpty()) {
+                getView().setEmptyLayoutVisibility(View.VISIBLE);
+                getView().setContentLayoutVisibility(View.GONE);
             }
             else {
-                mView.setContentLayoutVisibility(View.VISIBLE);
-                mView.setEmptyLayoutVisibility(View.GONE);
+                getView().setContentLayoutVisibility(View.VISIBLE);
+                getView().setEmptyLayoutVisibility(View.GONE);
             }
         }
         // 取消Task
         else if (state == TaskState.canceled) {
-            if (mView.isContentLayoutEmpty()) {
-                mView.setLoadingLayoutVisibility(View.GONE);
-                mView.setEmptyLayoutVisibility(View.VISIBLE);
+            if (getView().isContentLayoutEmpty()) {
+                getView().setLoadingLayoutVisibility(View.GONE);
+                getView().setEmptyLayoutVisibility(View.VISIBLE);
             }
         }
         // Task失败
         else if (state == TaskState.falid) {
-            if (mView.isContentLayoutEmpty()) {
-                mView.setFailureLayoutVisibility(View.VISIBLE, exception);
+            if (getView().isContentLayoutEmpty()) {
+                getView().setFailureLayoutVisibility(View.VISIBLE, exception);
 
-                mView.setLoadingLayoutVisibility(View.GONE);
+                getView().setLoadingLayoutVisibility(View.GONE);
             }
         }
         // Task结束
         else if (state == TaskState.finished) {
 
         }
-    }
-
-    public AContentModel<Params, Progress, Result> getModel() {
-        return mModel;
-    }
-
-    public void setModel(AContentModel<Params, Progress, Result> model) {
-        this.mModel = model;
     }
 
     /**

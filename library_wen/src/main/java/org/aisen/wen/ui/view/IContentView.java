@@ -1,23 +1,43 @@
 package org.aisen.wen.ui.view;
 
+import android.view.View;
+
 import org.aisen.wen.component.network.task.TaskException;
-import org.aisen.wen.ui.presenter.ILifecycleBridge;
 
 /**
  * Created by wangdan on 16/9/30.
  */
-public interface IContentView extends IView, ILifecycleBridge {
+public abstract class IContentView extends ABridgeView {
 
-    void setLoadingLayoutVisibility(int visibility);
+    /**
+     * ContentView的ID
+     *
+     * @return
+     */
+    abstract public int contentViewResId();
 
-    void setEmptyLayoutVisibility(int visibility);
+    abstract public View findViewById(int id);
 
-    void setContentLayoutVisibility(int visibility);
+    abstract public void setLoadingLayoutVisibility(int visibility);
 
-    void setFailureLayoutVisibility(int visibility, TaskException e);
+    abstract public void setEmptyLayoutVisibility(int visibility);
 
-    boolean isContentLayoutEmpty();
+    abstract public void setContentLayoutVisibility(int visibility);
 
-    void setContentLayoutEmpty(boolean empty);
+    abstract public void setFailureLayoutVisibility(int visibility, TaskException e);
+
+    /**
+     * ContentView是否是Empty
+     *
+     * @return
+     */
+    abstract public boolean isContentLayoutEmpty();
+
+    /**
+     * 设置ContentView的Empty属性
+     *
+     * @param empty
+     */
+    abstract public void setContentLayoutEmpty(boolean empty);
 
 }

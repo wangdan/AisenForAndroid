@@ -11,24 +11,32 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/9/30.
  */
-public abstract class AContentModel<Params, Progress, Result extends Serializable> implements IModel<Params> {
+public abstract class AContentModel<Progress, Result extends Serializable> implements IModel {
 
     private static final String TAST_ID = "ContentModelTask";
 
-    private final ITaskManager taskManager;
-    private final IModelListener<Progress, Result> modelListener;
+    private ITaskManager taskManager;
+    private IModelListener<Progress, Result> modelListener;
 
-    public AContentModel(IModelListener<Progress, Result> modelListener, ITaskManager taskManager) {
-        this.modelListener = modelListener;
-        this.taskManager = taskManager;
+    @Override
+    public void bindCallback(IModelListener listener) {
+        modelListener = listener;
+        if (modelListener instanceof ITaskManager) {
+            taskManager = (ITaskManager) modelListener;
+        }
     }
 
     @Override
-    final public void execute(Params... params) {
-        new ContentModelTask(TAST_ID).execute(params);
+    public IModelListener<Progress, Result> getCallback() {
+        return modelListener;
     }
 
-    protected class ContentModelTask extends WorkTask<Params, Progress, Result> {
+    @Override
+    final public void execute() {
+        new ContentModelTask(TAST_ID).execute();
+    }
+
+    class ContentModelTask extends WorkTask<Void, Progress, Result> {
 
         public ContentModelTask(String taskId) {
             super(taskId, taskManager);
@@ -38,40 +46,40 @@ public abstract class AContentModel<Params, Progress, Result extends Serializabl
         protected void onPrepare() {
             super.onPrepare();
 
-            modelListener.onPrepare();
+            getCallback().onPrepare();
         }
 
         @Override
-        public Result workInBackground(Params... params) throws TaskException {
-            return AContentModel.this.workInBackground(params);
+        public Result workInBackground(Void... params) throws TaskException {
+            return AContentModel.this.workInBackground();
         }
 
         @Override
         protected void onProgressUpdate(Progress... values) {
             super.onProgressUpdate(values);
-            
-            modelListener.onProgressUpdate(values);
+
+            getCallback().onProgressUpdate(values);
         }
 
         @Override
         protected void onSuccess(Result result) {
             super.onSuccess(result);
 
-            modelListener.onSuccess(result);
+            getCallback().onSuccess(result);
         }
 
         @Override
         protected void onFailure(TaskException exception) {
             super.onFailure(exception);
 
-            modelListener.onFailure(exception);
+            getCallback().onFailure(exception);
         }
 
         @Override
         protected void onFinished() {
             super.onFinished();
 
-            modelListener.onFinished();
+            getCallback().onFinished();
         }
 
     }
@@ -80,6 +88,6 @@ public abstract class AContentModel<Params, Progress, Result extends Serializabl
         return result == null ? true : false;
     }
 
-    abstract protected Result workInBackground(Params... params) throws TaskException;
+    abstract protected Result workInBackground(Void... params) throws TaskException;
 
 }
