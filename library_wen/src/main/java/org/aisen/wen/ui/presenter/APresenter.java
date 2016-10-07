@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/9/30.
  */
-public abstract class APresenter<Mode extends IModel, View extends IView, Result extends Serializable>
+public abstract class APresenter<Result extends Serializable, Mode extends IModel, View extends IView>
                                             implements IModelListener<Result>, ILifecycleBridge {
 
     private final Mode mMode;

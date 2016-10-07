@@ -13,8 +13,8 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/10/8.
  */
-public abstract class ABridgePresenter<Mode extends IModel, View extends ABridgeView, Result extends Serializable>
-                            extends APresenter<Mode, View, Result> {
+public abstract class ABridgePresenter<Result extends Serializable, Mode extends IModel, View extends ABridgeView>
+                            extends APresenter<Result, Mode, View> {
 
     public ABridgePresenter(Mode mode, View view) {
         super(mode, view);

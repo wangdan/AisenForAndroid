@@ -21,13 +21,13 @@ public abstract class ABaseFragment<Result extends Serializable, ContentMode ext
                             extends Fragment {
 
     private ILifecycleBridge lifecycleBridge;
-    private AContentPresenter<ContentMode, ContentView, Result> contentPresenter;
+    private AContentPresenter<Result, ContentMode, ContentView> contentPresenter;
 
     public abstract ContentView newContentView();
 
     public abstract ContentMode newContentMode();
 
-    class InnerPresenter extends AContentPresenter<ContentMode, ContentView, Result> {
+    class InnerPresenter extends AContentPresenter<Result, ContentMode, ContentView> {
 
         public InnerPresenter() {
             super(newContentMode(), newContentView());

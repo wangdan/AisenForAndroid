@@ -21,8 +21,8 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/9/30.
  */
-public abstract class AContentPresenter<ContentMode extends AContentModel<Result>, ContentView extends AContentView, Result extends Serializable>
-                                                        extends ABridgePresenter<ContentMode, ContentView, Result>
+public abstract class AContentPresenter<Result extends Serializable, ContentMode extends AContentModel<Result>, ContentView extends AContentView>
+                                                        extends ABridgePresenter<Result, ContentMode, ContentView>
                                                         implements ITaskManager {
 
     private final static String TAG = "ContentPresenter";
