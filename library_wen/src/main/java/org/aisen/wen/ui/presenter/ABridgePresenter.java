@@ -13,8 +13,8 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/10/8.
  */
-public abstract class ABridgePresenter<Mode extends IModel, View extends ABridgeView, Progress, Result extends Serializable>
-                            extends APresenter<Mode, View, Progress, Result> {
+public abstract class ABridgePresenter<Mode extends IModel, View extends ABridgeView, Result extends Serializable>
+                            extends APresenter<Mode, View, Result> {
 
     public ABridgePresenter(Mode mode, View view) {
         super(mode, view);
@@ -22,7 +22,7 @@ public abstract class ABridgePresenter<Mode extends IModel, View extends ABridge
 
     @Override
     public void onBridgeCreate(Bundle savedInstanceState) {
-        getMode().bindCallback(this);
+        getMode().setCallback(this);
         getView().onBridgeCreate(savedInstanceState);
     }
 

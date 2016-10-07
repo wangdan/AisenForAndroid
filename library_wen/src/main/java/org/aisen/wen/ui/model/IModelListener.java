@@ -7,11 +7,9 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/9/30.
  */
-public interface IModelListener<Progress, Result extends Serializable> {
+public interface IModelListener<Result extends Serializable> {
 
     void onPrepare();
-
-    void onProgressUpdate(Progress... values);
 
     void onSuccess(Result result);
 

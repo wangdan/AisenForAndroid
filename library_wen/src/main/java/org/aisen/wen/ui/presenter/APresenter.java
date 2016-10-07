@@ -9,8 +9,8 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/9/30.
  */
-public abstract class APresenter<Mode extends IModel, View extends IView, Progress, Result extends Serializable>
-                                            implements IModelListener<Progress, Result>, ILifecycleBridge {
+public abstract class APresenter<Mode extends IModel, View extends IView, Result extends Serializable>
+                                            implements IModelListener<Result>, ILifecycleBridge {
 
     private final Mode mMode;
     private final View mView;

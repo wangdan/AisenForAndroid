@@ -11,15 +11,15 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/9/30.
  */
-public abstract class AContentModel<Progress, Result extends Serializable> implements IModel {
+public abstract class AContentModel<Result extends Serializable> implements IModel {
 
-    private static final String TAST_ID = "ContentModelTask";
+    private static final String TAST_ID = "ContentModel";
 
     private ITaskManager taskManager;
-    private IModelListener<Progress, Result> modelListener;
+    private IModelListener<Result> modelListener;
 
     @Override
-    public void bindCallback(IModelListener listener) {
+    public void setCallback(IModelListener listener) {
         modelListener = listener;
         if (modelListener instanceof ITaskManager) {
             taskManager = (ITaskManager) modelListener;
@@ -27,7 +27,7 @@ public abstract class AContentModel<Progress, Result extends Serializable> imple
     }
 
     @Override
-    public IModelListener<Progress, Result> getCallback() {
+    public IModelListener<Result> getCallback() {
         return modelListener;
     }
 
@@ -36,7 +36,7 @@ public abstract class AContentModel<Progress, Result extends Serializable> imple
         new ContentModelTask(TAST_ID).execute();
     }
 
-    class ContentModelTask extends WorkTask<Void, Progress, Result> {
+    class ContentModelTask extends WorkTask<Void, Void, Result> {
 
         public ContentModelTask(String taskId) {
             super(taskId, taskManager);
@@ -52,13 +52,6 @@ public abstract class AContentModel<Progress, Result extends Serializable> imple
         @Override
         public Result workInBackground(Void... params) throws TaskException {
             return AContentModel.this.workInBackground();
-        }
-
-        @Override
-        protected void onProgressUpdate(Progress... values) {
-            super.onProgressUpdate(values);
-
-            getCallback().onProgressUpdate(values);
         }
 
         @Override

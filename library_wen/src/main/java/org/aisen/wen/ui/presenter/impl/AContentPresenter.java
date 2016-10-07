@@ -21,8 +21,8 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/9/30.
  */
-public abstract class AContentPresenter<ContentMode extends AContentModel<Progress, Result>, ContentView extends AContentView, Progress, Result extends Serializable>
-                                                        extends ABridgePresenter<ContentMode, ContentView, Progress, Result>
+public abstract class AContentPresenter<ContentMode extends AContentModel<Result>, ContentView extends AContentView, Result extends Serializable>
+                                                        extends ABridgePresenter<ContentMode, ContentView, Result>
                                                         implements ITaskManager {
 
     private final static String TAG = "ContentPresenter";
@@ -84,10 +84,6 @@ public abstract class AContentPresenter<ContentMode extends AContentModel<Progre
     @Override
     public void onPrepare() {
         onTaskStateChanged(TaskState.prepare, null);
-    }
-
-    @Override
-    public void onProgressUpdate(Progress... values) {
     }
 
     @Override

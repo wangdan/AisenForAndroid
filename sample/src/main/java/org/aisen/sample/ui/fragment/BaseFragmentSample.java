@@ -14,7 +14,7 @@ import org.aisen.wen.ui.view.impl.AContentView;
 /**
  * Created by wangdan on 15/4/23.
  */
-public class BaseFragmentSample extends ABaseFragment<AContentModel<Void, VideoStreamsBean>, AContentView, Void, VideoStreamsBean> {
+public class BaseFragmentSample extends ABaseFragment<VideoStreamsBean, AContentModel<VideoStreamsBean>, AContentView> {
 
     public static Fragment newInstance() {
         return new BaseFragmentSample();
@@ -34,8 +34,8 @@ public class BaseFragmentSample extends ABaseFragment<AContentModel<Void, VideoS
     }
 
     @Override
-    public AContentModel<Void, VideoStreamsBean> newContentMode() {
-        return new AContentModel<Void, VideoStreamsBean>() {
+    public AContentModel<VideoStreamsBean> newContentMode() {
+        return new AContentModel<VideoStreamsBean>() {
 
             @Override
             protected VideoStreamsBean workInBackground(Void... params) throws TaskException {

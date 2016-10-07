@@ -17,17 +17,17 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/10/2.
  */
-public abstract class ABaseFragment<ContentMode extends AContentModel<Progress, Result>, ContentView extends AContentView, Progress, Result extends Serializable>
+public abstract class ABaseFragment<Result extends Serializable, ContentMode extends AContentModel<Result>, ContentView extends AContentView>
                             extends Fragment {
 
     private ILifecycleBridge lifecycleBridge;
-    private AContentPresenter<ContentMode, ContentView, Progress, Result> contentPresenter;
+    private AContentPresenter<ContentMode, ContentView, Result> contentPresenter;
 
     public abstract ContentView newContentView();
 
     public abstract ContentMode newContentMode();
 
-    class InnerPresenter extends AContentPresenter<ContentMode, ContentView, Progress, Result> {
+    class InnerPresenter extends AContentPresenter<ContentMode, ContentView, Result> {
 
         public InnerPresenter() {
             super(newContentMode(), newContentView());
