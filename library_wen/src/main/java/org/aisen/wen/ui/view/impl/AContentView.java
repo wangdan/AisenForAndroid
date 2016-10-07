@@ -11,12 +11,12 @@ import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.inject.InjectUtility;
 import org.aisen.wen.support.inject.ViewInject;
 import org.aisen.wen.support.utils.Logger;
-import org.aisen.wen.ui.view.IContentView;
+import org.aisen.wen.ui.view.ABridgeView;
 
 /**
  * Created by wangdan on 16/9/30.
  */
-public abstract class AContentView extends IContentView {
+public abstract class AContentView extends ABridgeView {
 
     static final String TAG = "AContentView";
 
@@ -47,22 +47,18 @@ public abstract class AContentView extends IContentView {
         InjectUtility.initInjectedView(getContext(), this, getContentView());
     }
 
-    @Override
     public View findViewById(int id) {
         return getContentView().findViewById(id);
     }
 
-    @Override
     public boolean isContentLayoutEmpty() {
         return contentEmpty;
     }
 
-    @Override
     public void setContentLayoutEmpty(boolean empty) {
         this.contentEmpty = empty;
     }
 
-    @Override
     public void setLoadingLayoutVisibility(int visibility) {
         if (loadingLayout != null) {
             loadingLayout.setVisibility(visibility);
@@ -71,7 +67,6 @@ public abstract class AContentView extends IContentView {
         }
     }
 
-    @Override
     public void setEmptyLayoutVisibility(int visibility) {
         if (emptyLayout != null) {
             emptyLayout.setVisibility(visibility);
@@ -80,7 +75,6 @@ public abstract class AContentView extends IContentView {
         }
     }
 
-    @Override
     public void setContentLayoutVisibility(int visibility) {
         if (contentLayout != null) {
             contentLayout.setVisibility(visibility);
@@ -89,7 +83,6 @@ public abstract class AContentView extends IContentView {
         }
     }
 
-    @Override
     public void setFailureLayoutVisibility(int visibility, TaskException e) {
         if (loadFailureLayout != null) {
             loadFailureLayout.setVisibility(visibility);
@@ -111,5 +104,12 @@ public abstract class AContentView extends IContentView {
     public View getContentView() {
         return mContentView;
     }
+
+    /**
+     * ContentView的ID
+     *
+     * @return
+     */
+    abstract public int contentViewResId();
 
 }
