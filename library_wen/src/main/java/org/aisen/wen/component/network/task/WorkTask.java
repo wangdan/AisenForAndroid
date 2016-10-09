@@ -152,7 +152,9 @@ public abstract class WorkTask<Params, Progress, Result> {
 	public WorkTask(String taskId, ITaskManager taskManager) {
 		this();
 		this.taskId = taskId;
-		taskManager.addTask(this);
+		if (taskManager != null) {
+			taskManager.addTask(this);
+		}
 	}
 
 	public WorkTask() {

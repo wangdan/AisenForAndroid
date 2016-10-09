@@ -3,6 +3,7 @@ package org.aisen.wen.ui.view;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import org.aisen.wen.ui.presenter.ILifecycleBridge;
@@ -60,12 +61,12 @@ public abstract class ABridgeView implements IView, ILifecycleBridge {
     }
 
     @Override
-    public void bindEvent() {
+    public void bindEvent(View contentView) {
 
     }
 
     @Override
-    public void bindView() {
+    public void bindView(View contentView) {
 
     }
 

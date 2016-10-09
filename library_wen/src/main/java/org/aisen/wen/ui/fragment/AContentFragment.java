@@ -17,7 +17,7 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/10/2.
  */
-public abstract class ABaseFragment<Result extends Serializable, ContentMode extends AContentModel<Result>, ContentView extends AContentView>
+public abstract class AContentFragment<Result extends Serializable, ContentMode extends AContentModel<Result>, ContentView extends AContentView>
                             extends Fragment {
 
     private ILifecycleBridge lifecycleBridge;
@@ -104,6 +104,24 @@ public abstract class ABaseFragment<Result extends Serializable, ContentMode ext
         super.onSaveInstanceState(outState);
 
         lifecycleBridge.onBridgeSaveInstanceState(outState);
+    }
+
+    /**
+     * Action的home被点击了
+     *
+     * @return
+     */
+    public boolean onHomeClick() {
+        return onBackClick();
+    }
+
+    /**
+     * 返回按键被点击了
+     *
+     * @return
+     */
+    public boolean onBackClick() {
+        return false;
     }
 
 }

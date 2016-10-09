@@ -7,14 +7,14 @@ import com.example.aisensample.R;
 import org.aisen.sample.support.sdk.YoutubeSDK;
 import org.aisen.sample.support.sdk.bean.VideoStreamsBean;
 import org.aisen.wen.component.network.task.TaskException;
-import org.aisen.wen.ui.fragment.ABaseFragment;
+import org.aisen.wen.ui.fragment.AContentFragment;
 import org.aisen.wen.ui.model.impl.AContentModel;
 import org.aisen.wen.ui.view.impl.AContentView;
 
 /**
  * Created by wangdan on 15/4/23.
  */
-public class BaseFragmentSample extends ABaseFragment<VideoStreamsBean, AContentModel<VideoStreamsBean>, AContentView> {
+public class BaseFragmentSample extends AContentFragment<VideoStreamsBean, AContentModel<VideoStreamsBean>, AContentView> {
 
     public static Fragment newInstance() {
         return new BaseFragmentSample();

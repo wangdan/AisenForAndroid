@@ -1,6 +1,6 @@
 package org.aisen.sample.support.sdk.bean;
 
-import org.aisen.android.support.bean.ResultBean;
+import org.aisen.wen.support.bean.ResultBean;
 
 import java.io.Serializable;
 import java.util.List;

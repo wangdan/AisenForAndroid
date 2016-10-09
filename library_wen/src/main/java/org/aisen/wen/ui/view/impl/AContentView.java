@@ -10,7 +10,7 @@ import org.aisen.wen.R;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.inject.InjectUtility;
 import org.aisen.wen.support.inject.ViewInject;
-import org.aisen.wen.support.utils.Logger;
+import org.aisen.wen.ui.presenter.impl.AContentPresenter;
 import org.aisen.wen.ui.view.ABridgeView;
 
 /**
@@ -33,6 +33,8 @@ public abstract class AContentView extends ABridgeView {
     // 标志是否ContentView是否为空
     private boolean contentEmpty = true;
 
+    private AContentPresenter mPresenter;
+
     @Override
     public void onBridgeCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onBridgeCreateView(inflater, container, savedInstanceState);
@@ -41,10 +43,42 @@ public abstract class AContentView extends ABridgeView {
     }
 
     @Override
-    public void bindView() {
-        super.bindView();
+    public void bindView(View contentView) {
+        super.bindView(contentView);
 
-        InjectUtility.initInjectedView(getContext(), this, getContentView());
+        InjectUtility.initInjectedView(getContext(), this, contentView);
+    }
+
+    @Override
+    public void bindEvent(View contentView) {
+        super.bindEvent(contentView);
+
+        if (loadFailureLayout != null) {
+            View reloadView = loadFailureLayout.findViewById(R.id.layoutReload);
+            if (reloadView != null) {
+                reloadView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mPresenter != null) {
+                            mPresenter.requestData();
+                        }
+                    }
+                });
+            }
+        }
+        if (emptyLayout != null) {
+            View reloadView = emptyLayout.findViewById(R.id.layoutReload);
+            if (reloadView != null) {
+                reloadView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mPresenter != null) {
+                            mPresenter.requestData();
+                        }
+                    }
+                });
+            }
+        }
     }
 
     public View findViewById(int id) {
@@ -62,32 +96,24 @@ public abstract class AContentView extends ABridgeView {
     public void setLoadingLayoutVisibility(int visibility) {
         if (loadingLayout != null) {
             loadingLayout.setVisibility(visibility);
-
-            Logger.v(TAG, "setLoadingLayoutVisibility[%d]", visibility);
         }
     }
 
     public void setEmptyLayoutVisibility(int visibility) {
         if (emptyLayout != null) {
             emptyLayout.setVisibility(visibility);
-
-            Logger.v(TAG, "setEmptyLayoutVisibility[%d]", visibility);
         }
     }
 
     public void setContentLayoutVisibility(int visibility) {
         if (contentLayout != null) {
             contentLayout.setVisibility(visibility);
-
-            Logger.v(TAG, "setContentLayoutVisibility[%d]", visibility);
         }
     }
 
     public void setFailureLayoutVisibility(int visibility, TaskException e) {
         if (loadFailureLayout != null) {
             loadFailureLayout.setVisibility(visibility);
-
-            Logger.v(TAG, "setFailureLayoutVisibility[%d]", visibility);
 
             if (e != null) {
                 TextView txtLoadFailed = (TextView) loadFailureLayout.findViewById(R.id.txtLoadFailed);
@@ -101,8 +127,13 @@ public abstract class AContentView extends ABridgeView {
         }
     }
 
+    @Override
     public View getContentView() {
         return mContentView;
+    }
+
+    public void setPresenter(AContentPresenter presenter) {
+        mPresenter = presenter;
     }
 
     /**

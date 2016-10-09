@@ -42,6 +42,8 @@ public abstract class AContentPresenter<Result extends Serializable, ContentMode
     public AContentPresenter(ContentMode mode, ContentView view) {
         super(mode, view);
 
+        view.setPresenter(this);
+
         this.taskManager = new TaskManager();
     }
 

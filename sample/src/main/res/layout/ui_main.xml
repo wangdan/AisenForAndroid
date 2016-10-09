@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.aisen.android.ui.widget.FitWindowsFrameLayout
+<org.aisen.wen.ui.widget.FitWindowsFrameLayout
     android:id="@+id/layMainRoot"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <org.aisen.android.ui.widget.FitWindowsFrameLayout
+        <org.aisen.wen.ui.widget.FitWindowsFrameLayout
             android:id="@+id/layMainContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent" app:fitType="top"
@@ -28,7 +28,7 @@
                 layout="@layout/comm_lay_toolbar_spinner" android:layout_width="match_parent"
                 android:layout_height="@dimen/abc_action_bar_default_height_material"/>
 
-        </org.aisen.android.ui.widget.FitWindowsFrameLayout>
+        </org.aisen.wen.ui.widget.FitWindowsFrameLayout>
 
         <FrameLayout
             android:id="@+id/menu_frame" android:layout_width="match_parent"
@@ -39,4 +39,4 @@
 
     </android.support.v4.widget.DrawerLayout>
 
-</org.aisen.android.ui.widget.FitWindowsFrameLayout>
+</org.aisen.wen.ui.widget.FitWindowsFrameLayout>

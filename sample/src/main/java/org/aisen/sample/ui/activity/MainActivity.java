@@ -15,15 +15,14 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.example.aisensample.R;
+
 import org.aisen.sample.support.bean.MenuBean;
 import org.aisen.sample.support.utils.SystemBarUtils;
 import org.aisen.sample.ui.fragment.BaseFragmentSample;
-import org.aisen.sample.ui.fragment.MenuFragment;
-
-import org.aisen.android.common.utils.SystemUtils;
-import org.aisen.android.support.inject.ViewInject;
-import org.aisen.android.ui.activity.basic.BaseActivity;
-import org.aisen.android.ui.widget.FitWindowsFrameLayout;
+import org.aisen.wen.support.inject.ViewInject;
+import org.aisen.wen.support.utils.SystemUtils;
+import org.aisen.wen.ui.activity.base.BaseActivity;
+import org.aisen.wen.ui.widget.FitWindowsFrameLayout;
 
 /**
  * Created by wangdan on 15/4/23.
@@ -39,7 +38,7 @@ public class MainActivity extends BaseActivity {
 
     private ActionBarDrawerToggle mDrawerToggle;
 
-    private MenuFragment menuFragment;
+//    private MenuFragment menuFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,8 +72,9 @@ public class MainActivity extends BaseActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        menuFragment = MenuFragment.newInstance();
-        getFragmentManager().beginTransaction().add(R.id.menu_frame, menuFragment, "MenuFragment").commit();
+//        menuFragment = MenuFragment.newInstance();
+//        getFragmentManager().beginTransaction().add(R.id.menu_frame, menuFragment, "MenuFragment").commit();
+        onMenuSelected(new MenuBean(0, R.string.a_base_fragment, R.string.a_base_fragment, "0"));
     }
 
     public void onMenuSelected(MenuBean bean) {
