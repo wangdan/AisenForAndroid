@@ -14,7 +14,6 @@ import org.aisen.wen.R;
 import org.aisen.wen.component.network.task.ITaskManager;
 import org.aisen.wen.component.network.task.TaskManager;
 import org.aisen.wen.component.network.task.WorkTask;
-import org.aisen.wen.support.inject.InjectUtility;
 import org.aisen.wen.support.utils.Logger;
 import org.aisen.wen.support.utils.ViewUtils;
 import org.aisen.wen.ui.fragment.AContentFragment;
@@ -25,6 +24,8 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import butterknife.ButterKnife;
 
 /**
  * Created by wangdan on 15-1-16.
@@ -159,7 +160,7 @@ public class BaseActivity extends AppCompatActivity implements ITaskManager, AsT
 
         rootView = view;
 
-        InjectUtility.initInjectedView(this);
+        ButterKnife.bind(this);
     }
 
     @Override
@@ -168,8 +169,8 @@ public class BaseActivity extends AppCompatActivity implements ITaskManager, AsT
 
         rootView = view;
 
-        InjectUtility.initInjectedView(this);
-        
+        ButterKnife.bind(this);
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar != null)
             setSupportActionBar(mToolbar);

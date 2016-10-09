@@ -19,21 +19,22 @@ import com.example.aisensample.R;
 import org.aisen.sample.support.bean.MenuBean;
 import org.aisen.sample.support.utils.SystemBarUtils;
 import org.aisen.sample.ui.fragment.BaseFragmentSample;
-import org.aisen.wen.support.inject.ViewInject;
 import org.aisen.wen.support.utils.SystemUtils;
 import org.aisen.wen.ui.activity.base.BaseActivity;
 import org.aisen.wen.ui.widget.FitWindowsFrameLayout;
+
+import butterknife.BindView;
 
 /**
  * Created by wangdan on 15/4/23.
  */
 public class MainActivity extends BaseActivity {
 
-    @ViewInject(id = R.id.drawer)
-    private DrawerLayout mDrawerLayout;
-    @ViewInject(id = R.id.layMainContent)
+    @BindView(R.id.drawer)
+    DrawerLayout mDrawerLayout;
+    @BindView(R.id.layMainContent)
     FitWindowsFrameLayout mainContent;
-    @ViewInject(id = R.id.layMainRoot)
+    @BindView(R.id.layMainRoot)
     FitWindowsFrameLayout mainRoot;
 
     private ActionBarDrawerToggle mDrawerToggle;

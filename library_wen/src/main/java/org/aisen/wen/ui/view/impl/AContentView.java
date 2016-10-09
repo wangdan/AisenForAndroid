@@ -7,11 +7,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.aisen.wen.R;
+import org.aisen.wen.R2;
 import org.aisen.wen.component.network.task.TaskException;
-import org.aisen.wen.support.inject.InjectUtility;
-import org.aisen.wen.support.inject.ViewInject;
 import org.aisen.wen.ui.presenter.impl.AContentPresenter;
 import org.aisen.wen.ui.view.ABridgeView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Created by wangdan on 16/9/30.
@@ -21,13 +23,13 @@ public abstract class AContentView extends ABridgeView {
     static final String TAG = "AContentView";
 
     private View mContentView;
-    @ViewInject(idStr = "layoutLoading")
+    @BindView(R2.id.layoutLoading)
     View loadingLayout;// 加载中视图
-    @ViewInject(idStr = "layoutLoadFailed")
+    @BindView(R2.id.layoutLoadFailed)
     View loadFailureLayout;// 加载失败视图
-    @ViewInject(idStr = "layoutContent")
+    @BindView(R2.id.layoutContent)
     View contentLayout;// 内容视图
-    @ViewInject(idStr = "layoutEmpty")
+    @BindView(R2.id.layoutEmpty)
     View emptyLayout;// 空视图
 
     // 标志是否ContentView是否为空
@@ -46,7 +48,7 @@ public abstract class AContentView extends ABridgeView {
     public void bindView(View contentView) {
         super.bindView(contentView);
 
-        InjectUtility.initInjectedView(getContext(), this, contentView);
+        ButterKnife.bind(this, contentView);
     }
 
     @Override
