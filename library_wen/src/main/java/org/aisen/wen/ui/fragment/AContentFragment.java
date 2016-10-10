@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import org.aisen.wen.ui.model.IContentMode;
 import org.aisen.wen.ui.presenter.ILifecycleBridge;
+import org.aisen.wen.ui.presenter.impl.ABridgePresenter;
 import org.aisen.wen.ui.presenter.impl.AContentPresenter;
 import org.aisen.wen.ui.view.IContentView;
 
@@ -24,7 +25,7 @@ public abstract class AContentFragment<Result extends Serializable, ContentMode 
     private View contentView;
 
     private ILifecycleBridge lifecycleBridge;
-    private AContentPresenter<Result, ContentMode, ContentView> contentPresenter;
+    private ABridgePresenter<Result, ContentMode, ContentView> contentPresenter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,21 +101,15 @@ public abstract class AContentFragment<Result extends Serializable, ContentMode 
         return contentView;
     }
 
-    class InnerPresenter extends AContentPresenter<Result, ContentMode, ContentView> {
+    protected ABridgePresenter<Result, ContentMode, ContentView> newContentPresenter() {
+        return new AContentPresenter<Result, ContentMode, ContentView>(newContentMode(), newContentView()) {
 
-        public InnerPresenter() {
-            super(newContentMode(), newContentView());
-        }
+            @Override
+            public void requestData() {
+                getMode().execute();
+            }
 
-        @Override
-        public void requestData() {
-            getMode().execute();
-        }
-
-    }
-
-    protected AContentPresenter<Result, ContentMode, ContentView> newContentPresenter() {
-        return new InnerPresenter();
+        };
     }
 
     protected abstract ContentView newContentView();
