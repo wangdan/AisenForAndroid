@@ -75,7 +75,8 @@ public class MainActivity extends BaseActivity {
 
 //        menuFragment = MenuFragment.newInstance();
 //        getFragmentManager().beginTransaction().add(R.id.menu_frame, menuFragment, "MenuFragment").commit();
-        onMenuSelected(new MenuBean(0, R.string.a_base_fragment, R.string.a_base_fragment, "0"));
+        if (savedInstanceState == null)
+            onMenuSelected(new MenuBean(0, R.string.a_base_fragment, R.string.a_base_fragment, "0"));
     }
 
     public void onMenuSelected(MenuBean bean) {

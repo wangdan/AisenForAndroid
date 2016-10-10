@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import org.aisen.wen.R;
 import org.aisen.wen.R2;
+import org.aisen.wen.base.Consts;
 import org.aisen.wen.ui.presenter.IContentPresenter;
 import org.aisen.wen.ui.view.IContentView;
 
@@ -146,7 +147,9 @@ public abstract class AContentView implements IContentView {
 
     @Override
     public void onBridgeCreate(Bundle savedInstanceState) {
-
+        if (savedInstanceState != null) {
+            setContentLayout(savedInstanceState.getBoolean(Consts.KEY_PREFIX + ".AContentView_ContentEmpty", true));
+        }
     }
 
     @Override
@@ -181,7 +184,7 @@ public abstract class AContentView implements IContentView {
 
     @Override
     public void onBridgeSaveInstanceState(Bundle outState) {
-
+        outState.putBoolean(Consts.KEY_PREFIX + ".AContentView_ContentEmpty", isContentEmpty());
     }
 
     @Override
