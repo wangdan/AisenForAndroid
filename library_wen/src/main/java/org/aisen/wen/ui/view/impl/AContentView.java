@@ -1,5 +1,6 @@
 package org.aisen.wen.ui.view.impl;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,19 +9,18 @@ import android.widget.TextView;
 
 import org.aisen.wen.R;
 import org.aisen.wen.R2;
-import org.aisen.wen.component.network.task.TaskException;
-import org.aisen.wen.ui.presenter.impl.AContentPresenter;
-import org.aisen.wen.ui.view.ABridgeView;
+import org.aisen.wen.ui.presenter.IContentPresenter;
+import org.aisen.wen.ui.view.IContentView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
+ * 控制4种基本视图的页面刷新
+ *
  * Created by wangdan on 16/9/30.
  */
-public abstract class AContentView extends ABridgeView {
-
-    static final String TAG = "AContentView";
+public abstract class AContentView implements IContentView {
 
     private View mContentView;
     @BindView(R2.id.layoutLoading)
@@ -32,29 +32,20 @@ public abstract class AContentView extends ABridgeView {
     @BindView(R2.id.layoutEmpty)
     View emptyLayout;// 空视图
 
+    private Activity mContext;
+
     // 标志是否ContentView是否为空
     private boolean contentEmpty = true;
 
-    private AContentPresenter mPresenter;
-
-    @Override
-    public void onBridgeCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onBridgeCreateView(inflater, container, savedInstanceState);
-
-        mContentView = inflater.inflate(contentViewResId(), null);
-    }
+    private IContentPresenter mPresenter;
 
     @Override
     public void bindView(View contentView) {
-        super.bindView(contentView);
-
         ButterKnife.bind(this, contentView);
     }
 
     @Override
     public void bindEvent(View contentView) {
-        super.bindEvent(contentView);
-
         if (loadFailureLayout != null) {
             View reloadView = loadFailureLayout.findViewById(R.id.layoutReload);
             if (reloadView != null) {
@@ -83,50 +74,59 @@ public abstract class AContentView extends ABridgeView {
         }
     }
 
+    @Override
     public View findViewById(int id) {
         return getContentView().findViewById(id);
     }
 
-    public boolean isContentLayoutEmpty() {
+    @Override
+    public boolean isContentEmpty() {
         return contentEmpty;
     }
 
-    public void setContentLayoutEmpty(boolean empty) {
+    @Override
+    public void setContentLayout(boolean empty) {
         this.contentEmpty = empty;
     }
 
-    public void setLoadingLayoutVisibility(int visibility) {
-        if (loadingLayout != null) {
-            loadingLayout.setVisibility(visibility);
-        }
+    @Override
+    public View getLoadingLayout() {
+        return loadingLayout;
     }
 
-    public void setEmptyLayoutVisibility(int visibility) {
-        if (emptyLayout != null) {
-            emptyLayout.setVisibility(visibility);
-        }
+    @Override
+    public View getEmptyLayout() {
+        return emptyLayout;
     }
 
-    public void setContentLayoutVisibility(int visibility) {
-        if (contentLayout != null) {
-            contentLayout.setVisibility(visibility);
-        }
+    @Override
+    public View getContentLayout() {
+        return contentLayout;
     }
 
-    public void setFailureLayoutVisibility(int visibility, TaskException e) {
-        if (loadFailureLayout != null) {
-            loadFailureLayout.setVisibility(visibility);
+    @Override
+    public View getFailureLayout() {
+        return loadFailureLayout;
+    }
 
-            if (e != null) {
-                TextView txtLoadFailed = (TextView) loadFailureLayout.findViewById(R.id.txtLoadFailed);
-                if (txtLoadFailed != null)
-                    txtLoadFailed.setText(e.getMessage());
-            }
+    @Override
+    public void setFailureHint(String hint) {
+        if (getFailureLayout() == null)
+            return;
 
-            setEmptyLayoutVisibility(View.GONE);
-        } else {
-            setEmptyLayoutVisibility(View.VISIBLE);
-        }
+        TextView txtLoadFailed = (TextView) getFailureLayout().findViewById(R.id.txtLoadFailed);
+        if (txtLoadFailed != null)
+            txtLoadFailed.setText(hint);
+    }
+
+    @Override
+    public void setEmptyHind(String hint) {
+        if (getEmptyLayout() == null)
+            return;
+
+        TextView txtLoadEmpty = (TextView) getFailureLayout().findViewById(R.id.txtLoadEmpty);
+        if (txtLoadEmpty != null)
+            txtLoadEmpty.setText(hint);
     }
 
     @Override
@@ -134,15 +134,59 @@ public abstract class AContentView extends ABridgeView {
         return mContentView;
     }
 
-    public void setPresenter(AContentPresenter presenter) {
+    @Override
+    public void setPresenter(IContentPresenter presenter) {
         mPresenter = presenter;
     }
 
-    /**
-     * ContentView的ID
-     *
-     * @return
-     */
-    abstract public int contentViewResId();
+    @Override
+    public void onBridgeActivityCreate(Activity activity, Bundle savedInstanceState) {
+        mContext = activity;
+    }
+
+    @Override
+    public void onBridgeCreate(Bundle savedInstanceState) {
+
+    }
+
+    @Override
+    public void onBridgeCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mContentView = inflater.inflate(setLayoutId(), null);
+    }
+
+    @Override
+    public void onBridgeStart() {
+
+    }
+
+    @Override
+    public void onBridgeResume() {
+
+    }
+
+    @Override
+    public void onBridgePause() {
+
+    }
+
+    @Override
+    public void onBridgeStop() {
+
+    }
+
+    @Override
+    public void onBridgeDestory() {
+
+    }
+
+    @Override
+    public void onBridgeSaveInstanceState(Bundle outState) {
+
+    }
+
+    @Override
+    public Activity getContext() {
+        return mContext;
+    }
 
 }

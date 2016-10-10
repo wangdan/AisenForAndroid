@@ -16,7 +16,7 @@ import org.aisen.wen.component.network.task.TaskManager;
 import org.aisen.wen.component.network.task.WorkTask;
 import org.aisen.wen.support.utils.Logger;
 import org.aisen.wen.support.utils.ViewUtils;
-import org.aisen.wen.ui.fragment.AContentFragment;
+import org.aisen.wen.ui.fragment.ABaseFragment;
 import org.aisen.wen.ui.widget.AsToolbar;
 
 import java.lang.ref.WeakReference;
@@ -44,7 +44,7 @@ public class BaseActivity extends AppCompatActivity implements ITaskManager, AsT
     private boolean isDestory;
 
     // 当有Fragment Attach到这个Activity的时候，就会保存
-    private Map<String, WeakReference<AContentFragment>> fragmentRefs;
+    private Map<String, WeakReference<ABaseFragment>> fragmentRefs;
 
     private static BaseActivity runningActivity;
 
@@ -90,7 +90,7 @@ public class BaseActivity extends AppCompatActivity implements ITaskManager, AsT
         if (mHelper != null)
             mHelper.onCreate(savedInstanceState);
 
-        fragmentRefs = new HashMap<String, WeakReference<AContentFragment>>();
+        fragmentRefs = new HashMap<>();
 
         if (savedInstanceState == null) {
             theme = configTheme();
@@ -186,8 +186,8 @@ public class BaseActivity extends AppCompatActivity implements ITaskManager, AsT
         outState.putInt("theme", theme);
     }
 
-    public void addFragment(String tag, AContentFragment fragment) {
-        fragmentRefs.put(tag, new WeakReference<AContentFragment>(fragment));
+    public void addFragment(String tag, ABaseFragment fragment) {
+        fragmentRefs.put(tag, new WeakReference(fragment));
     }
 
     public void removeFragment(String tag) {
@@ -282,8 +282,8 @@ public class BaseActivity extends AppCompatActivity implements ITaskManager, AsT
 
         Set<String> keys = fragmentRefs.keySet();
         for (String key : keys) {
-            WeakReference<AContentFragment> fragmentRef = fragmentRefs.get(key);
-            AContentFragment fragment = fragmentRef.get();
+            WeakReference<ABaseFragment> fragmentRef = fragmentRefs.get(key);
+            ABaseFragment fragment = fragmentRef.get();
             if (fragment != null && fragment.onHomeClick())
                 return true;
         }
@@ -315,8 +315,8 @@ public class BaseActivity extends AppCompatActivity implements ITaskManager, AsT
 
         Set<String> keys = fragmentRefs.keySet();
         for (String key : keys) {
-            WeakReference<AContentFragment> fragmentRef = fragmentRefs.get(key);
-            AContentFragment fragment = fragmentRef.get();
+            WeakReference<ABaseFragment> fragmentRef = fragmentRefs.get(key);
+            ABaseFragment fragment = fragmentRef.get();
             if (fragment != null && fragment.onBackClick())
                 return true;
         }
@@ -400,8 +400,8 @@ public class BaseActivity extends AppCompatActivity implements ITaskManager, AsT
     public boolean onToolbarDoubleClick() {
         Set<String> keys = fragmentRefs.keySet();
         for (String key : keys) {
-            WeakReference<AContentFragment> fragmentRef = fragmentRefs.get(key);
-            AContentFragment fragment = fragmentRef.get();
+            WeakReference<ABaseFragment> fragmentRef = fragmentRefs.get(key);
+            ABaseFragment fragment = fragmentRef.get();
             if (fragment != null && fragment instanceof AsToolbar.OnToolbarDoubleClick) {
                 if (((AsToolbar.OnToolbarDoubleClick) fragment).onToolbarDoubleClick())
                     return true;

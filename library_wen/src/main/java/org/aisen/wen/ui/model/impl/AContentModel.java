@@ -3,7 +3,7 @@ package org.aisen.wen.ui.model.impl;
 import org.aisen.wen.component.network.task.ITaskManager;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.component.network.task.WorkTask;
-import org.aisen.wen.ui.model.IModel;
+import org.aisen.wen.ui.model.IContentMode;
 import org.aisen.wen.ui.model.IModelListener;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/9/30.
  */
-public abstract class AContentModel<Result extends Serializable> implements IModel {
+public abstract class AContentModel<Result extends Serializable> implements IContentMode<Result> {
 
     private static final String TAST_ID = "ContentModel";
 
@@ -77,10 +77,9 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
 
     }
 
+    @Override
     public boolean resultIsEmpty(Result result) {
         return result == null ? true : false;
     }
-
-    abstract protected Result workInBackground(Void... params) throws TaskException;
 
 }

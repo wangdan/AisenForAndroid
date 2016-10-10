@@ -7,31 +7,38 @@ import android.os.Looper;
 import android.view.View;
 
 import org.aisen.wen.component.network.biz.IResult;
-import org.aisen.wen.component.network.task.ITaskManager;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.component.network.task.TaskManager;
 import org.aisen.wen.component.network.task.WorkTask;
 import org.aisen.wen.support.utils.Logger;
-import org.aisen.wen.ui.model.impl.AContentModel;
-import org.aisen.wen.ui.presenter.ABridgePresenter;
-import org.aisen.wen.ui.view.impl.AContentView;
+import org.aisen.wen.ui.model.IContentMode;
+import org.aisen.wen.ui.presenter.IContentPresenter;
+import org.aisen.wen.ui.view.IContentView;
 
 import java.io.Serializable;
 
 /**
- * Created by wangdan on 16/9/30.
+ * 根据Mode的回调方法，自动切换4种视图的切换
+ * 管理Task的生命周期
+ *
+ * @param <Result>
+ * @param <ContentMode>
+ * @param <ContentView>
  */
-public abstract class AContentPresenter<Result extends Serializable, ContentMode extends AContentModel<Result>, ContentView extends AContentView>
+public abstract class AContentPresenter<Result extends Serializable, ContentMode extends IContentMode<Result>, ContentView extends IContentView>
                                                         extends ABridgePresenter<Result, ContentMode, ContentView>
-                                                        implements ITaskManager {
+                                                        implements IContentPresenter {
 
     private final static String TAG = "ContentPresenter";
 
-    public enum TaskState {
-        none, prepare, falid, success, finished, canceled
-    }
-
     private final static long DELAY_REQUEST = 500;
+
+    /**
+     * ContentView对应Mode的四种状态
+     */
+    public enum TaskState {
+        prepare, falid, success, finished
+    }
 
     private final TaskManager taskManager;// 管理线程
 
@@ -54,14 +61,14 @@ public abstract class AContentPresenter<Result extends Serializable, ContentMode
         if (savedInstanceState != null) {
             taskManager.restore(savedInstanceState);
 
-            if (getView().isContentLayoutEmpty()) {
+            if (getView().isContentEmpty()) {
                 requestData();
             }
             else {
-                getView().setContentLayoutVisibility(android.view.View.VISIBLE);
-                getView().setEmptyLayoutVisibility(android.view.View.GONE);
-                getView().setFailureLayoutVisibility(android.view.View.GONE, null);
-                getView().setLoadingLayoutVisibility(android.view.View.GONE);
+                setContentLayoutVisibility(android.view.View.VISIBLE);
+                setEmptyLayoutVisibility(android.view.View.GONE);
+                setFailureLayoutVisibility(android.view.View.GONE, null);
+                setLoadingLayoutVisibility(android.view.View.GONE);
             }
         }
         else {
@@ -85,13 +92,17 @@ public abstract class AContentPresenter<Result extends Serializable, ContentMode
 
     @Override
     public void onPrepare() {
+        super.onPrepare();
+
         onTaskStateChanged(TaskState.prepare, null);
     }
 
     @Override
     public void onSuccess(Result result) {
+        super.onSuccess(result);
+
         // 默认加载数据成功，且ContentView有数据展示
-        getView().setContentLayoutEmpty(getMode().resultIsEmpty(result));
+        getView().setContentLayout(getMode().resultIsEmpty(result));
 
         onTaskStateChanged(TaskState.success, null);
 
@@ -119,11 +130,15 @@ public abstract class AContentPresenter<Result extends Serializable, ContentMode
 
     @Override
     public void onFailure(TaskException e) {
+        super.onFailure(e);
+
         onTaskStateChanged(TaskState.falid, e);
     }
 
     @Override
     public void onFinished() {
+        super.onFinished();
+
         onTaskStateChanged(TaskState.finished, null);
     }
 
@@ -167,56 +182,49 @@ public abstract class AContentPresenter<Result extends Serializable, ContentMode
     }
 
     /**
+     * Task状态改变时，切换各种View的状态
      *
      * @param state
-     *
      * @param exception
      */
-    protected void onTaskStateChanged(TaskState state, TaskException exception) {
+    public void onTaskStateChanged(TaskState state, TaskException exception) {
         // 开始Task
         if (state == TaskState.prepare) {
-            if (getView().isContentLayoutEmpty()) {
-                getView().setLoadingLayoutVisibility(View.VISIBLE);
+            if (getView().isContentEmpty()) {
+                setLoadingLayoutVisibility(View.VISIBLE);
 
-                getView().setContentLayoutVisibility(View.GONE);
+                setContentLayoutVisibility(View.GONE);
             }
             else {
-                getView().setLoadingLayoutVisibility(View.GONE);
+                setLoadingLayoutVisibility(View.GONE);
 
-                getView().setContentLayoutVisibility(View.VISIBLE);
+                setContentLayoutVisibility(View.VISIBLE);
             }
 
-            getView().setEmptyLayoutVisibility(View.GONE);
-            if (getView().isContentLayoutEmpty()) {
-                getView().setFailureLayoutVisibility(View.GONE, null);
+            setEmptyLayoutVisibility(View.GONE);
+            if (getView().isContentEmpty()) {
+                setFailureLayoutVisibility(View.GONE, null);
             }
         }
         // Task成功
         else if (state == TaskState.success) {
-            getView().setLoadingLayoutVisibility(View.GONE);
+            setLoadingLayoutVisibility(View.GONE);
 
-            if (getView().isContentLayoutEmpty()) {
-                getView().setEmptyLayoutVisibility(View.VISIBLE);
-                getView().setContentLayoutVisibility(View.GONE);
+            if (getView().isContentEmpty()) {
+                setEmptyLayoutVisibility(View.VISIBLE);
+                setContentLayoutVisibility(View.GONE);
             }
             else {
-                getView().setContentLayoutVisibility(View.VISIBLE);
-                getView().setEmptyLayoutVisibility(View.GONE);
-            }
-        }
-        // 取消Task
-        else if (state == TaskState.canceled) {
-            if (getView().isContentLayoutEmpty()) {
-                getView().setLoadingLayoutVisibility(View.GONE);
-                getView().setEmptyLayoutVisibility(View.VISIBLE);
+                setContentLayoutVisibility(View.VISIBLE);
+                setEmptyLayoutVisibility(View.GONE);
             }
         }
         // Task失败
         else if (state == TaskState.falid) {
-            if (getView().isContentLayoutEmpty()) {
-                getView().setFailureLayoutVisibility(View.VISIBLE, exception);
+            if (getView().isContentEmpty()) {
+                setFailureLayoutVisibility(View.VISIBLE, exception);
 
-                getView().setLoadingLayoutVisibility(View.GONE);
+                setLoadingLayoutVisibility(View.GONE);
             }
         }
         // Task结束
@@ -225,14 +233,45 @@ public abstract class AContentPresenter<Result extends Serializable, ContentMode
         }
     }
 
+    protected void setLoadingLayoutVisibility(int visibility) {
+        if (getView().getLoadingLayout() != null) {
+            getView().getLoadingLayout().setVisibility(visibility);
+        }
+    }
+
+    protected void setEmptyLayoutVisibility(int visibility) {
+        if (getView().getEmptyLayout() != null) {
+            getView().getEmptyLayout().setVisibility(visibility);
+        }
+    }
+
+    protected void setContentLayoutVisibility(int visibility) {
+        if (getView().getContentLayout() != null) {
+            getView().getContentLayout().setVisibility(visibility);
+        }
+    }
+
+    protected void setFailureLayoutVisibility(int visibility, TaskException e) {
+        if (getView().getFailureLayout() != null) {
+            getView().getFailureLayout().setVisibility(visibility);
+
+            if (e != null) {
+                getView().setFailureHint(e.getMessage());
+            }
+
+            setEmptyLayoutVisibility(View.GONE);
+        } else {
+            setEmptyLayoutVisibility(View.VISIBLE);
+        }
+    }
+
     /**
      * 缓存数据失效，重新刷新数据
      *
      */
+    @Override
     public void requestDataOutofdate() {
         requestData();
     }
-
-    abstract public void requestData();
 
 }

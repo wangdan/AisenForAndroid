@@ -1,50 +1,36 @@
 package org.aisen.wen.ui.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.aisen.wen.ui.model.impl.AContentModel;
+import org.aisen.wen.ui.model.IContentMode;
 import org.aisen.wen.ui.presenter.ILifecycleBridge;
 import org.aisen.wen.ui.presenter.impl.AContentPresenter;
-import org.aisen.wen.ui.view.impl.AContentView;
+import org.aisen.wen.ui.view.IContentView;
 
 import java.io.Serializable;
 
 /**
+ * 管理好IContentPresenter
+ *
  * Created by wangdan on 16/10/2.
  */
-public abstract class AContentFragment<Result extends Serializable, ContentMode extends AContentModel<Result>, ContentView extends AContentView>
-                            extends Fragment {
+public abstract class AContentFragment<Result extends Serializable, ContentMode extends IContentMode<Result>, ContentView extends IContentView>
+                            extends ABaseFragment {
+
+    private View contentView;
 
     private ILifecycleBridge lifecycleBridge;
     private AContentPresenter<Result, ContentMode, ContentView> contentPresenter;
-
-    public abstract ContentView newContentView();
-
-    public abstract ContentMode newContentMode();
-
-    class InnerPresenter extends AContentPresenter<Result, ContentMode, ContentView> {
-
-        public InnerPresenter() {
-            super(newContentMode(), newContentView());
-        }
-
-        @Override
-        public void requestData() {
-            getMode().execute();
-        }
-
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        contentPresenter = new InnerPresenter();
+        contentPresenter = newContentPresenter();
         lifecycleBridge = contentPresenter;
         lifecycleBridge.onBridgeCreate(savedInstanceState);
     }
@@ -54,7 +40,10 @@ public abstract class AContentFragment<Result extends Serializable, ContentMode 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         lifecycleBridge.onBridgeCreateView(inflater, container, savedInstanceState);
 
-        return contentPresenter.getView().getContentView();
+        contentView = contentPresenter.getView().getContentView();
+        contentView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+        return contentView;
     }
 
     @Override
@@ -106,22 +95,30 @@ public abstract class AContentFragment<Result extends Serializable, ContentMode 
         lifecycleBridge.onBridgeSaveInstanceState(outState);
     }
 
-    /**
-     * Action的home被点击了
-     *
-     * @return
-     */
-    public boolean onHomeClick() {
-        return onBackClick();
+    @Override
+    public View getContentView() {
+        return contentView;
     }
 
-    /**
-     * 返回按键被点击了
-     *
-     * @return
-     */
-    public boolean onBackClick() {
-        return false;
+    class InnerPresenter extends AContentPresenter<Result, ContentMode, ContentView> {
+
+        public InnerPresenter() {
+            super(newContentMode(), newContentView());
+        }
+
+        @Override
+        public void requestData() {
+            getMode().execute();
+        }
+
     }
+
+    protected AContentPresenter<Result, ContentMode, ContentView> newContentPresenter() {
+        return new InnerPresenter();
+    }
+
+    protected abstract ContentView newContentView();
+
+    protected abstract ContentMode newContentMode();
 
 }
