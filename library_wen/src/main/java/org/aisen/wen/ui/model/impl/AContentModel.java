@@ -4,7 +4,8 @@ import org.aisen.wen.component.network.task.ITaskManager;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.component.network.task.WorkTask;
 import org.aisen.wen.ui.model.IModel;
-import org.aisen.wen.ui.model.IModelListener;
+import org.aisen.wen.ui.model.listener.IModelListener;
+import org.aisen.wen.ui.model.listener.ModelListenerParam;
 import org.aisen.wen.ui.presenter.impl.AContentPresenter;
 
 import java.io.Serializable;
@@ -53,23 +54,7 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onPrepare() {
             super.onPrepare();
 
-            getCallback().onPrepare(new IModelListener.IModelListenerParam() {
-                @Override
-                public AContentPresenter.TaskState getTaskState() {
-                    return AContentPresenter.TaskState.prepare;
-                }
-
-                @Override
-                public Result getResult() {
-                    return null;
-                }
-
-                @Override
-                public TaskException getException() {
-                    return null;
-                }
-
-            });
+            getCallback().onPrepare(getListenerParam(AContentPresenter.TaskState.prepare, null, null));
         }
 
         @Override
@@ -81,72 +66,27 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onSuccess(final Result result) {
             super.onSuccess(result);
 
-            getCallback().onSuccess(new IModelListener.IModelListenerParam<Result>() {
-
-                @Override
-                public AContentPresenter.TaskState getTaskState() {
-                    return AContentPresenter.TaskState.success;
-                }
-
-                @Override
-                public Result getResult() {
-                    return result;
-                }
-
-                @Override
-                public TaskException getException() {
-                    return null;
-                }
-
-            });
+            getCallback().onSuccess(getListenerParam(AContentPresenter.TaskState.success, null, result));
         }
 
         @Override
         protected void onFailure(final TaskException exception) {
             super.onFailure(exception);
 
-            getCallback().onFailure(new IModelListener.IModelListenerParam() {
-                @Override
-                public AContentPresenter.TaskState getTaskState() {
-                    return AContentPresenter.TaskState.falid;
-                }
-
-                @Override
-                public Result getResult() {
-                    return null;
-                }
-
-                @Override
-                public TaskException getException() {
-                    return exception;
-                }
-
-            });
+            getCallback().onFailure(getListenerParam(AContentPresenter.TaskState.falid, exception, null));
         }
 
         @Override
         protected void onFinished() {
             super.onFinished();
 
-            getCallback().onFinished(new IModelListener.IModelListenerParam() {
-                @Override
-                public AContentPresenter.TaskState getTaskState() {
-                    return AContentPresenter.TaskState.finished;
-                }
-
-                @Override
-                public Result getResult() {
-                    return null;
-                }
-
-                @Override
-                public TaskException getException() {
-                    return null;
-                }
-
-            });
+            getCallback().onFinished(getListenerParam(AContentPresenter.TaskState.finished, null, null));
 
             mTask = null;
+        }
+
+        ModelListenerParam<Result> getListenerParam(AContentPresenter.TaskState taskState, TaskException exception, Result result) {
+            return new ModelListenerParam(taskState, result, exception);
         }
 
     }

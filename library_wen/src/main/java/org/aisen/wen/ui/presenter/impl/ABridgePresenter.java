@@ -6,7 +6,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import org.aisen.wen.ui.model.IModel;
-import org.aisen.wen.ui.model.IModelListener;
+import org.aisen.wen.ui.model.listener.IModelListener;
+import org.aisen.wen.ui.model.listener.ModelListenerParam;
 import org.aisen.wen.ui.presenter.ILifecycleBridge;
 import org.aisen.wen.ui.presenter.IPresenter;
 import org.aisen.wen.ui.view.IContentView;
@@ -92,28 +93,28 @@ public abstract class ABridgePresenter<Result extends Serializable,
     }
 
     @Override
-    public <Param extends IModelListenerParam> void onFinished(Param param) {
+    public void onFinished(ModelListenerParam<Result> param) {
         if (getView() instanceof IModelListener) {
             ((IModelListener) getView()).onFinished(param);
         }
     }
 
     @Override
-    public <Param extends IModelListenerParam> void onFailure(Param param) {
+    public void onFailure(ModelListenerParam<Result> param) {
         if (getView() instanceof IModelListener) {
             ((IModelListener) getView()).onFailure(param);
         }
     }
 
     @Override
-    public <Param extends IModelListenerParam<Result>> void onSuccess(Param param) {
+    public void onSuccess(ModelListenerParam<Result> param) {
         if (getView() instanceof IModelListener) {
-            ((IModelListener<Result>) getView()).onSuccess(param);
+            ((IModelListener) getView()).onSuccess(param);
         }
     }
 
     @Override
-    public <Param extends IModelListenerParam> void onPrepare(Param param) {
+    public void onPrepare(ModelListenerParam<Result> param) {
         if (getView() instanceof IModelListener) {
             ((IModelListener) getView()).onPrepare(param);
         }

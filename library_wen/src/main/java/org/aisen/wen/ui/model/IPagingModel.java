@@ -11,7 +11,7 @@ import java.util.List;
  */
 public interface IPagingModel<Item extends Serializable,
                               Result extends Serializable>
-            extends IModel<Result> {
+                        extends IModel<Result> {
 
     void execute(APagingPresenter.RefreshMode mode, IPaging<Item, Result> paging);
 

@@ -5,7 +5,7 @@ import android.view.ViewGroup;
 import org.aisen.wen.ui.adapter.IPagingAdapter;
 import org.aisen.wen.ui.itemview.AHeaderItemViewCreator;
 import org.aisen.wen.ui.itemview.IItemViewCreator;
-import org.aisen.wen.ui.model.IPagingModelListener;
+import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
 import org.aisen.wen.ui.presenter.impl.APagingPresenter;
 
 import java.io.Serializable;
@@ -15,7 +15,11 @@ import java.util.List;
 /**
  * Created by wangdan on 16/10/12.
  */
-public interface IPaingView<Item extends Serializable, Result extends Serializable, Header extends Serializable, RefreshView extends ViewGroup> extends IContentView {
+public interface IPaingView<Item extends Serializable,
+                            Result extends Serializable,
+                            Header extends Serializable,
+                            RefreshView extends ViewGroup>
+                    extends IContentView {
 
     class RefreshConfig implements Serializable {
 
@@ -173,6 +177,6 @@ public interface IPaingView<Item extends Serializable, Result extends Serializab
      * Task状态发生改变
      *
      */
-    void onTaskStateChanged(IPagingModelListener.IPaingModeListenerParam param);
+    void onTaskStateChanged(PagingModelListenerParam<Result> param);
 
 }

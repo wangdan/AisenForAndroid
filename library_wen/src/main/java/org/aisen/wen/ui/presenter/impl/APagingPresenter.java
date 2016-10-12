@@ -6,11 +6,12 @@ import org.aisen.wen.component.network.biz.IResult;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.paging.IPaging;
 import org.aisen.wen.ui.adapter.IPagingAdapter;
-import org.aisen.wen.ui.model.IModelListener;
+import org.aisen.wen.ui.model.listener.IModelListener;
 import org.aisen.wen.ui.model.IPagingModel;
-import org.aisen.wen.ui.model.IPagingModelListener;
 import org.aisen.wen.ui.model.IPagingModelParams;
 import org.aisen.wen.ui.model.impl.AContentModel;
+import org.aisen.wen.ui.model.listener.ModelListenerParam;
+import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
 import org.aisen.wen.ui.presenter.IPagingPresenter;
 import org.aisen.wen.ui.view.IPaingView;
 
@@ -114,14 +115,14 @@ public abstract class APagingPresenter<Item extends Serializable,
     }
 
     @Override
-    public <Param extends IModelListenerParam<Result>> void onSuccess(Param param) {
+    public void onSuccess(ModelListenerParam<Result> param) {
         if (param.getResult() == null) {
             super.onSuccess(param);
             return;
         }
 
         Result result = param.getResult();
-        RefreshMode mode = ((IPagingModelParams) param).getRefreshMode();
+        RefreshMode mode = ((PagingModelListenerParam<Result>) param).getRefreshMode();
 
         getView().bindAdapter(getView().getAdapter());
 
@@ -194,14 +195,14 @@ public abstract class APagingPresenter<Item extends Serializable,
     }
 
     @Override
-    public void onTaskStateChanged(IModelListenerParam param) {
+    public void onTaskStateChanged(ModelListenerParam<Result> param) {
         super.onTaskStateChanged(param);
 
         RefreshMode mode = ((IPagingModelParams) param).getRefreshMode();
         TaskState state = param.getTaskState();
         TaskException exception = param.getException();
 
-        getView().onTaskStateChanged((IPagingModelListener.IPaingModeListenerParam) param);
+        getView().onTaskStateChanged((PagingModelListenerParam<Result>) param);
 
         if (state == TaskState.success) {
             if (getView().isContentEmpty()) {

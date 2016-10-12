@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import org.aisen.wen.R;
 import org.aisen.wen.R2;
-import org.aisen.wen.ui.model.IPagingModelListener;
+import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
 import org.aisen.wen.ui.presenter.impl.AContentPresenter;
 import org.aisen.wen.ui.presenter.impl.APagingPresenter;
 
@@ -68,7 +68,7 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
     }
 
     @Override
-    public void onTaskStateChanged(IPagingModelListener.IPaingModeListenerParam param) {
+    public void onTaskStateChanged(PagingModelListenerParam param) {
         AContentPresenter.TaskState state = param.getTaskState();
         APagingPresenter.RefreshMode mode = param.getRefreshMode();
 

@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.view.View;
 
 import org.aisen.wen.ui.adapter.ARecycleViewItemView;
-import org.aisen.wen.ui.model.IPagingModelListener;
+import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
 
 import java.io.Serializable;
 
@@ -27,7 +27,7 @@ public abstract class AFooterItemView<Item extends Serializable> extends ARecycl
         return onFooterViewCallback;
     }
 
-    abstract public void onTaskStateChanged(IPagingModelListener.IPaingModeListenerParam param);
+    abstract public void onTaskStateChanged(PagingModelListenerParam param);
 
     abstract public void setFooterViewToRefreshing();
 

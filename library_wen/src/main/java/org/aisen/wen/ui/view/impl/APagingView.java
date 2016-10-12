@@ -18,7 +18,7 @@ import org.aisen.wen.ui.itemview.AHeaderItemViewCreator;
 import org.aisen.wen.ui.itemview.BasicFooterView;
 import org.aisen.wen.ui.itemview.IITemView;
 import org.aisen.wen.ui.itemview.IItemViewCreator;
-import org.aisen.wen.ui.model.IPagingModelListener;
+import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
 import org.aisen.wen.ui.presenter.impl.APagingPresenter;
 import org.aisen.wen.ui.view.IPaingView;
 
@@ -247,7 +247,7 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
     }
 
     @Override
-    public void onTaskStateChanged(IPagingModelListener.IPaingModeListenerParam param) {
+    public void onTaskStateChanged(PagingModelListenerParam<Result> param) {
         // 刷新FooterView
         if (refreshConfig == null || !refreshConfig.footerMoreEnable || mFooterItemView == null)
             return;

@@ -12,6 +12,7 @@ import org.aisen.wen.component.network.task.TaskManager;
 import org.aisen.wen.component.network.task.WorkTask;
 import org.aisen.wen.support.utils.Logger;
 import org.aisen.wen.ui.model.IModel;
+import org.aisen.wen.ui.model.listener.ModelListenerParam;
 import org.aisen.wen.ui.presenter.IContentPresenter;
 import org.aisen.wen.ui.view.IContentView;
 
@@ -92,16 +93,15 @@ public abstract class AContentPresenter<Result extends Serializable,
         removeAllTask(true);
     }
 
-
     @Override
-    public <Param extends IModelListenerParam> void onPrepare(Param param) {
+    public void onPrepare(ModelListenerParam<Result> param) {
         super.onPrepare(param);
 
         onTaskStateChanged(param);
     }
 
     @Override
-    public <Param extends IModelListenerParam<Result>> void onSuccess(Param param) {
+    public void onSuccess(ModelListenerParam<Result> param) {
         super.onSuccess(param);
 
         Result result = param.getResult();
@@ -134,16 +134,14 @@ public abstract class AContentPresenter<Result extends Serializable,
     }
 
     @Override
-    public <Param extends IModelListenerParam> void onFailure(final Param param) {
+    public void onFailure(ModelListenerParam<Result> param) {
         super.onFailure(param);
 
         onTaskStateChanged(param);
     }
 
     @Override
-    public <Param extends IModelListenerParam> void onFinished(Param param) {
-        super.onFinished(param);
-
+    public void onFinished(ModelListenerParam param) {
         onTaskStateChanged(param);
     }
 
@@ -190,7 +188,7 @@ public abstract class AContentPresenter<Result extends Serializable,
      * Task状态改变时，切换各种View的状态
      *
      */
-    public void onTaskStateChanged(IModelListenerParam param) {
+    public void onTaskStateChanged(ModelListenerParam<Result> param) {
         TaskState state = param.getTaskState();
         TaskException exception = param.getException();
 

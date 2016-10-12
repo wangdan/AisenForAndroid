@@ -1,5 +1,7 @@
 package org.aisen.wen.ui.model;
 
+import org.aisen.wen.ui.model.listener.IModelListener;
+
 import java.io.Serializable;
 
 /**

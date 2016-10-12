@@ -2,9 +2,10 @@ package org.aisen.wen.ui.model.impl;
 
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.paging.IPaging;
-import org.aisen.wen.ui.model.IModelListener;
 import org.aisen.wen.ui.model.IPagingModel;
-import org.aisen.wen.ui.model.IPagingModelListener;
+import org.aisen.wen.ui.model.listener.IModelListener;
+import org.aisen.wen.ui.model.listener.ModelListenerParam;
+import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
 import org.aisen.wen.ui.presenter.impl.AContentPresenter;
 import org.aisen.wen.ui.presenter.impl.APagingPresenter;
 
@@ -46,116 +47,13 @@ public abstract class APaingModel<Item extends Serializable,
         }
 
         @Override
-        protected void onPrepare() {
-            getCallback().onPrepare(new IPagingModelListener.IPaingModeListenerParam() {
-
-                @Override
-                public AContentPresenter.TaskState getTaskState() {
-                    return AContentPresenter.TaskState.prepare;
-                }
-
-                @Override
-                public Serializable getResult() {
-                    return null;
-                }
-
-                @Override
-                public TaskException getException() {
-                    return null;
-                }
-
-                @Override
-                public APagingPresenter.RefreshMode getRefreshMode() {
-                    return mode;
-                }
-
-            });
-        }
-
-        @Override
         public Result workInBackground(Void... params) throws TaskException {
             return APaingModel.this.workInBackground(mode, paging);
         }
 
         @Override
-        protected void onFailure(final TaskException exception) {
-            getCallback().onFailure(new IPagingModelListener.IPaingModeListenerParam() {
-
-                @Override
-                public APagingPresenter.RefreshMode getRefreshMode() {
-                    return mode;
-                }
-
-                @Override
-                public AContentPresenter.TaskState getTaskState() {
-                    return AContentPresenter.TaskState.falid;
-                }
-
-                @Override
-                public Serializable getResult() {
-                    return null;
-                }
-
-                @Override
-                public TaskException getException() {
-                    return exception;
-                }
-
-            });
-        }
-
-        @Override
-        protected void onSuccess(final Result result) {
-            getCallback().onSuccess(new IPagingModelListener.IPaingModeListenerParam() {
-
-                @Override
-                public AContentPresenter.TaskState getTaskState() {
-                    return AContentPresenter.TaskState.success;
-                }
-
-                @Override
-                public Result getResult() {
-                    return result;
-                }
-
-                @Override
-                public TaskException getException() {
-                    return null;
-                }
-
-                @Override
-                public APagingPresenter.RefreshMode getRefreshMode() {
-                    return mode;
-                }
-
-            });
-        }
-
-        @Override
-        protected void onFinished() {
-            getCallback().onFinished(new IPagingModelListener.IPaingModeListenerParam() {
-
-                @Override
-                public AContentPresenter.TaskState getTaskState() {
-                    return AContentPresenter.TaskState.finished;
-                }
-
-                @Override
-                public Serializable getResult() {
-                    return null;
-                }
-
-                @Override
-                public TaskException getException() {
-                    return null;
-                }
-
-                @Override
-                public APagingPresenter.RefreshMode getRefreshMode() {
-                    return mode;
-                }
-
-            });
+        ModelListenerParam getListenerParam(AContentPresenter.TaskState taskState, TaskException exception, Result result) {
+            return new PagingModelListenerParam(taskState, result, exception, mode);
         }
     }
 
