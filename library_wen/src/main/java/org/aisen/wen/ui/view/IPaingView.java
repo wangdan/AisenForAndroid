@@ -1,15 +1,19 @@
 package org.aisen.wen.ui.view;
 
+import android.view.ViewGroup;
+
 import org.aisen.wen.ui.adapter.IPagingAdapter;
+import org.aisen.wen.ui.itemview.IItemViewCreator;
 import org.aisen.wen.ui.presenter.impl.APagingPresenter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by wangdan on 16/10/12.
  */
-public interface IPaingView<Item extends Serializable, Result extends Serializable> extends IContentView {
+public interface IPaingView<Item extends Serializable, Result extends Serializable, Header extends Serializable, V extends ViewGroup> extends IContentView {
 
     class RefreshConfig implements Serializable {
 
@@ -31,7 +35,23 @@ public interface IPaingView<Item extends Serializable, Result extends Serializab
 
     }
 
+    interface IPagingViewCallback {
+
+        void onPullDownToRefresh();
+
+        void onPullUpToRefresh();
+
+    }
+
     RefreshConfig getRefreshConfig();
+
+    int getLastReadPosition();
+
+    void putLastReadPosition(int position);
+
+    int getLastReadTop();
+
+    void putLastReadTop(int top);
 
     void toLastReadPosition();
 
@@ -40,6 +60,12 @@ public interface IPaingView<Item extends Serializable, Result extends Serializab
     void bindAdapter(IPagingAdapter adapter);
 
     IPagingAdapter getAdapter();
+
+    IPagingAdapter<Item> newAdapter(ArrayList<Item> datas);
+
+    void setPagingViewCallback(IPagingViewCallback callback);
+
+    boolean setRefreshViewToLoading();
 
     /**
      * 每次调用接口，获取新的数据时调用这个方法
@@ -52,5 +78,14 @@ public interface IPaingView<Item extends Serializable, Result extends Serializab
      *         默认清空adapter中的数据
      */
     boolean handleResult(APagingPresenter.RefreshMode mode, List<Item> datas);
+
+    IItemViewCreator<Item> newItemViewCreator();
+
+    /**
+     * 列表控件
+     *
+     * @return
+     */
+    V getRefreshView();
 
 }

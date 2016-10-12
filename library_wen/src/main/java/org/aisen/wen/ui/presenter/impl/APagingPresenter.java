@@ -1,5 +1,7 @@
 package org.aisen.wen.ui.presenter.impl;
 
+import android.os.Bundle;
+
 import org.aisen.wen.component.network.biz.IResult;
 import org.aisen.wen.support.paging.IPaging;
 import org.aisen.wen.ui.adapter.IPagingAdapter;
@@ -21,7 +23,9 @@ public abstract class APagingPresenter<Item extends Serializable,
                                        ContentMode extends IPagingModel<Item, Result>,
                                        ContentView extends IPaingView>
                             extends AContentPresenter<Result, ContentMode, ContentView>
-                            implements IPagingPresenter<Item, Result>, IPagingModelListener<Result> {
+                            implements IPagingPresenter<Item, Result>, IPagingModelListener<Result>, IPaingView.IPagingViewCallback {
+
+    private static final String SAVED_PAGING = "org.aisen.android.ui.Paging";
 
     public enum RefreshMode {
         /**
@@ -42,6 +46,38 @@ public abstract class APagingPresenter<Item extends Serializable,
 
     public APagingPresenter(ContentMode contentMode, ContentView view) {
         super(contentMode, view);
+
+        view.setPagingViewCallback(this);
+    }
+
+    @Override
+    public void onBridgeCreate(Bundle savedInstanceState) {
+        super.onBridgeCreate(savedInstanceState);
+
+        if (savedInstanceState != null && savedInstanceState.getSerializable(SAVED_PAGING) != null) {
+            mPaging = (IPaging) savedInstanceState.getSerializable(SAVED_PAGING);
+        } else {
+            mPaging = newPaging();
+        }
+    }
+
+    @Override
+    public void onBridgeSaveInstanceState(Bundle outState) {
+        super.onBridgeSaveInstanceState(outState);
+
+        // 将分页信息保存起来
+        if (mPaging != null)
+            outState.putSerializable(SAVED_PAGING, mPaging);
+    }
+
+    @Override
+    public void onPullDownToRefresh() {
+        requestData(RefreshMode.refresh);
+    }
+
+    @Override
+    public void onPullUpToRefresh() {
+        requestData(RefreshMode.update);
     }
 
     @Override
@@ -54,6 +90,24 @@ public abstract class APagingPresenter<Item extends Serializable,
             mPaging = newPaging();
 
         getMode().execute(mode, mPaging);
+    }
+
+    @Override
+    public void requestDataOutofdate() {
+        getView().putLastReadPosition(0);
+        getView().putLastReadTop(0);
+
+        requestDataSetRefreshing();
+    }
+
+    /**
+     * 设置刷新控件为刷新状态且刷新数据
+     *
+     */
+    public void requestDataSetRefreshing() {
+        // 如果没有正在刷新，设置刷新控件，且子类没有自动刷新
+        if (!getMode().isRunning() && !getView().setRefreshViewToLoading())
+            requestData(RefreshMode.reset);
     }
 
     @Override
@@ -129,6 +183,11 @@ public abstract class APagingPresenter<Item extends Serializable,
         getView().setupRefreshViewWithConfig(getView().getRefreshConfig());
 
         super.onSuccess(param);
+    }
+
+    @Override
+    public IPaging<Item, Result> getPaging() {
+        return mPaging;
     }
 
 }

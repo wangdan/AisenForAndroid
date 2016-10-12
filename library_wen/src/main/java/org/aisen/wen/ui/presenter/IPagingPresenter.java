@@ -11,4 +11,6 @@ public interface IPagingPresenter<Item extends Serializable, Result extends Seri
 
     IPaging<Item, Result> newPaging();
 
+    IPaging<Item, Result> getPaging();
+
 }

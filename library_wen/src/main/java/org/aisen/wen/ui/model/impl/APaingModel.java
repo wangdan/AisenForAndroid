@@ -44,30 +44,66 @@ public abstract class APaingModel<Item extends Serializable,
         }
 
         @Override
+        protected void onPrepare() {
+            getCallback().onPrepare(new OnPagingPrepareParam() {
+
+                @Override
+                public APagingPresenter.RefreshMode getRefreshMode() {
+                    return mode;
+                }
+
+            });
+        }
+
+        @Override
         public Result workInBackground(Void... params) throws TaskException {
             return APaingModel.this.workInBackground(mode, paging);
         }
 
         @Override
+        protected void onFailure(final TaskException exception) {
+            getCallback().onFailure(new OnPagingFailureParam() {
+
+                @Override
+                public APagingPresenter.RefreshMode getRefreshMode() {
+                    return mode;
+                }
+
+                @Override
+                public TaskException getException() {
+                    return exception;
+                }
+
+            });
+        }
+
+        @Override
         protected void onSuccess(final Result result) {
-            if (getCallback() instanceof IPagingModelListener) {
-                ((IPagingModelListener) getCallback()).onSuccess(new OnPagingSuccessParam() {
+            getCallback().onSuccess(new OnPagingSuccessParam<Result>() {
 
-                    @Override
-                    public Serializable getResult() {
-                        return result;
-                    }
+                @Override
+                public Result getResult() {
+                    return result;
+                }
 
-                    @Override
-                    public APagingPresenter.RefreshMode getRefreshMode() {
-                        return mode;
-                    }
+                @Override
+                public APagingPresenter.RefreshMode getRefreshMode() {
+                    return mode;
+                }
 
-                });
-            }
-            else {
-                super.onSuccess(result);
-            }
+            });
+        }
+
+        @Override
+        protected void onFinished() {
+            getCallback().onFinished(new OnPagingFinishedParam() {
+
+                @Override
+                public APagingPresenter.RefreshMode getRefreshMode() {
+                    return mode;
+                }
+
+            });
         }
 
     }
