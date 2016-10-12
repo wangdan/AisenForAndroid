@@ -9,29 +9,9 @@ import java.io.Serializable;
  */
 public interface IPagingModelListener<Result extends Serializable> extends IModelListener<Result> {
 
-    interface IPaingModeParam {
+    interface IPaingModeParam extends IModelParam {
 
         APagingPresenter.RefreshMode getRefreshMode();
-
-    }
-
-    interface OnPagingPrepareParam extends OnPrepareParam, IPagingModelParams {
-
-    }
-
-    interface OnPagingSuccessParam<Result extends Serializable>
-                    extends OnSuccessParam<Result>, IPagingModelParams {
-
-        Result getResult();
-
-    }
-
-    interface OnPagingFailureParam extends OnFailureParam, IPagingModelParams {
-
-
-    }
-
-    interface OnPagingFinishedParam extends OnFinishedParam, IPagingModelParams {
 
     }
 

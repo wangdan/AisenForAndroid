@@ -92,28 +92,28 @@ public abstract class ABridgePresenter<Result extends Serializable,
     }
 
     @Override
-    public <Param extends OnFinishedParam> void onFinished(Param param) {
+    public <Param extends IModelParam> void onFinished(Param param) {
         if (getView() instanceof IModelListener) {
             ((IModelListener) getView()).onFinished(param);
         }
     }
 
     @Override
-    public <Param extends OnFailureParam> void onFailure(Param param) {
+    public <Param extends IModelParam> void onFailure(Param param) {
         if (getView() instanceof IModelListener) {
             ((IModelListener) getView()).onFailure(param);
         }
     }
 
     @Override
-    public <Param extends OnSuccessParam<Result>> void onSuccess(Param param) {
+    public <Param extends IModelParam<Result>> void onSuccess(Param param) {
         if (getView() instanceof IModelListener) {
             ((IModelListener<Result>) getView()).onSuccess(param);
         }
     }
 
     @Override
-    public <Param extends OnPrepareParam> void onPrepare(Param param) {
+    public <Param extends IModelParam> void onPrepare(Param param) {
         if (getView() instanceof IModelListener) {
             ((IModelListener) getView()).onPrepare(param);
         }

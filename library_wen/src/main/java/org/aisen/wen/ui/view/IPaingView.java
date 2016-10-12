@@ -3,7 +3,9 @@ package org.aisen.wen.ui.view;
 import android.view.ViewGroup;
 
 import org.aisen.wen.ui.adapter.IPagingAdapter;
+import org.aisen.wen.ui.itemview.AHeaderItemViewCreator;
 import org.aisen.wen.ui.itemview.IItemViewCreator;
+import org.aisen.wen.ui.model.IPagingModelListener;
 import org.aisen.wen.ui.presenter.impl.APagingPresenter;
 
 import java.io.Serializable;
@@ -13,7 +15,7 @@ import java.util.List;
 /**
  * Created by wangdan on 16/10/12.
  */
-public interface IPaingView<Item extends Serializable, Result extends Serializable, Header extends Serializable, V extends ViewGroup> extends IContentView {
+public interface IPaingView<Item extends Serializable, Result extends Serializable, Header extends Serializable, RefreshView extends ViewGroup> extends IContentView {
 
     class RefreshConfig implements Serializable {
 
@@ -43,29 +45,96 @@ public interface IPaingView<Item extends Serializable, Result extends Serializab
 
     }
 
+    /**
+     * 刷新控件配置
+     *
+     * @return
+     */
     RefreshConfig getRefreshConfig();
 
+    /**
+     * 最后一次阅读Position
+     *
+     * @return
+     */
     int getLastReadPosition();
 
+    /**
+     * 保存最后一次阅读Position
+     *
+     * @param position
+     */
     void putLastReadPosition(int position);
 
+    /**
+     * 最后一次阅读Position的Top
+     *
+     * @return
+     */
     int getLastReadTop();
 
+    /**
+     * 保存最后一次阅读Position的Top
+     *
+     * @param top
+     */
     void putLastReadTop(int top);
 
+    /**
+     * 跳转到最后一次阅读Position的Top
+     *
+     */
     void toLastReadPosition();
 
-    void setupRefreshViewWithConfig(RefreshConfig config);
-
+    /**
+     * 将Adapter绑定到RefreshView
+     *
+     * @param adapter
+     */
     void bindAdapter(IPagingAdapter adapter);
 
+    /**
+     * 当前RefreshView绑定的Adapter
+     *
+     * @return
+     */
     IPagingAdapter getAdapter();
 
+    /**
+     * 生成一个新的Adapter
+     *
+     * @param datas
+     * @return
+     */
     IPagingAdapter<Item> newAdapter(ArrayList<Item> datas);
 
+    /**
+     * 设置分页回调
+     *
+     * @param callback
+     */
     void setPagingViewCallback(IPagingViewCallback callback);
 
+    /**
+     * 将RefreshView设置为加载状态
+     *
+     * @return
+     */
     boolean setRefreshViewToLoading();
+
+    /**
+     * 将RefreshView设置为加载结束状态
+     *
+     * @param mode
+     */
+    void setRefreshViewFinished(APagingPresenter.RefreshMode mode);
+
+    /**
+     * 根据RefreshConfig刷新RefreshView
+     *
+     * @param config
+     */
+    void setupRefreshViewWithConfig(RefreshConfig config);
 
     /**
      * 每次调用接口，获取新的数据时调用这个方法
@@ -79,13 +148,31 @@ public interface IPaingView<Item extends Serializable, Result extends Serializab
      */
     boolean handleResult(APagingPresenter.RefreshMode mode, List<Item> datas);
 
+    /**
+     * 生成一个新的ItemViewCreator
+     *
+     * @return
+     */
     IItemViewCreator<Item> newItemViewCreator();
+
+    /**
+     * 设置HeaderCreator
+     *
+     * @return
+     */
+    AHeaderItemViewCreator<Header> configHeaderViewCreator();
 
     /**
      * 列表控件
      *
      * @return
      */
-    V getRefreshView();
+    RefreshView getRefreshView();
+
+    /**
+     * Task状态发生改变
+     *
+     */
+    void onTaskStateChanged(IPagingModelListener.IPaingModeParam param);
 
 }

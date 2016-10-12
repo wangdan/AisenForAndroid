@@ -5,6 +5,7 @@ import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.component.network.task.WorkTask;
 import org.aisen.wen.ui.model.IModel;
 import org.aisen.wen.ui.model.IModelListener;
+import org.aisen.wen.ui.presenter.impl.AContentPresenter;
 
 import java.io.Serializable;
 
@@ -52,7 +53,23 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onPrepare() {
             super.onPrepare();
 
-            getCallback().onPrepare(null);
+            getCallback().onPrepare(new IModelListener.IModelParam() {
+                @Override
+                public AContentPresenter.TaskState getTaskState() {
+                    return AContentPresenter.TaskState.prepare;
+                }
+
+                @Override
+                public Result getResult() {
+                    return null;
+                }
+
+                @Override
+                public TaskException getException() {
+                    return null;
+                }
+
+            });
         }
 
         @Override
@@ -64,11 +81,21 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onSuccess(final Result result) {
             super.onSuccess(result);
 
-            getCallback().onSuccess(new IModelListener.OnSuccessParam<Result>() {
+            getCallback().onSuccess(new IModelListener.IModelParam<Result>() {
+
+                @Override
+                public AContentPresenter.TaskState getTaskState() {
+                    return AContentPresenter.TaskState.success;
+                }
 
                 @Override
                 public Result getResult() {
                     return result;
+                }
+
+                @Override
+                public TaskException getException() {
+                    return null;
                 }
 
             });
@@ -78,7 +105,17 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onFailure(final TaskException exception) {
             super.onFailure(exception);
 
-            getCallback().onFailure(new IModelListener.OnFailureParam() {
+            getCallback().onFailure(new IModelListener.IModelParam() {
+                @Override
+                public AContentPresenter.TaskState getTaskState() {
+                    return AContentPresenter.TaskState.falid;
+                }
+
+                @Override
+                public Result getResult() {
+                    return null;
+                }
+
                 @Override
                 public TaskException getException() {
                     return exception;
@@ -91,7 +128,23 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onFinished() {
             super.onFinished();
 
-            getCallback().onFinished(null);
+            getCallback().onFinished(new IModelListener.IModelParam() {
+                @Override
+                public AContentPresenter.TaskState getTaskState() {
+                    return AContentPresenter.TaskState.finished;
+                }
+
+                @Override
+                public Result getResult() {
+                    return null;
+                }
+
+                @Override
+                public TaskException getException() {
+                    return null;
+                }
+
+            });
 
             mTask = null;
         }

@@ -4,6 +4,7 @@ import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.paging.IPaging;
 import org.aisen.wen.ui.model.IPagingModel;
 import org.aisen.wen.ui.model.IPagingModelListener;
+import org.aisen.wen.ui.presenter.impl.AContentPresenter;
 import org.aisen.wen.ui.presenter.impl.APagingPresenter;
 
 import java.io.Serializable;
@@ -45,7 +46,22 @@ public abstract class APaingModel<Item extends Serializable,
 
         @Override
         protected void onPrepare() {
-            getCallback().onPrepare(new OnPagingPrepareParam() {
+            getCallback().onPrepare(new IPaingModeParam() {
+
+                @Override
+                public AContentPresenter.TaskState getTaskState() {
+                    return AContentPresenter.TaskState.prepare;
+                }
+
+                @Override
+                public Serializable getResult() {
+                    return null;
+                }
+
+                @Override
+                public TaskException getException() {
+                    return null;
+                }
 
                 @Override
                 public APagingPresenter.RefreshMode getRefreshMode() {
@@ -62,11 +78,21 @@ public abstract class APaingModel<Item extends Serializable,
 
         @Override
         protected void onFailure(final TaskException exception) {
-            getCallback().onFailure(new OnPagingFailureParam() {
+            getCallback().onFailure(new IPaingModeParam() {
 
                 @Override
                 public APagingPresenter.RefreshMode getRefreshMode() {
                     return mode;
+                }
+
+                @Override
+                public AContentPresenter.TaskState getTaskState() {
+                    return AContentPresenter.TaskState.falid;
+                }
+
+                @Override
+                public Serializable getResult() {
+                    return null;
                 }
 
                 @Override
@@ -79,11 +105,21 @@ public abstract class APaingModel<Item extends Serializable,
 
         @Override
         protected void onSuccess(final Result result) {
-            getCallback().onSuccess(new OnPagingSuccessParam<Result>() {
+            getCallback().onSuccess(new IPaingModeParam() {
+
+                @Override
+                public AContentPresenter.TaskState getTaskState() {
+                    return AContentPresenter.TaskState.success;
+                }
 
                 @Override
                 public Result getResult() {
                     return result;
+                }
+
+                @Override
+                public TaskException getException() {
+                    return null;
                 }
 
                 @Override
@@ -96,7 +132,22 @@ public abstract class APaingModel<Item extends Serializable,
 
         @Override
         protected void onFinished() {
-            getCallback().onFinished(new OnPagingFinishedParam() {
+            getCallback().onFinished(new IPaingModeParam() {
+
+                @Override
+                public AContentPresenter.TaskState getTaskState() {
+                    return AContentPresenter.TaskState.finished;
+                }
+
+                @Override
+                public Serializable getResult() {
+                    return null;
+                }
+
+                @Override
+                public TaskException getException() {
+                    return null;
+                }
 
                 @Override
                 public APagingPresenter.RefreshMode getRefreshMode() {
@@ -105,7 +156,6 @@ public abstract class APaingModel<Item extends Serializable,
 
             });
         }
-
     }
 
     /**

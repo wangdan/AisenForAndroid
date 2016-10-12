@@ -11,7 +11,6 @@ import android.widget.ListView;
 
 import org.aisen.wen.R;
 import org.aisen.wen.base.GlobalContext;
-import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.utils.SharedPreferencesUtils;
 import org.aisen.wen.ui.adapter.IPagingAdapter;
 import org.aisen.wen.ui.itemview.AFooterItemView;
@@ -19,8 +18,7 @@ import org.aisen.wen.ui.itemview.AHeaderItemViewCreator;
 import org.aisen.wen.ui.itemview.BasicFooterView;
 import org.aisen.wen.ui.itemview.IITemView;
 import org.aisen.wen.ui.itemview.IItemViewCreator;
-import org.aisen.wen.ui.itemview.OnFooterViewListener;
-import org.aisen.wen.ui.presenter.impl.AContentPresenter;
+import org.aisen.wen.ui.model.IPagingModelListener;
 import org.aisen.wen.ui.presenter.impl.APagingPresenter;
 import org.aisen.wen.ui.view.IPaingView;
 
@@ -33,8 +31,7 @@ import java.util.ArrayList;
 public abstract class APagingView<Item extends Serializable, Result extends Serializable, Header extends Serializable, V extends ViewGroup>
                             extends AContentView implements IPaingView<Item, Result, Header, V>,
                                                             AFooterItemView.OnFooterViewCallback,
-                                                            IPaingView.IPagingViewCallback,
-                                                            OnFooterViewListener {
+                                                            IPaingView.IPagingViewCallback {
 
 
     private static final String SAVED_DATAS = "org.aisen.android.ui.Datas";
@@ -170,7 +167,8 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
         return getAdapter() == null || getAdapter().getDatas().size() == 0;
     }
 
-    protected AHeaderItemViewCreator<Header> configHeaderViewCreator() {
+    @Override
+    public AHeaderItemViewCreator<Header> configHeaderViewCreator() {
         return null;
     }
 
@@ -241,41 +239,25 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
     /*********************************************结束阅读位置历史************************************************/
 
     /**
-     * 设置FooterView为加载状态，
-     *
+     * 设置列表控件状态为刷新结束
      */
     @Override
-    public void setFooterViewToRefreshing() {
-        if (mFooterItemView != null) {
-            mFooterItemView.setFooterViewToRefreshing();
-        }
+    public void setRefreshViewFinished(APagingPresenter.RefreshMode mode) {
+
     }
 
     @Override
-    public void onTaskStateChanged(AFooterItemView<?> footerItemView, AContentPresenter.TaskState state, TaskException exception, APagingPresenter.RefreshMode mode) {
+    public void onTaskStateChanged(IPagingModelListener.IPaingModeParam param) {
+        // 刷新FooterView
         if (refreshConfig == null || !refreshConfig.footerMoreEnable || mFooterItemView == null)
             return;
 
         if (mFooterItemView != null) {
-            mFooterItemView.onTaskStateChanged(footerItemView, state, exception, mode);
+            mFooterItemView.onTaskStateChanged(param);
         }
     }
 
-    private boolean refreshViewScrolling = false;// 正在滚动
-    protected void onScrollStateChanged(int scrollState) {
-        // 滑动的时候，不加载图片
-        if (!refreshConfig.displayWhenScrolling) {
-            if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_FLING) {
-                refreshViewScrolling = true;
-            }
-            else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL) {
-                refreshViewScrolling = true;
-            }
-            else if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-                refreshViewScrolling = false;
-            }
-        }
-
+    void onScrollStateChanged(int scrollState) {
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && // 停止滚动
                 !refreshConfig.pagingEnd && // 分页未加载完
                 refreshConfig.footerMoreEnable && // 自动加载更多
@@ -283,7 +265,9 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
                 ) {
             int childCount = getRefreshView().getChildCount();
             if (childCount > 0 && getRefreshView().getChildAt(childCount - 1) == mFooterItemView.getConvertView()) {
-                setFooterViewToRefreshing();
+                if (mFooterItemView != null) {
+                    mFooterItemView.setFooterViewToRefreshing();
+                }
             }
         }
 
@@ -297,18 +281,27 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
         }
     }
 
-    protected void onScroll(int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    void onScroll(int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 
     }
 
+    /**
+     * FooterView加载更多数据使能
+     *
+     * @return
+     */
     @Override
-    public boolean canLoadMore() {
+    public boolean footerViewLoadMoreAbility() {
         return refreshConfig == null || !refreshConfig.pagingEnd;
     }
 
+    /**
+     * FooterView开始加载更多
+     *
+     */
     @Override
-    public void onLoadMore() {
-        if (canLoadMore()) {
+    public void onFooterViewLoadMore() {
+        if (footerViewLoadMoreAbility()) {
             onPullUpToRefresh();
         }
     }

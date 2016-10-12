@@ -92,15 +92,16 @@ public abstract class AContentPresenter<Result extends Serializable,
         removeAllTask(true);
     }
 
+
     @Override
-    public <Param extends OnPrepareParam> void onPrepare(Param param) {
+    public <Param extends IModelParam> void onPrepare(Param param) {
         super.onPrepare(param);
 
-        onTaskStateChanged(TaskState.prepare, null);
+        onTaskStateChanged(param);
     }
 
     @Override
-    public <Param extends OnSuccessParam<Result>> void onSuccess(Param param) {
+    public <Param extends IModelParam<Result>> void onSuccess(Param param) {
         super.onSuccess(param);
 
         Result result = param.getResult();
@@ -108,7 +109,7 @@ public abstract class AContentPresenter<Result extends Serializable,
         // 默认加载数据成功，且ContentView有数据展示
         getView().setContentLayout(resultIsEmpty(result));
 
-        onTaskStateChanged(TaskState.success, null);
+        onTaskStateChanged(param);
 
         if (result instanceof IResult) {
             IResult iResult = (IResult) result;
@@ -133,17 +134,17 @@ public abstract class AContentPresenter<Result extends Serializable,
     }
 
     @Override
-    public <Param extends OnFailureParam> void onFailure(Param param) {
+    public <Param extends IModelParam> void onFailure(final Param param) {
         super.onFailure(param);
 
-        onTaskStateChanged(TaskState.falid, param.getException());
+        onTaskStateChanged(param);
     }
 
     @Override
-    public <Param extends OnFinishedParam> void onFinished(Param param) {
+    public <Param extends IModelParam> void onFinished(Param param) {
         super.onFinished(param);
 
-        onTaskStateChanged(TaskState.finished, null);
+        onTaskStateChanged(param);
     }
 
     @Override
@@ -188,10 +189,11 @@ public abstract class AContentPresenter<Result extends Serializable,
     /**
      * Task状态改变时，切换各种View的状态
      *
-     * @param state
-     * @param exception
      */
-    public void onTaskStateChanged(TaskState state, TaskException exception) {
+    public void onTaskStateChanged(IModelParam param) {
+        TaskState state = param.getTaskState();
+        TaskException exception = param.getException();
+
         // 开始Task
         if (state == TaskState.prepare) {
             if (getView().isContentEmpty()) {

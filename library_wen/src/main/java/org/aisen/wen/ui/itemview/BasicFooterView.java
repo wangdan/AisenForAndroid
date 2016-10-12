@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import org.aisen.wen.R;
 import org.aisen.wen.R2;
-import org.aisen.wen.component.network.task.TaskException;
+import org.aisen.wen.ui.model.IPagingModelListener;
 import org.aisen.wen.ui.presenter.impl.AContentPresenter;
 import org.aisen.wen.ui.presenter.impl.APagingPresenter;
 
@@ -45,8 +45,8 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
 
             @Override
             public void onClick(View v) {
-                if (getCallback() != null && getCallback().canLoadMore()) {
-                    getCallback().onLoadMore();
+                if (getCallback() != null && getCallback().footerViewLoadMoreAbility()) {
+                    getCallback().onFooterViewLoadMore();
                 }
             }
 
@@ -68,7 +68,10 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
     }
 
     @Override
-    public void onTaskStateChanged(AFooterItemView<?> footerItemView, AContentPresenter.TaskState state, TaskException exception, APagingPresenter.RefreshMode mode) {
+    public void onTaskStateChanged(IPagingModelListener.IPaingModeParam param) {
+        AContentPresenter.TaskState state = param.getTaskState();
+        APagingPresenter.RefreshMode mode = param.getRefreshMode();
+
         if (state == AContentPresenter.TaskState.finished) {
             if (mode == APagingPresenter.RefreshMode.update) {
                 if (layLoading.getVisibility() == View.VISIBLE) {
@@ -87,7 +90,7 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
         }
         else if (state == AContentPresenter.TaskState.success) {
             if ((mode == APagingPresenter.RefreshMode.update || mode == APagingPresenter.RefreshMode.reset)) {
-                if (!getCallback().canLoadMore()) {
+                if (!getCallback().footerViewLoadMoreAbility()) {
                     btnMore.setText(endpagingText());
                 } else {
                     btnMore.setText(moreText());
@@ -108,7 +111,7 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
         if (layLoading.getVisibility() != View.VISIBLE) {
             layLoading.setVisibility(View.VISIBLE);
 
-            getCallback().onLoadMore();
+            getCallback().onFooterViewLoadMore();
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.view.View;
 
 import org.aisen.wen.ui.adapter.ARecycleViewItemView;
+import org.aisen.wen.ui.model.IPagingModelListener;
 
 import java.io.Serializable;
 
@@ -12,8 +13,7 @@ import java.io.Serializable;
  *
  * Created by wangdan on 16/1/9.
  */
-public abstract class AFooterItemView<Item extends Serializable> extends ARecycleViewItemView<Item>
-                                                                implements OnFooterViewListener {
+public abstract class AFooterItemView<Item extends Serializable> extends ARecycleViewItemView<Item> {
 
     private OnFooterViewCallback onFooterViewCallback;
 
@@ -27,11 +27,15 @@ public abstract class AFooterItemView<Item extends Serializable> extends ARecycl
         return onFooterViewCallback;
     }
 
+    abstract public void onTaskStateChanged(IPagingModelListener.IPaingModeParam param);
+
+    abstract public void setFooterViewToRefreshing();
+
     public interface OnFooterViewCallback {
 
-        void onLoadMore();
+        void onFooterViewLoadMore();
 
-        boolean canLoadMore();
+        boolean footerViewLoadMoreAbility();
 
     }
 
