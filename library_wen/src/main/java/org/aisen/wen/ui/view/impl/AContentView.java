@@ -140,10 +140,6 @@ public abstract class AContentView implements IContentView {
         mPresenter = presenter;
     }
 
-    @Override
-    public void onBridgeActivityCreate(Activity activity, Bundle savedInstanceState) {
-        mContext = activity;
-    }
 
     @Override
     public void onBridgeCreate(Bundle savedInstanceState) {
@@ -155,6 +151,11 @@ public abstract class AContentView implements IContentView {
     @Override
     public void onBridgeCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContentView = inflater.inflate(setLayoutId(), null);
+    }
+
+    @Override
+    public void onBridgeActivityCreate(Activity activity, Bundle savedInstanceState) {
+
     }
 
     @Override
@@ -190,6 +191,11 @@ public abstract class AContentView implements IContentView {
     @Override
     public Activity getContext() {
         return mContext;
+    }
+
+    @Override
+    public void setContext(Activity context) {
+        this.mContext = context;
     }
 
 }

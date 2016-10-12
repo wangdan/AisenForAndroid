@@ -45,6 +45,11 @@ public abstract class ABridgePresenter<Result extends Serializable,
     }
 
     @Override
+    public void setContext(Activity context) {
+        getView().setContext(context);
+    }
+
+    @Override
     public void onBridgeCreate(Bundle savedInstanceState) {
         getMode().setCallback(this);
         getView().onBridgeCreate(savedInstanceState);

@@ -10,6 +10,8 @@ public interface IView {
 
     Activity getContext();
 
+    void setContext(Activity context);
+
     View getContentView();
 
     void bindView(View contentView);

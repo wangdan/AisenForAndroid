@@ -1,6 +1,8 @@
 package org.aisen.sample.ui.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.os.Bundle;
 
 import com.example.aisensample.R;
 
@@ -32,6 +34,7 @@ public class BaseFragmentSample extends AContentFragment<VideoStreamsBean, IMode
                 return R.layout.ui_a_base;
             }
         };
+
     }
 
     @Override

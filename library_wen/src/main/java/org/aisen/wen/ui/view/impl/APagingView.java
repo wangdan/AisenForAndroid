@@ -86,8 +86,6 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
 
     @Override
     public void onBridgeActivityCreate(Activity activity, Bundle savedInstanceState) {
-        super.onBridgeActivityCreate(activity, savedInstanceState);
-
         setupRefreshConfig(refreshConfig);
 
         setupRefreshView(savedInstanceState);
@@ -310,4 +308,8 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
         }
     }
 
+    @Override
+    public RefreshConfig getRefreshConfig() {
+        return refreshConfig;
+    }
 }
