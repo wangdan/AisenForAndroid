@@ -11,7 +11,7 @@ import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.component.network.task.TaskManager;
 import org.aisen.wen.component.network.task.WorkTask;
 import org.aisen.wen.support.utils.Logger;
-import org.aisen.wen.ui.model.IContentMode;
+import org.aisen.wen.ui.model.IModel;
 import org.aisen.wen.ui.presenter.IContentPresenter;
 import org.aisen.wen.ui.view.IContentView;
 
@@ -25,9 +25,11 @@ import java.io.Serializable;
  * @param <ContentMode>
  * @param <ContentView>
  */
-public abstract class AContentPresenter<Result extends Serializable, ContentMode extends IContentMode<Result>, ContentView extends IContentView>
-                                                        extends ABridgePresenter<Result, ContentMode, ContentView>
-                                                        implements IContentPresenter {
+public abstract class AContentPresenter<Result extends Serializable,
+                                        ContentMode extends IModel<Result>,
+                                        ContentView extends IContentView>
+                                            extends ABridgePresenter<Result, ContentMode, ContentView>
+                                            implements IContentPresenter {
 
     private final static String TAG = "ContentPresenter";
 
@@ -91,18 +93,20 @@ public abstract class AContentPresenter<Result extends Serializable, ContentMode
     }
 
     @Override
-    public void onPrepare() {
-        super.onPrepare();
+    public <Param extends OnPrepareParam> void onPrepare(Param param) {
+        super.onPrepare(param);
 
         onTaskStateChanged(TaskState.prepare, null);
     }
 
     @Override
-    public void onSuccess(Result result) {
-        super.onSuccess(result);
+    public <Param extends OnSuccessParam<Result>> void onSuccess(Param param) {
+        super.onSuccess(param);
+
+        Result result = param.getResult();
 
         // 默认加载数据成功，且ContentView有数据展示
-        getView().setContentLayout(getMode().resultIsEmpty(result));
+        getView().setContentLayout(resultIsEmpty(result));
 
         onTaskStateChanged(TaskState.success, null);
 
@@ -129,15 +133,15 @@ public abstract class AContentPresenter<Result extends Serializable, ContentMode
     }
 
     @Override
-    public void onFailure(TaskException e) {
-        super.onFailure(e);
+    public <Param extends OnFailureParam> void onFailure(Param param) {
+        super.onFailure(param);
 
-        onTaskStateChanged(TaskState.falid, e);
+        onTaskStateChanged(TaskState.falid, param.getException());
     }
 
     @Override
-    public void onFinished() {
-        super.onFinished();
+    public <Param extends OnFinishedParam> void onFinished(Param param) {
+        super.onFinished(param);
 
         onTaskStateChanged(TaskState.finished, null);
     }
@@ -272,6 +276,10 @@ public abstract class AContentPresenter<Result extends Serializable, ContentMode
     @Override
     public void requestDataOutofdate() {
         requestData();
+    }
+
+    public boolean resultIsEmpty(Result result) {
+        return result == null ? true : false;
     }
 
 }

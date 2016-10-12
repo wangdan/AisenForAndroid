@@ -13,4 +13,6 @@ public interface IModel<Result extends Serializable> {
 
     void execute();
 
+    boolean isRunning();
+
 }

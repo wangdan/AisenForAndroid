@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.ui.model.IModel;
 import org.aisen.wen.ui.model.IModelListener;
 import org.aisen.wen.ui.presenter.ILifecycleBridge;
@@ -23,8 +22,10 @@ import java.io.Serializable;
  * @param <Mode>
  * @param <View>
  */
-public abstract class ABridgePresenter<Result extends Serializable, Mode extends IModel<Result>, View extends IContentView>
-                                        implements IPresenter, IModelListener<Result>, ILifecycleBridge {
+public abstract class ABridgePresenter<Result extends Serializable,
+                                       Mode extends IModel<Result>,
+                                       View extends IContentView>
+                                implements IPresenter, IModelListener<Result>, ILifecycleBridge {
 
     private final Mode mMode;
     private final View mView;
@@ -91,30 +92,30 @@ public abstract class ABridgePresenter<Result extends Serializable, Mode extends
     }
 
     @Override
-    public void onFinished() {
+    public <Param extends OnFinishedParam> void onFinished(Param param) {
         if (getView() instanceof IModelListener) {
-            ((IModelListener) getView()).onFinished();
+            ((IModelListener) getView()).onFinished(param);
         }
     }
 
     @Override
-    public void onFailure(TaskException e) {
+    public <Param extends OnFailureParam> void onFailure(Param param) {
         if (getView() instanceof IModelListener) {
-            ((IModelListener) getView()).onFailure(e);
+            ((IModelListener) getView()).onFailure(param);
         }
     }
 
     @Override
-    public void onSuccess(Result result) {
+    public <Param extends OnSuccessParam<Result>> void onSuccess(Param param) {
         if (getView() instanceof IModelListener) {
-            ((IModelListener<Result>) getView()).onSuccess(result);
+            ((IModelListener<Result>) getView()).onSuccess(param);
         }
     }
 
     @Override
-    public void onPrepare() {
+    public <Param extends OnPrepareParam> void onPrepare(Param param) {
         if (getView() instanceof IModelListener) {
-            ((IModelListener) getView()).onPrepare();
+            ((IModelListener) getView()).onPrepare(param);
         }
     }
 

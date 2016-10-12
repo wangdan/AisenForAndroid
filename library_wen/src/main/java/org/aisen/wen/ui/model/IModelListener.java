@@ -9,12 +9,32 @@ import java.io.Serializable;
  */
 public interface IModelListener<Result extends Serializable> {
 
-    void onPrepare();
+    <Param extends OnPrepareParam> void onPrepare(Param param);
 
-    void onSuccess(Result result);
+    <Param extends OnSuccessParam<Result>> void onSuccess(Param param);
 
-    void onFailure(TaskException e);
+    <Param extends OnFailureParam> void onFailure(Param param);
 
-    void onFinished();
+    <Param extends OnFinishedParam> void onFinished(Param param);
+
+    interface OnPrepareParam {
+
+    }
+
+    interface OnSuccessParam<Result extends Serializable> {
+
+        Result getResult();
+
+    }
+
+    interface OnFailureParam {
+
+        TaskException getException();
+
+    }
+
+    interface OnFinishedParam {
+
+    }
 
 }

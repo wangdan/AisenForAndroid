@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.aisen.wen.ui.model.IContentMode;
+import org.aisen.wen.ui.model.IModel;
 import org.aisen.wen.ui.presenter.ILifecycleBridge;
 import org.aisen.wen.ui.presenter.impl.ABridgePresenter;
 import org.aisen.wen.ui.presenter.impl.AContentPresenter;
@@ -19,7 +19,7 @@ import java.io.Serializable;
  *
  * Created by wangdan on 16/10/2.
  */
-public abstract class AContentFragment<Result extends Serializable, ContentMode extends IContentMode<Result>, ContentView extends IContentView>
+public abstract class AContentFragment<Result extends Serializable, ContentMode extends IModel<Result>, ContentView extends IContentView>
                             extends ABaseFragment {
 
     private View contentView;

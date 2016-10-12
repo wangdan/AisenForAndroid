@@ -8,7 +8,7 @@ import org.aisen.sample.support.sdk.YoutubeSDK;
 import org.aisen.sample.support.sdk.bean.VideoStreamsBean;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.ui.fragment.AContentFragment;
-import org.aisen.wen.ui.model.IContentMode;
+import org.aisen.wen.ui.model.IModel;
 import org.aisen.wen.ui.model.impl.AContentModel;
 import org.aisen.wen.ui.view.IContentView;
 import org.aisen.wen.ui.view.impl.AContentView;
@@ -16,7 +16,7 @@ import org.aisen.wen.ui.view.impl.AContentView;
 /**
  * Created by wangdan on 15/4/23.
  */
-public class BaseFragmentSample extends AContentFragment<VideoStreamsBean, IContentMode<VideoStreamsBean>, IContentView> {
+public class BaseFragmentSample extends AContentFragment<VideoStreamsBean, IModel<VideoStreamsBean>, IContentView> {
 
     public static Fragment newInstance() {
         return new BaseFragmentSample();
@@ -35,11 +35,11 @@ public class BaseFragmentSample extends AContentFragment<VideoStreamsBean, ICont
     }
 
     @Override
-    public IContentMode<VideoStreamsBean> newContentMode() {
+    public IModel<VideoStreamsBean> newContentMode() {
         return new AContentModel<VideoStreamsBean>() {
 
             @Override
-            public VideoStreamsBean workInBackground(Void... params) throws TaskException {
+            public VideoStreamsBean workInBackground() throws TaskException {
                 return YoutubeSDK.newInstance().getVideoStreams(0l);
             }
 
