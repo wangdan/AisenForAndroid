@@ -86,7 +86,12 @@ public abstract class APagingPresenter<Item extends Serializable,
 
     @Override
     final public void requestData() {
-        requestData(RefreshMode.reset);
+        // 如果没有Loading视图，且数据为空，就显示FootView加载状态
+        RefreshMode mode = RefreshMode.reset;
+        if (getView().getAdapter().getDatas().size() == 0 && getView().getLoadingLayout() == null)
+            mode = RefreshMode.update;
+
+        requestData(mode);
     }
 
     public void requestData(RefreshMode mode) {

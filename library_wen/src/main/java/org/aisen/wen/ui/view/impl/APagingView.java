@@ -39,7 +39,6 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
 
     IItemViewCreator<Item> mFooterItemViewCreator;
     AFooterItemView<Item> mFooterItemView;// FooterView，滑动到底部时，自动加载更多数据
-
     AHeaderItemViewCreator<Header> mHeaderItemViewCreator;
 
     private IPagingAdapter<Item> mAdapter;
@@ -74,6 +73,17 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
         onSaveDatas(outState);
     }
 
+    /**
+     * 数据量比较大的时候，子类可以不保存，会阻塞
+     *
+     * @param outState
+     */
+    protected void onSaveDatas(Bundle outState) {
+        // 将数据保存起来
+        if (getAdapter() != null && getAdapter().getDatas().size() != 0)
+            outState.putSerializable(SAVED_DATAS, getAdapter().getDatas());
+    }
+
     @Override
     public void onBridgeActivityCreate(Activity activity, Bundle savedInstanceState) {
         super.onBridgeActivityCreate(activity, savedInstanceState);
@@ -85,17 +95,6 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
         setupRefreshViewWithConfig(refreshConfig);
 
         bindAdapter(getAdapter());
-    }
-
-    /**
-     * 数据量比较大的时候，子类可以不保存，会阻塞
-     *
-     * @param outState
-     */
-    protected void onSaveDatas(Bundle outState) {
-        // 将数据保存起来
-        if (getAdapter() != null && getAdapter().getDatas().size() != 0)
-            outState.putSerializable(SAVED_DATAS, getAdapter().getDatas());
     }
 
     /**
@@ -146,6 +145,11 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
      */
     public void onRefreshViewFinished(APagingPresenter.RefreshMode mode) {
 
+    }
+
+    @Override
+    public IPagingAdapter getAdapter() {
+        return mAdapter;
     }
 
     @Override
