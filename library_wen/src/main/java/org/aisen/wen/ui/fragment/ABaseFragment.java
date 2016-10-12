@@ -4,7 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.view.View;
 
-import org.aisen.wen.ui.activity.base.BaseActivity;
+import org.aisen.wen.ui.activity.BaseActivity;
 
 /**
  * Created by wangdan on 16/10/10.

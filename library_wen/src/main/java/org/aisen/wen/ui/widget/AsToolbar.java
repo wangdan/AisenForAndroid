@@ -5,7 +5,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import org.aisen.wen.ui.activity.base.BaseActivity;
+import org.aisen.wen.ui.activity.BaseActivity;
 
 
 /**

@@ -20,7 +20,7 @@ import org.aisen.sample.support.bean.MenuBean;
 import org.aisen.sample.support.utils.SystemBarUtils;
 import org.aisen.sample.ui.fragment.BaseFragmentSample;
 import org.aisen.wen.support.utils.SystemUtils;
-import org.aisen.wen.ui.activity.base.BaseActivity;
+import org.aisen.wen.ui.activity.BaseActivity;
 import org.aisen.wen.ui.widget.FitWindowsFrameLayout;
 
 import butterknife.BindView;

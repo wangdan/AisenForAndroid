@@ -1,4 +1,4 @@
-package org.aisen.wen.ui.activity.base;
+package org.aisen.wen.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
