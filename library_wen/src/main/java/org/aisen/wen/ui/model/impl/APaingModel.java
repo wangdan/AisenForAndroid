@@ -2,6 +2,7 @@ package org.aisen.wen.ui.model.impl;
 
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.paging.IPaging;
+import org.aisen.wen.ui.model.IModelListener;
 import org.aisen.wen.ui.model.IPagingModel;
 import org.aisen.wen.ui.model.IPagingModelListener;
 import org.aisen.wen.ui.presenter.impl.AContentPresenter;
@@ -15,7 +16,7 @@ import java.io.Serializable;
 public abstract class APaingModel<Item extends Serializable,
                                   Result extends Serializable>
                         extends AContentModel<Result>
-                        implements IPagingModel<Item, Result>, IPagingModelListener<Result> {
+                        implements IPagingModel<Item, Result>, IModelListener<Result> {
 
     @Override
     public void execute() {
@@ -46,7 +47,7 @@ public abstract class APaingModel<Item extends Serializable,
 
         @Override
         protected void onPrepare() {
-            getCallback().onPrepare(new IPaingModeParam() {
+            getCallback().onPrepare(new IPagingModelListener.IPaingModeListenerParam() {
 
                 @Override
                 public AContentPresenter.TaskState getTaskState() {
@@ -78,7 +79,7 @@ public abstract class APaingModel<Item extends Serializable,
 
         @Override
         protected void onFailure(final TaskException exception) {
-            getCallback().onFailure(new IPaingModeParam() {
+            getCallback().onFailure(new IPagingModelListener.IPaingModeListenerParam() {
 
                 @Override
                 public APagingPresenter.RefreshMode getRefreshMode() {
@@ -105,7 +106,7 @@ public abstract class APaingModel<Item extends Serializable,
 
         @Override
         protected void onSuccess(final Result result) {
-            getCallback().onSuccess(new IPaingModeParam() {
+            getCallback().onSuccess(new IPagingModelListener.IPaingModeListenerParam() {
 
                 @Override
                 public AContentPresenter.TaskState getTaskState() {
@@ -132,7 +133,7 @@ public abstract class APaingModel<Item extends Serializable,
 
         @Override
         protected void onFinished() {
-            getCallback().onFinished(new IPaingModeParam() {
+            getCallback().onFinished(new IPagingModelListener.IPaingModeListenerParam() {
 
                 @Override
                 public AContentPresenter.TaskState getTaskState() {

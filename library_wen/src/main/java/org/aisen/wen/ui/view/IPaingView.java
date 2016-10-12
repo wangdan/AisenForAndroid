@@ -173,6 +173,6 @@ public interface IPaingView<Item extends Serializable, Result extends Serializab
      * Task状态发生改变
      *
      */
-    void onTaskStateChanged(IPagingModelListener.IPaingModeParam param);
+    void onTaskStateChanged(IPagingModelListener.IPaingModeListenerParam param);
 
 }

@@ -10,15 +10,15 @@ import java.io.Serializable;
  */
 public interface IModelListener<Result extends Serializable> {
 
-    <Param extends IModelParam> void onPrepare(Param param);
+    <Param extends IModelListenerParam> void onPrepare(Param param);
 
-    <Param extends IModelParam<Result>> void onSuccess(Param param);
+    <Param extends IModelListenerParam<Result>> void onSuccess(Param param);
 
-    <Param extends IModelParam> void onFailure(Param param);
+    <Param extends IModelListenerParam> void onFailure(Param param);
 
-    <Param extends IModelParam> void onFinished(Param param);
+    <Param extends IModelListenerParam> void onFinished(Param param);
 
-    interface IModelParam<Result extends Serializable> {
+    interface IModelListenerParam<Result extends Serializable> {
 
         AContentPresenter.TaskState getTaskState();
 

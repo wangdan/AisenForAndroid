@@ -27,7 +27,7 @@ public abstract class AFooterItemView<Item extends Serializable> extends ARecycl
         return onFooterViewCallback;
     }
 
-    abstract public void onTaskStateChanged(IPagingModelListener.IPaingModeParam param);
+    abstract public void onTaskStateChanged(IPagingModelListener.IPaingModeListenerParam param);
 
     abstract public void setFooterViewToRefreshing();
 

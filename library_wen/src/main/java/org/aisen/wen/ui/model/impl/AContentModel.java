@@ -53,7 +53,7 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onPrepare() {
             super.onPrepare();
 
-            getCallback().onPrepare(new IModelListener.IModelParam() {
+            getCallback().onPrepare(new IModelListener.IModelListenerParam() {
                 @Override
                 public AContentPresenter.TaskState getTaskState() {
                     return AContentPresenter.TaskState.prepare;
@@ -81,7 +81,7 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onSuccess(final Result result) {
             super.onSuccess(result);
 
-            getCallback().onSuccess(new IModelListener.IModelParam<Result>() {
+            getCallback().onSuccess(new IModelListener.IModelListenerParam<Result>() {
 
                 @Override
                 public AContentPresenter.TaskState getTaskState() {
@@ -105,7 +105,7 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onFailure(final TaskException exception) {
             super.onFailure(exception);
 
-            getCallback().onFailure(new IModelListener.IModelParam() {
+            getCallback().onFailure(new IModelListener.IModelListenerParam() {
                 @Override
                 public AContentPresenter.TaskState getTaskState() {
                     return AContentPresenter.TaskState.falid;
@@ -128,7 +128,7 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onFinished() {
             super.onFinished();
 
-            getCallback().onFinished(new IModelListener.IModelParam() {
+            getCallback().onFinished(new IModelListener.IModelListenerParam() {
                 @Override
                 public AContentPresenter.TaskState getTaskState() {
                     return AContentPresenter.TaskState.finished;

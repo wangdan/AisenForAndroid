@@ -94,14 +94,14 @@ public abstract class AContentPresenter<Result extends Serializable,
 
 
     @Override
-    public <Param extends IModelParam> void onPrepare(Param param) {
+    public <Param extends IModelListenerParam> void onPrepare(Param param) {
         super.onPrepare(param);
 
         onTaskStateChanged(param);
     }
 
     @Override
-    public <Param extends IModelParam<Result>> void onSuccess(Param param) {
+    public <Param extends IModelListenerParam<Result>> void onSuccess(Param param) {
         super.onSuccess(param);
 
         Result result = param.getResult();
@@ -134,14 +134,14 @@ public abstract class AContentPresenter<Result extends Serializable,
     }
 
     @Override
-    public <Param extends IModelParam> void onFailure(final Param param) {
+    public <Param extends IModelListenerParam> void onFailure(final Param param) {
         super.onFailure(param);
 
         onTaskStateChanged(param);
     }
 
     @Override
-    public <Param extends IModelParam> void onFinished(Param param) {
+    public <Param extends IModelListenerParam> void onFinished(Param param) {
         super.onFinished(param);
 
         onTaskStateChanged(param);
@@ -190,7 +190,7 @@ public abstract class AContentPresenter<Result extends Serializable,
      * Task状态改变时，切换各种View的状态
      *
      */
-    public void onTaskStateChanged(IModelParam param) {
+    public void onTaskStateChanged(IModelListenerParam param) {
         TaskState state = param.getTaskState();
         TaskException exception = param.getException();
 

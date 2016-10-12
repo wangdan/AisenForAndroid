@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 public interface IPagingModelListener<Result extends Serializable> extends IModelListener<Result> {
 
-    interface IPaingModeParam extends IModelParam {
+    interface IPaingModeListenerParam extends IModelListenerParam {
 
         APagingPresenter.RefreshMode getRefreshMode();
 

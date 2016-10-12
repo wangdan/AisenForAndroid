@@ -247,7 +247,7 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
     }
 
     @Override
-    public void onTaskStateChanged(IPagingModelListener.IPaingModeParam param) {
+    public void onTaskStateChanged(IPagingModelListener.IPaingModeListenerParam param) {
         // 刷新FooterView
         if (refreshConfig == null || !refreshConfig.footerMoreEnable || mFooterItemView == null)
             return;

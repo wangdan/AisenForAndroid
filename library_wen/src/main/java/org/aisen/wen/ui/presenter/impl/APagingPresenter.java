@@ -6,6 +6,7 @@ import org.aisen.wen.component.network.biz.IResult;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.paging.IPaging;
 import org.aisen.wen.ui.adapter.IPagingAdapter;
+import org.aisen.wen.ui.model.IModelListener;
 import org.aisen.wen.ui.model.IPagingModel;
 import org.aisen.wen.ui.model.IPagingModelListener;
 import org.aisen.wen.ui.model.IPagingModelParams;
@@ -25,7 +26,7 @@ public abstract class APagingPresenter<Item extends Serializable,
                                        ContentMode extends IPagingModel<Item, Result>,
                                        ContentView extends IPaingView>
                             extends AContentPresenter<Result, ContentMode, ContentView>
-                            implements IPagingPresenter<Item, Result>, IPagingModelListener<Result>, IPaingView.IPagingViewCallback {
+                            implements IPagingPresenter<Item, Result>, IModelListener<Result>, IPaingView.IPagingViewCallback {
 
     private static final String SAVED_PAGING = "org.aisen.android.ui.Paging";
 
@@ -113,7 +114,7 @@ public abstract class APagingPresenter<Item extends Serializable,
     }
 
     @Override
-    public <Param extends IModelParam<Result>> void onSuccess(Param param) {
+    public <Param extends IModelListenerParam<Result>> void onSuccess(Param param) {
         if (param.getResult() == null) {
             super.onSuccess(param);
             return;
@@ -193,14 +194,14 @@ public abstract class APagingPresenter<Item extends Serializable,
     }
 
     @Override
-    public void onTaskStateChanged(IModelParam param) {
+    public void onTaskStateChanged(IModelListenerParam param) {
         super.onTaskStateChanged(param);
 
         RefreshMode mode = ((IPagingModelParams) param).getRefreshMode();
         TaskState state = param.getTaskState();
         TaskException exception = param.getException();
 
-        getView().onTaskStateChanged((IPaingModeParam) param);
+        getView().onTaskStateChanged((IPagingModelListener.IPaingModeListenerParam) param);
 
         if (state == TaskState.success) {
             if (getView().isContentEmpty()) {

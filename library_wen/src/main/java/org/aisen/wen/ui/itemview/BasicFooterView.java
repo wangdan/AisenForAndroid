@@ -68,7 +68,7 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
     }
 
     @Override
-    public void onTaskStateChanged(IPagingModelListener.IPaingModeParam param) {
+    public void onTaskStateChanged(IPagingModelListener.IPaingModeListenerParam param) {
         AContentPresenter.TaskState state = param.getTaskState();
         APagingPresenter.RefreshMode mode = param.getRefreshMode();
 
