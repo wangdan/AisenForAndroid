@@ -6,10 +6,9 @@ import org.aisen.wen.component.network.biz.IResult;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.paging.IPaging;
 import org.aisen.wen.ui.adapter.IPagingAdapter;
-import org.aisen.wen.ui.model.listener.IModelListener;
 import org.aisen.wen.ui.model.IPagingModel;
-import org.aisen.wen.ui.model.IPagingModelParams;
 import org.aisen.wen.ui.model.impl.AContentModel;
+import org.aisen.wen.ui.model.listener.IModelListener;
 import org.aisen.wen.ui.model.listener.ModelListenerParam;
 import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
 import org.aisen.wen.ui.presenter.IPagingPresenter;
@@ -195,6 +194,11 @@ public abstract class APagingPresenter<Item extends Serializable,
     }
 
     @Override
+    public IPaging<Item, Result> newPaging() {
+        return null;
+    }
+
+    @Override
     public IPaging<Item, Result> getPaging() {
         return mPaging;
     }
@@ -203,7 +207,7 @@ public abstract class APagingPresenter<Item extends Serializable,
     public void onTaskStateChanged(ModelListenerParam<Result> param) {
         super.onTaskStateChanged(param);
 
-        RefreshMode mode = ((IPagingModelParams) param).getRefreshMode();
+        RefreshMode mode = ((PagingModelListenerParam) param).getRefreshMode();
         TaskState state = param.getTaskState();
         TaskException exception = param.getException();
 

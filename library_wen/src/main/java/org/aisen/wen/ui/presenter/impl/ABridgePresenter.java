@@ -58,13 +58,13 @@ public abstract class ABridgePresenter<Result extends Serializable,
     @Override
     public void onBridgeCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getView().onBridgeCreateView(inflater, container, savedInstanceState);
+        getView().bindView(getView().getContentView());
+        getView().bindEvent(getView().getContentView());
     }
 
     @Override
     public void onBridgeActivityCreate(Activity activity, Bundle savedInstanceState) {
         getView().onBridgeActivityCreate(activity, savedInstanceState);
-        getView().bindView(getView().getContentView());
-        getView().bindEvent(getView().getContentView());
     }
 
     @Override

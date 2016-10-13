@@ -3,7 +3,6 @@ package org.aisen.wen.ui.model.impl;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.paging.IPaging;
 import org.aisen.wen.ui.model.IPagingModel;
-import org.aisen.wen.ui.model.listener.IModelListener;
 import org.aisen.wen.ui.model.listener.ModelListenerParam;
 import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
 import org.aisen.wen.ui.presenter.impl.AContentPresenter;
@@ -14,10 +13,10 @@ import java.io.Serializable;
 /**
  * Created by wangdan on 16/10/10.
  */
-public abstract class APaingModel<Item extends Serializable,
+public abstract class APagingModel<Item extends Serializable,
                                   Result extends Serializable>
                         extends AContentModel<Result>
-                        implements IPagingModel<Item, Result>, IModelListener<Result> {
+                        implements IPagingModel<Item, Result> {
 
     @Override
     public void execute() {
@@ -48,7 +47,7 @@ public abstract class APaingModel<Item extends Serializable,
 
         @Override
         public Result workInBackground(Void... params) throws TaskException {
-            return APaingModel.this.workInBackground(mode, paging);
+            return APagingModel.this.workInBackground(mode, paging);
         }
 
         @Override
