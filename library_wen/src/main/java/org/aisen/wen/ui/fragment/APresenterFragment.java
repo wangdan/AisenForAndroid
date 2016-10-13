@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import org.aisen.wen.ui.model.IModel;
 import org.aisen.wen.ui.presenter.ILifecycleBridge;
 import org.aisen.wen.ui.presenter.impl.ABridgePresenter;
-import org.aisen.wen.ui.presenter.impl.AContentPresenter;
 import org.aisen.wen.ui.view.IContentView;
 
 import java.io.Serializable;
@@ -20,11 +19,10 @@ import java.io.Serializable;
  *
  * Created by wangdan on 16/10/2.
  */
-public abstract class AContentFragment<Result extends Serializable, ContentMode extends IModel<Result>, ContentView extends IContentView>
+public abstract class APresenterFragment<Result extends Serializable, ContentMode extends IModel<Result>, ContentView extends IContentView>
                             extends ABaseFragment {
 
     private View contentView;
-
     private ILifecycleBridge lifecycleBridge;
     private ABridgePresenter<Result, ContentMode, ContentView> contentPresenter;
 
@@ -32,7 +30,7 @@ public abstract class AContentFragment<Result extends Serializable, ContentMode 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        contentPresenter = newContentPresenter();
+        contentPresenter = setPresenter();
         lifecycleBridge = contentPresenter;
         lifecycleBridge.onBridgeCreate(savedInstanceState);
     }
@@ -109,19 +107,6 @@ public abstract class AContentFragment<Result extends Serializable, ContentMode 
         return contentView;
     }
 
-    protected ABridgePresenter<Result, ContentMode, ContentView> newContentPresenter() {
-        return new AContentPresenter<Result, ContentMode, ContentView>(newContentMode(), newContentView()) {
-
-            @Override
-            public void requestData() {
-                getMode().execute();
-            }
-
-        };
-    }
-
-    protected abstract ContentView newContentView();
-
-    protected abstract ContentMode newContentMode();
+    abstract protected ABridgePresenter<Result, ContentMode, ContentView> setPresenter();
 
 }

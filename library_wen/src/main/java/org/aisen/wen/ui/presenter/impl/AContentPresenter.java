@@ -269,6 +269,11 @@ public abstract class AContentPresenter<Result extends Serializable,
         }
     }
 
+    @Override
+    public void requestData() {
+        getMode().execute();
+    }
+
     /**
      * 缓存数据失效，重新刷新数据
      *

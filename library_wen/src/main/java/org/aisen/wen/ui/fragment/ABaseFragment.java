@@ -45,6 +45,13 @@ public abstract class ABaseFragment extends Fragment {
         return false;
     }
 
+    public View findViewById(int viewId) {
+        if (getContentView() == null)
+            return null;
+
+        return getContentView().findViewById(viewId);
+    }
+
     abstract public View getContentView();
 
 }
