@@ -31,6 +31,8 @@ public abstract class ABridgePresenter<Result extends Serializable,
     private final Mode mMode;
     private final View mView;
 
+    private Activity mContext;
+
     public ABridgePresenter(Mode mode, View view) {
         this.mView = view;
         this.mMode = mode;
@@ -47,6 +49,12 @@ public abstract class ABridgePresenter<Result extends Serializable,
     @Override
     public void setContext(Activity context) {
         getView().setContext(context);
+        mContext = context;
+    }
+
+    @Override
+    public Activity getContext() {
+        return mContext;
     }
 
     @Override

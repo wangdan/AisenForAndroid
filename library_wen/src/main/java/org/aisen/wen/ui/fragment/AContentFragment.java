@@ -1,7 +1,6 @@
 package org.aisen.wen.ui.fragment;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -39,20 +38,15 @@ public abstract class AContentFragment<Result extends Serializable, ContentMode 
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
 
-        if (context instanceof Activity) {
-            lifecycleBridge.setContext((Activity) context);
-        }
+        lifecycleBridge.setContext(activity);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if (contentPresenter.getView().getContext() == null) {
-            lifecycleBridge.setContext(getActivity());
-        }
         lifecycleBridge.onBridgeCreateView(inflater, container, savedInstanceState);
 
         contentView = contentPresenter.getView().getContentView();

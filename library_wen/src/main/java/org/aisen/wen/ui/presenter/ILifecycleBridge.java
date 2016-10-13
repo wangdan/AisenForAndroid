@@ -14,6 +14,8 @@ public interface ILifecycleBridge {
 
     void setContext(Activity context);
 
+    Activity getContext();
+
     void onBridgeCreate(Bundle savedInstanceState);
 
     void onBridgeCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState);
