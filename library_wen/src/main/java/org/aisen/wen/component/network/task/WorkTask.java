@@ -23,7 +23,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class WorkTask<Params, Progress, Result> {
+public abstract class WorkTask<Params, Progress, Result> implements IWorkTask {
 	private static final String TAG = "WorkTask";
 
 	/**

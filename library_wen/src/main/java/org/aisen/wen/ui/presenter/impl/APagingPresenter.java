@@ -7,7 +7,6 @@ import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.support.paging.IPaging;
 import org.aisen.wen.ui.adapter.IPagingAdapter;
 import org.aisen.wen.ui.model.IPagingModel;
-import org.aisen.wen.ui.model.impl.AContentModel;
 import org.aisen.wen.ui.model.listener.IModelListener;
 import org.aisen.wen.ui.model.listener.ModelListenerParam;
 import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
@@ -185,7 +184,7 @@ public abstract class APagingPresenter<Item extends Serializable,
             }
         }
 
-        if (mode == RefreshMode.reset && getTaskCount(AContentModel.TASK_ID) > 1)
+        if (mode == RefreshMode.reset && getTaskCount(getMode().getTaskId()) > 1)
             getView().getAdapter().notifyDataSetChanged();
 
         getView().setupRefreshViewWithConfig(getView().getRefreshConfig());

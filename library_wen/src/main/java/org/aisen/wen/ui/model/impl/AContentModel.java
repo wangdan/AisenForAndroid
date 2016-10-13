@@ -15,7 +15,7 @@ import java.io.Serializable;
  */
 public abstract class AContentModel<Result extends Serializable> implements IModel<Result> {
 
-    public static final String TASK_ID = "ModeTask";
+    private static final String TASK_ID = "ModeTask";
 
     private ITaskManager taskManager;
     private IModelListener<Result> modelListener;
@@ -39,10 +39,15 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         new ContentModelTask().execute();
     }
 
+    @Override
+    public String getTaskId() {
+        return TASK_ID;
+    }
+
     class ContentModelTask extends WorkTask<Void, Void, Result> {
 
         public ContentModelTask() {
-            super(TASK_ID, taskManager);
+            super(AContentModel.this.getTaskId(), taskManager);
 
             if (mTask != null) {
                 mTask.cancel(true);

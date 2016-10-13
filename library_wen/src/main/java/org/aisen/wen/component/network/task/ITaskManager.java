@@ -2,7 +2,7 @@ package org.aisen.wen.component.network.task;
 
 public interface ITaskManager {
 
-	void addTask(WorkTask task);
+	void addTask(IWorkTask task);
 
 	void removeTask(String taskId, boolean cancelIfRunning);
 

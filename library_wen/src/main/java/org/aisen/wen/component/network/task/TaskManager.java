@@ -14,7 +14,7 @@ public class TaskManager implements ITaskManager {
 	
 	static final String TAG = "TaskManager";
 
-	private LinkedHashMap<String, WeakReference<WorkTask>> taskCache;
+	private LinkedHashMap<String, WeakReference<IWorkTask>> taskCache;
 	private HashMap<String, Integer> taskCountMap;
 
 	public TaskManager() {
@@ -23,7 +23,7 @@ public class TaskManager implements ITaskManager {
 	}
 
 	@Override
-	public void addTask(WorkTask task) {
+	public void addTask(IWorkTask task) {
 		if (task != null && !TextUtils.isEmpty(task.getTaskId())) {
 			int count = taskCountMap.keySet().contains(task.getTaskId()) ? taskCountMap.get(task.getTaskId()) : 0;
 			taskCountMap.put(task.getTaskId(), ++count);
@@ -44,7 +44,7 @@ public class TaskManager implements ITaskManager {
 	public void removeAllTask(boolean mayInterruptIfRunning) {
 		Set<String> keySet = taskCache.keySet();
 		for (String key : keySet) {
-			WorkTask task = getTaskById(key);
+			IWorkTask task = getTaskById(key);
 			if (task != null)
 				task.cancel(mayInterruptIfRunning);
 		}
@@ -52,7 +52,7 @@ public class TaskManager implements ITaskManager {
 	}
 
 	private void cancelExistTask(String taskId, boolean mayInterruptIfRunning) {
-		WorkTask existTask = getTaskById(taskId);
+		IWorkTask existTask = getTaskById(taskId);
 
 		if (existTask != null)
 			Logger.d(TAG, String.format("interrupt exist task --->%s", taskId));
@@ -63,8 +63,8 @@ public class TaskManager implements ITaskManager {
 		taskCache.remove(taskId);
 	}
 
-	private WorkTask getTaskById(String taskId) {
-		WeakReference<WorkTask> existTaskRef = taskCache.get(taskId);
+	private IWorkTask getTaskById(String taskId) {
+		WeakReference<IWorkTask> existTaskRef = taskCache.get(taskId);
 		if (existTaskRef != null)
 			return existTaskRef.get();
 		return null;

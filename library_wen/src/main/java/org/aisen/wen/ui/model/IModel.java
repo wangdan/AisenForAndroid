@@ -13,6 +13,13 @@ public interface IModel<Result extends Serializable> {
 
     IModelListener<Result> getCallback();
 
+    /**
+     * 这个Model绑定的IWorkTask的TaskID
+     *
+     * @return
+     */
+    String getTaskId();
+
     void execute();
 
     boolean isRunning();

@@ -7,9 +7,9 @@ import android.os.Looper;
 import android.view.View;
 
 import org.aisen.wen.component.network.biz.IResult;
+import org.aisen.wen.component.network.task.IWorkTask;
 import org.aisen.wen.component.network.task.TaskException;
 import org.aisen.wen.component.network.task.TaskManager;
-import org.aisen.wen.component.network.task.WorkTask;
 import org.aisen.wen.support.utils.Logger;
 import org.aisen.wen.ui.model.IModel;
 import org.aisen.wen.ui.model.listener.ModelListenerParam;
@@ -146,7 +146,7 @@ public abstract class AContentPresenter<Result extends Serializable,
     }
 
     @Override
-    final public void addTask(WorkTask task) {
+    final public void addTask(IWorkTask task) {
         taskManager.addTask(task);
     }
 

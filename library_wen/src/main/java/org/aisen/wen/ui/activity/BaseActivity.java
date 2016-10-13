@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 
 import org.aisen.wen.R;
 import org.aisen.wen.component.network.task.ITaskManager;
+import org.aisen.wen.component.network.task.IWorkTask;
 import org.aisen.wen.component.network.task.TaskManager;
-import org.aisen.wen.component.network.task.WorkTask;
 import org.aisen.wen.support.utils.Logger;
 import org.aisen.wen.support.utils.ViewUtils;
 import org.aisen.wen.ui.fragment.ABaseFragment;
@@ -327,7 +327,7 @@ public class BaseActivity extends AppCompatActivity implements ITaskManager, AsT
     }
 
     @Override
-    final public void addTask(@SuppressWarnings("rawtypes") WorkTask task) {
+    final public void addTask(@SuppressWarnings("rawtypes") IWorkTask task) {
         taskManager.addTask(task);
     }
 
