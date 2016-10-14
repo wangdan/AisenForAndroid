@@ -1,6 +1,7 @@
 package org.aisen.wen.ui.view;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 
 /**
@@ -8,14 +9,14 @@ import android.view.View;
  */
 public interface IView {
 
-    Activity getContext();
+    Activity getViewContext();
 
-    void setContext(Activity context);
+    void setViewContext(Activity context);
 
     View getContentView();
 
-    void bindView(View contentView);
+    void bindView(View contentView, Bundle savedInstanceState);
 
-    void bindEvent(View contentView);
+    void bindEvent(View contentView, Bundle savedInstanceState);
 
 }

@@ -41,12 +41,12 @@ public abstract class AContentView implements IContentView {
     private IContentPresenter mPresenter;
 
     @Override
-    public void bindView(View contentView) {
+    public void bindView(View contentView, Bundle savedInstanceState) {
         ButterKnife.bind(this, contentView);
     }
 
     @Override
-    public void bindEvent(View contentView) {
+    public void bindEvent(View contentView, Bundle savedInstanceState) {
         if (loadFailureLayout != null) {
             View reloadView = loadFailureLayout.findViewById(R.id.layoutReload);
             if (reloadView != null) {
@@ -189,12 +189,22 @@ public abstract class AContentView implements IContentView {
     }
 
     @Override
-    public Activity getContext() {
+    public Activity getBridgeContext() {
+        return getViewContext();
+    }
+
+    @Override
+    public void setBridgeContext(Activity context) {
+        setViewContext(context);
+    }
+
+    @Override
+    public Activity getViewContext() {
         return mContext;
     }
 
     @Override
-    public void setContext(Activity context) {
+    public void setViewContext(Activity context) {
         this.mContext = context;
     }
 

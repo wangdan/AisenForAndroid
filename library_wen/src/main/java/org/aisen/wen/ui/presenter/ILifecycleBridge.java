@@ -12,9 +12,9 @@ import android.view.ViewGroup;
  */
 public interface ILifecycleBridge {
 
-    void setContext(Activity context);
+    void setBridgeContext(Activity context);
 
-    Activity getContext();
+    Activity getBridgeContext();
 
     void onBridgeCreate(Bundle savedInstanceState);
 

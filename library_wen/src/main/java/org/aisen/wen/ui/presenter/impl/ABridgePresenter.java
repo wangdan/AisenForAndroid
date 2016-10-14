@@ -47,13 +47,13 @@ public abstract class ABridgePresenter<Result extends Serializable,
     }
 
     @Override
-    public void setContext(Activity context) {
-        getView().setContext(context);
+    public void setBridgeContext(Activity context) {
+        getView().setViewContext(context);
         mContext = context;
     }
 
     @Override
-    public Activity getContext() {
+    public Activity getBridgeContext() {
         return mContext;
     }
 
@@ -66,8 +66,8 @@ public abstract class ABridgePresenter<Result extends Serializable,
     @Override
     public void onBridgeCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         getView().onBridgeCreateView(inflater, container, savedInstanceState);
-        getView().bindView(getView().getContentView());
-        getView().bindEvent(getView().getContentView());
+        getView().bindView(getView().getContentView(), savedInstanceState);
+        getView().bindEvent(getView().getContentView(), savedInstanceState);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.aisen.wen.ui.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.view.View;
 
 import org.aisen.wen.ui.itemview.IITemView;
@@ -54,7 +53,7 @@ public abstract class ABasicItemView<T extends Serializable> implements IITemVie
         return convertView;
     }
 
-    public Context getContext() {
+    public Activity getContext() {
         return context;
     }
 

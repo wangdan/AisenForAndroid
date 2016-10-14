@@ -49,7 +49,7 @@ public class BasicListAdapter<Item extends Serializable> extends BaseAdapter imp
         if (convertView == null) {
             int itemType = getItemViewType(position);
 
-            convertView = itemViewCreator.newContentView(holderFragment.getContext().getLayoutInflater(), parent, itemType);
+            convertView = itemViewCreator.newContentView(holderFragment.getViewContext().getLayoutInflater(), parent, itemType);
 
             itemView = itemViewCreator.newItemView(convertView, itemType);
             itemView.onBindView(convertView);

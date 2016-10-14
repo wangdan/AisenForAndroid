@@ -179,4 +179,6 @@ public interface IPaingView<Item extends Serializable,
      */
     void onTaskStateChanged(PagingModelListenerParam<Result> param);
 
+    ArrayList<Item> getAdapterItems();
+
 }

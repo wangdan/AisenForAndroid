@@ -33,7 +33,6 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
                                                             AFooterItemView.OnFooterViewCallback,
                                                             IPaingView.IPagingViewCallback {
 
-
     private static final String SAVED_DATAS = "org.aisen.android.ui.Datas";
     private static final String SAVED_CONFIG = "org.aisen.android.ui.Config";
 
@@ -103,7 +102,7 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
      * @param config
      */
     protected void setupRefreshConfig(RefreshConfig config) {
-        config.emptyHint = getContext().getString(R.string.comm_content_empty);
+        config.emptyHint = getViewContext().getString(R.string.comm_content_empty);
     }
 
     /**
@@ -113,7 +112,7 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
     protected void setupRefreshView(Bundle savedInstanceSate) {
         if (refreshConfig != null && refreshConfig.footerMoreEnable) {
             mFooterItemViewCreator = configFooterViewCreator();
-            View convertView = mFooterItemViewCreator.newContentView(getContext().getLayoutInflater(), null, IPagingAdapter.TYPE_FOOTER);
+            View convertView = mFooterItemViewCreator.newContentView(getViewContext().getLayoutInflater(), null, IPagingAdapter.TYPE_FOOTER);
             mFooterItemView = (AFooterItemView<Item>) mFooterItemViewCreator.newItemView(convertView, IPagingAdapter.TYPE_FOOTER);
         }
 
@@ -177,6 +176,11 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
     }
 
     @Override
+    public ArrayList<Item> getAdapterItems() {
+        return getAdapter().getDatas();
+    }
+
+    @Override
     public void setPagingViewCallback(IPagingViewCallback pagingViewCallback) {
         this.pagingViewCallback = pagingViewCallback;
     }
@@ -191,7 +195,7 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
 
             @Override
             public IITemView<Item> newItemView(View convertView, int viewType) {
-                return new BasicFooterView<>(getContext(), convertView, APagingView.this);
+                return new BasicFooterView<>(getViewContext(), convertView, APagingView.this);
             }
 
         };

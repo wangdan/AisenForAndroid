@@ -15,6 +15,9 @@ public class Params implements Serializable {
 	private Map<String, String> mParameters = new HashMap<>();
 	private List<String> mKeys = new ArrayList<>();
 
+	// 某些时候，参数列表不需要进行编码，例如将参数作为URL QUERY时，防止进行了二次编码导致服务器不能解析
+	private boolean encodeAble = true;
+
 	public Params() {
 
 	}
@@ -85,6 +88,14 @@ public class Params implements Serializable {
 		}
 	}
 
+	public boolean isEncodeAble() {
+		return encodeAble;
+	}
+
+	public void setEncodeAble(boolean encodeAble) {
+		this.encodeAble = encodeAble;
+	}
+
 	public void clearParams() {
 		mParameters.clear();
 		mKeys.clear();
@@ -117,6 +128,7 @@ public class Params implements Serializable {
 
 			paramsBuffer.append(key + "=");
 			paramsBuffer.append(params.get(key));
+			paramsBuffer.append(params.isEncodeAble() ? encode(params.get(key)) : params.get(key));
 		}
 		return paramsBuffer.toString();
 	}

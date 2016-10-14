@@ -115,7 +115,7 @@ public abstract class ARecycleView<Item extends Serializable, Result extends Ser
 
     @Override
     public IPagingAdapter<Item> newAdapter(ArrayList<Item> datas) {
-        return new BasicRecycleViewAdapter<>(getContext(), this, newItemViewCreator(), datas);
+        return new BasicRecycleViewAdapter<>(getViewContext(), this, newItemViewCreator(), datas);
     }
 
     @Override
@@ -134,7 +134,7 @@ public abstract class ARecycleView<Item extends Serializable, Result extends Ser
      * @return
      */
     protected RecyclerView.LayoutManager configLayoutManager() {
-        return new LinearLayoutManager(getContext());
+        return new LinearLayoutManager(getViewContext());
     }
 
 }
