@@ -2,9 +2,8 @@ package org.aisen.wen.ui.view.impl;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.GridView;
 
 import org.aisen.wen.R;
 import org.aisen.wen.R2;
@@ -21,18 +20,22 @@ import java.util.List;
 import butterknife.BindView;
 
 /**
- * Created by wangdan on 16/10/13.
+ * Created by wangdan on 16/10/14.
  */
-public abstract class AListView<Item extends Serializable, Result extends Serializable, Header extends Serializable>
-                            extends APagingView<Item, Result, Header, ListView>
-                            implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener{
+public abstract class AGridView<Item extends Serializable, Result extends Serializable, Header extends Serializable>
+                            extends APagingView<Item, Result, Header, GridView> implements AdapterView.OnItemClickListener {
 
-    @BindView(R2.id.listView)
-    ListView mListView;
+    @BindView(R2.id.gridview)
+    GridView gridView;
 
     @Override
     public int setLayoutId() {
-        return R.layout.comm_ui_list;
+        return R.layout.comm_ui_gridview;
+    }
+
+    @Override
+    public GridView getRefreshView() {
+        return gridView;
     }
 
     @Override
@@ -40,18 +43,22 @@ public abstract class AListView<Item extends Serializable, Result extends Serial
         super.setupRefreshView(savedInstanceSate);
 
         // 设置事件
-        getRefreshView().setOnScrollListener(this);
         getRefreshView().setOnItemClickListener(this);
     }
 
     @Override
-    protected void addFooterViewToRefreshView(AFooterItemView<?> footerItemView) {
-        getRefreshView().addFooterView(footerItemView.getConvertView());
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
     }
 
     @Override
-    protected void addHeaderViewToRefreshView(AHeaderItemViewCreator<?> headerItemViewCreator) {
+    public IPagingAdapter<Item> newAdapter(ArrayList<Item> datas) {
+        return new BasicListAdapter<>(this, datas);
+    }
 
+    @Override
+    public boolean handleResult(IPagingPresenter.RefreshMode mode, List<Item> datas) {
+        return false;
     }
 
     @Override
@@ -61,37 +68,12 @@ public abstract class AListView<Item extends Serializable, Result extends Serial
     }
 
     @Override
-    public IPagingAdapter<Item> newAdapter(ArrayList<Item> datas) {
-        return new BasicListAdapter<>(this, datas);
+    protected void addFooterViewToRefreshView(AFooterItemView<?> footerItemView) {
+
     }
 
     @Override
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        onScroll(firstVisibleItem, visibleItemCount, totalItemCount);
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView view, int scrollState) {
-        onScrollStateChanged(scrollState);
-    }
-
-    @Override
-    public boolean handleResult(IPagingPresenter.RefreshMode mode, List<Item> datas) {
-        return false;
-    }
-
-    @Override
-    public int getFirstVisiblePosition() {
-        return getRefreshView().getFirstVisiblePosition();
-    }
-
-    @Override
-    public ListView getRefreshView() {
-        return mListView;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    protected void addHeaderViewToRefreshView(AHeaderItemViewCreator<?> headerItemViewCreator) {
 
     }
 
@@ -120,7 +102,7 @@ public abstract class AListView<Item extends Serializable, Result extends Serial
             bindAdapter(getAdapter());
         }
         else {
-            getRefreshView().setSelectionFromTop(0, 0);
+            getRefreshView().smoothScrollToPosition(0);
             getAdapter().notifyDataSetChanged();
         }
     }

@@ -104,6 +104,7 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
 			if (DEBUG)
 				Log.v(TAG, "Attaching item #" + itemId + ": f=" + fragment);
 //			mCurTransaction.attach(fragment);
+			freshUI(position, fragment);
 		} else {
 			fragment = getItem(position);
 			if (DEBUG)
@@ -151,6 +152,9 @@ public abstract class FragmentPagerAdapter extends PagerAdapter {
 			mCurTransaction = null;
 			mFragmentManager.executePendingTransactions();
 		}
+	}
+
+	protected void freshUI(int position, Fragment fragment) {
 	}
 
 	@Override

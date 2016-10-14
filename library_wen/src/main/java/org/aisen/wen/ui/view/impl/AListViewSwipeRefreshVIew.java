@@ -5,7 +5,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 
 import org.aisen.wen.R;
 import org.aisen.wen.R2;
-import org.aisen.wen.ui.itemview.IItemViewCreator;
 import org.aisen.wen.ui.presenter.IPagingPresenter;
 
 import java.io.Serializable;
@@ -13,20 +12,18 @@ import java.io.Serializable;
 import butterknife.BindView;
 
 /**
- * Created by wangdan on 16/10/13.
+ * Created by wangdan on 16/10/14.
  */
-public class ARecycleViewSwipeRefreshView<Item extends Serializable,
-                                          Result extends Serializable,
-                                          Header extends Serializable>
-                                    extends ARecycleView<Item, Result, Header>
-                                    implements SwipeRefreshLayout.OnRefreshListener{
+public abstract class AListViewSwipeRefreshVIew<Item extends Serializable, Result extends Serializable, Header extends Serializable>
+                    extends AListView<Item, Result, Header>
+                    implements SwipeRefreshLayout.OnRefreshListener {
 
     @BindView(R2.id.swipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public int setLayoutId() {
-        return R.layout.comm_ui_recycleview_swiperefresh;
+        return R.layout.comm_ui_list_swiperefresh;
     }
 
     @Override
@@ -45,11 +42,6 @@ public class ARecycleViewSwipeRefreshView<Item extends Serializable,
     }
 
     @Override
-    public IItemViewCreator<Item> newItemViewCreator() {
-        return null;
-    }
-
-    @Override
     public void onRefresh() {
         onPullDownToRefresh();
     }
@@ -62,7 +54,7 @@ public class ARecycleViewSwipeRefreshView<Item extends Serializable,
     }
 
     @Override
-    public void onRefreshViewFinished(IPagingPresenter.RefreshMode mode) {
+    public void setRefreshViewFinished(IPagingPresenter.RefreshMode mode) {
         if (mode != IPagingPresenter.RefreshMode.update && swipeRefreshLayout.isRefreshing())
             swipeRefreshLayout.setRefreshing(false);
     }
