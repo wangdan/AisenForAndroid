@@ -1,8 +1,8 @@
 package org.aisen.wen.ui.model.listener;
 
 import org.aisen.wen.component.network.task.TaskException;
-import org.aisen.wen.ui.presenter.impl.AContentPresenter;
-import org.aisen.wen.ui.presenter.impl.APagingPresenter;
+import org.aisen.wen.ui.presenter.IContentPresenter;
+import org.aisen.wen.ui.presenter.IPagingPresenter;
 
 import java.io.Serializable;
 
@@ -11,15 +11,15 @@ import java.io.Serializable;
  */
 public class PagingModelListenerParam<Result extends Serializable> extends ModelListenerParam<Result> {
 
-    private final APagingPresenter.RefreshMode mode;
+    private final IPagingPresenter.RefreshMode mode;
 
-    public PagingModelListenerParam(AContentPresenter.TaskState taskState, Result result, TaskException exception, APagingPresenter.RefreshMode mode) {
+    public PagingModelListenerParam(IContentPresenter.TaskState taskState, Result result, TaskException exception, IPagingPresenter.RefreshMode mode) {
         super(taskState, result, exception);
 
         this.mode = mode;
     }
 
-    public APagingPresenter.RefreshMode getRefreshMode() {
+    public IPagingPresenter.RefreshMode getRefreshMode() {
         return mode;
     }
 

@@ -12,7 +12,7 @@ import org.aisen.wen.ui.adapter.BasicListAdapter;
 import org.aisen.wen.ui.adapter.IPagingAdapter;
 import org.aisen.wen.ui.itemview.AFooterItemView;
 import org.aisen.wen.ui.itemview.AHeaderItemViewCreator;
-import org.aisen.wen.ui.presenter.impl.APagingPresenter;
+import org.aisen.wen.ui.presenter.IPagingPresenter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public abstract class AListView<Item extends Serializable, Result extends Serial
     }
 
     @Override
-    public boolean handleResult(APagingPresenter.RefreshMode mode, List<Item> datas) {
+    public boolean handleResult(IPagingPresenter.RefreshMode mode, List<Item> datas) {
         return false;
     }
 

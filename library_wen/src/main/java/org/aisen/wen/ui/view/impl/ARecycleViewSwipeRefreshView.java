@@ -6,7 +6,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import org.aisen.wen.R;
 import org.aisen.wen.R2;
 import org.aisen.wen.ui.itemview.IItemViewCreator;
-import org.aisen.wen.ui.presenter.impl.APagingPresenter;
+import org.aisen.wen.ui.presenter.IPagingPresenter;
 
 import java.io.Serializable;
 
@@ -62,8 +62,8 @@ public class ARecycleViewSwipeRefreshView<Item extends Serializable,
     }
 
     @Override
-    public void onRefreshViewFinished(APagingPresenter.RefreshMode mode) {
-        if (mode != APagingPresenter.RefreshMode.update && swipeRefreshLayout.isRefreshing())
+    public void onRefreshViewFinished(IPagingPresenter.RefreshMode mode) {
+        if (mode != IPagingPresenter.RefreshMode.update && swipeRefreshLayout.isRefreshing())
             swipeRefreshLayout.setRefreshing(false);
     }
 

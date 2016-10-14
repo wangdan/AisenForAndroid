@@ -1,6 +1,7 @@
-package org.aisen.wen.ui.presenter.impl;
+package org.aisen.wen.ui.fragment;
 
 import android.os.Bundle;
+import android.view.ViewGroup;
 
 import org.aisen.wen.component.network.biz.IResult;
 import org.aisen.wen.component.network.task.TaskException;
@@ -18,43 +19,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by wangdan on 16/10/10.
+ * Created by wangdan on 16/10/14.
  */
-public abstract class APagingPresenter<Item extends Serializable,
-                                       Result extends Serializable,
-                                       ContentMode extends IPagingModel<Item, Result>,
-                                       ContentView extends IPaingView>
-                            extends AContentPresenter<Result, ContentMode, ContentView>
-                            implements IPagingPresenter<Item, Result>, IModelListener<Result>, IPaingView.IPagingViewCallback {
+public abstract class APagingPresenterFragment<Item extends Serializable,
+                                               Result extends Serializable,
+                                               Header extends Serializable,
+                                               RefreshView extends ViewGroup,
+                                               ContentMode extends IPagingModel<Item, Result>,
+                                               ContentView extends IPaingView<Item, Result, Header, RefreshView>> extends APresenterFragment<Result, ContentMode, ContentView>
+                                implements IPagingPresenter<Item, Result, Header, RefreshView, ContentMode, ContentView>, 
+                                           IModelListener<Result>, 
+                                           IPaingView.IPagingViewCallback{
 
     private static final String SAVED_PAGING = "org.aisen.android.ui.Paging";
 
-    public enum RefreshMode {
-        /**
-         * 重设数据
-         */
-        reset,
-        /**
-         * 上拉，加载更多
-         */
-        update,
-        /**
-         * 下拉，刷新最新
-         */
-        refresh
-    }
-
     private IPaging<Item, Result> mPaging;// 分页器
-
-    public APagingPresenter(ContentMode contentMode, ContentView view) {
-        super(contentMode, view);
-
-        view.setPagingViewCallback(this);
-    }
-
+    
     @Override
-    public void onBridgeCreate(Bundle savedInstanceState) {
-        super.onBridgeCreate(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        getPView().setPagingViewCallback(this);
 
         if (savedInstanceState != null && savedInstanceState.getSerializable(SAVED_PAGING) != null) {
             mPaging = (IPaging) savedInstanceState.getSerializable(SAVED_PAGING);
@@ -64,8 +49,8 @@ public abstract class APagingPresenter<Item extends Serializable,
     }
 
     @Override
-    public void onBridgeSaveInstanceState(Bundle outState) {
-        super.onBridgeSaveInstanceState(outState);
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
 
         // 将分页信息保存起来
         if (mPaging != null)
@@ -86,7 +71,7 @@ public abstract class APagingPresenter<Item extends Serializable,
     final public void requestData() {
         // 如果没有Loading视图，且数据为空，就显示FootView加载状态
         RefreshMode mode = RefreshMode.reset;
-        if (getView().getAdapter().getDatas().size() == 0 && getView().getLoadingLayout() == null)
+        if (getPView().getAdapter().getDatas().size() == 0 && getPView().getLoadingLayout() == null)
             mode = RefreshMode.update;
 
         requestData(mode);
@@ -96,13 +81,13 @@ public abstract class APagingPresenter<Item extends Serializable,
         if (mode == RefreshMode.reset && mPaging != null)
             mPaging = newPaging();
 
-        getMode().execute(mode, mPaging);
+        getPModel().execute(mode, mPaging);
     }
 
     @Override
     public void requestDataOutofdate() {
-        getView().putLastReadPosition(0);
-        getView().putLastReadTop(0);
+        getPView().putLastReadPosition(0);
+        getPView().putLastReadTop(0);
 
         requestDataSetRefreshing();
     }
@@ -113,7 +98,7 @@ public abstract class APagingPresenter<Item extends Serializable,
      */
     public void requestDataSetRefreshing() {
         // 如果没有正在刷新，设置刷新控件，且子类没有自动刷新
-        if (!getMode().isRunning() && !getView().setRefreshViewToLoading())
+        if (!getPModel().isRunning() && !getPView().setRefreshViewToLoading())
             requestData(RefreshMode.reset);
     }
 
@@ -127,46 +112,46 @@ public abstract class APagingPresenter<Item extends Serializable,
         Result result = param.getResult();
         RefreshMode mode = ((PagingModelListenerParam<Result>) param).getRefreshMode();
 
-        getView().bindAdapter(getView().getAdapter());
+        getPView().bindAdapter(getPView().getAdapter());
 
         List<Item> resultList;
         if (result instanceof List)
             resultList = (List<Item>) result;
         else {
-            resultList = getMode().parseResult(result);
+            resultList = getPModel().parseResult(result);
             if (resultList == null)
                 resultList = new ArrayList<>();
         }
 
         // 如果子类没有处理新获取的数据刷新UI，默认替换所有数据
-        if (!getView().handleResult(mode, resultList)) {
+        if (!getPView().handleResult(mode, resultList)) {
             if (mode == RefreshMode.reset) {
-                getView().getAdapter().getDatas().clear();
-                getView().getAdapter().getDatas().addAll(new ArrayList<Item>());
+                getPView().getAdapter().getDatas().clear();
+                getPView().getAdapter().getDatas().addAll(new ArrayList<Item>());
             }
         }
 
         // append数据
         if (mode == RefreshMode.reset || mode == RefreshMode.refresh)
-            IPagingAdapter.Utils.addItemsAtFrontAndRefresh(getView().getAdapter(), resultList);
+            IPagingAdapter.Utils.addItemsAtFrontAndRefresh(getPView().getAdapter(), resultList);
         else if (mode == RefreshMode.update)
-            IPagingAdapter.Utils.addItemsAndRefresh(getView().getAdapter(), resultList);
+            IPagingAdapter.Utils.addItemsAndRefresh(getPView().getAdapter(), resultList);
 
         // 处理分页数据
         if (mPaging != null) {
-            if (getView().getAdapter() != null && getView().getAdapter().getDatas().size() != 0)
-                mPaging.processData(result, (Item) getView().getAdapter().getDatas().get(0),
-                        (Item) getView().getAdapter().getDatas().get(getView().getAdapter().getDatas().size() - 1));
+            if (getPView().getAdapter() != null && getPView().getAdapter().getDatas().size() != 0)
+                mPaging.processData(result, (Item) getPView().getAdapter().getDatas().get(0),
+                        (Item) getPView().getAdapter().getDatas().get(getPView().getAdapter().getDatas().size() - 1));
             else
                 mPaging.processData(result, null, null);
         }
 
         // 如果是重置数据，重置canLoadMore
         if (mode == RefreshMode.reset)
-            getView().getRefreshConfig().pagingEnd = false;
+            getPView().getRefreshConfig().pagingEnd = false;
         // 如果数据少于这个值，默认加载完了
         if (mode == RefreshMode.update || mode == RefreshMode.reset)
-            getView().getRefreshConfig().pagingEnd = resultList.size() == 0;
+            getPView().getRefreshConfig().pagingEnd = resultList.size() == 0;
 
         // 如果是缓存数据，且已经过期
         if (result instanceof IResult) {
@@ -174,20 +159,20 @@ public abstract class APagingPresenter<Item extends Serializable,
             IResult iResult = (IResult) result;
 
             if (iResult.fromCache() && !iResult.outofdate())
-                getView().toLastReadPosition();
+                getPView().toLastReadPosition();
 
             if (mode == RefreshMode.reset || mode == RefreshMode.update) {
                 if (iResult.endPaging())
-                    getView().getRefreshConfig().pagingEnd = true;
+                    getPView().getRefreshConfig().pagingEnd = true;
                 else
-                    getView().getRefreshConfig().pagingEnd = false;
+                    getPView().getRefreshConfig().pagingEnd = false;
             }
         }
 
-        if (mode == RefreshMode.reset && getTaskCount(getMode().getTaskId()) > 1)
-            getView().getAdapter().notifyDataSetChanged();
+        if (mode == RefreshMode.reset && getTaskCount(getPModel().getTaskId()) > 1)
+            getPView().getAdapter().notifyDataSetChanged();
 
-        getView().setupRefreshViewWithConfig(getView().getRefreshConfig());
+        getPView().setupRefreshViewWithConfig(getPView().getRefreshConfig());
 
         super.onSuccess(param);
     }
@@ -210,21 +195,21 @@ public abstract class APagingPresenter<Item extends Serializable,
         TaskState state = param.getTaskState();
         TaskException exception = param.getException();
 
-        getView().onTaskStateChanged((PagingModelListenerParam<Result>) param);
+        getPView().onTaskStateChanged((PagingModelListenerParam<Result>) param);
 
         if (state == TaskState.success) {
-            if (getView().isContentEmpty()) {
-                getView().setEmptyHind(getView().getRefreshConfig().emptyHint);
+            if (getPView().isContentEmpty()) {
+                getPView().setEmptyHind(getPView().getRefreshConfig().emptyHint);
             }
         }
         else if (state == TaskState.falid) {
-            if (getView().isContentEmpty()) {
-                getView().setFailureHint(exception.getMessage());
+            if (getPView().isContentEmpty()) {
+                getPView().setFailureHint(exception.getMessage());
             }
         }
         else if (state == TaskState.finished) {
-            getView().setRefreshViewFinished(mode);
+            getPView().setRefreshViewFinished(mode);
         }
     }
-
+    
 }

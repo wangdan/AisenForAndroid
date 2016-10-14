@@ -149,8 +149,10 @@ public abstract class AContentView implements IContentView {
     }
 
     @Override
-    public void onBridgeCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onBridgeCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContentView = inflater.inflate(setLayoutId(), null);
+
+        return mContentView;
     }
 
     @Override

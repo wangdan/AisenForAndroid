@@ -42,7 +42,7 @@ public abstract class ABaseFragment extends Fragment implements BitmapOwner, IVi
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (setLayoutId() > 0) {
-            contentView = (ViewGroup) inflater.inflate(setLayoutId(), null);
+            contentView = inflater.inflate(setLayoutId(), null);
             contentView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT));
             return contentView;

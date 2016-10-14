@@ -7,8 +7,8 @@ import android.widget.TextView;
 import org.aisen.wen.R;
 import org.aisen.wen.R2;
 import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
-import org.aisen.wen.ui.presenter.impl.AContentPresenter;
-import org.aisen.wen.ui.presenter.impl.APagingPresenter;
+import org.aisen.wen.ui.presenter.IContentPresenter;
+import org.aisen.wen.ui.presenter.IPagingPresenter;
 
 import java.io.Serializable;
 
@@ -69,27 +69,27 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
 
     @Override
     public void onTaskStateChanged(PagingModelListenerParam param) {
-        AContentPresenter.TaskState state = param.getTaskState();
-        APagingPresenter.RefreshMode mode = param.getRefreshMode();
+        IContentPresenter.TaskState state = param.getTaskState();
+        IPagingPresenter.RefreshMode mode = param.getRefreshMode();
 
-        if (state == AContentPresenter.TaskState.finished) {
-            if (mode == APagingPresenter.RefreshMode.update) {
+        if (state == IContentPresenter.TaskState.finished) {
+            if (mode == IPagingPresenter.RefreshMode.update) {
                 if (layLoading.getVisibility() == View.VISIBLE) {
                     layLoading.setVisibility(View.GONE);
                     btnMore.setVisibility(View.VISIBLE);
                 }
             }
         }
-        else if (state == AContentPresenter.TaskState.prepare) {
-            if (mode == APagingPresenter.RefreshMode.update) {
+        else if (state == IContentPresenter.TaskState.prepare) {
+            if (mode == IPagingPresenter.RefreshMode.update) {
                 txtLoading.setText(loadingText());
                 layLoading.setVisibility(View.VISIBLE);
                 btnMore.setVisibility(View.GONE);
                 btnMore.setText(moreText());
             }
         }
-        else if (state == AContentPresenter.TaskState.success) {
-            if ((mode == APagingPresenter.RefreshMode.update || mode == APagingPresenter.RefreshMode.reset)) {
+        else if (state == IContentPresenter.TaskState.success) {
+            if ((mode == IPagingPresenter.RefreshMode.update || mode == IPagingPresenter.RefreshMode.reset)) {
                 if (!getCallback().footerViewLoadMoreAbility()) {
                     btnMore.setText(endpagingText());
                 } else {
@@ -97,8 +97,8 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
                 }
             }
         }
-        else if (state == AContentPresenter.TaskState.falid) {
-            if (mode == APagingPresenter.RefreshMode.update) {
+        else if (state == IContentPresenter.TaskState.falid) {
+            if (mode == IPagingPresenter.RefreshMode.update) {
                 if (layLoading.getVisibility() == View.VISIBLE) {
                     btnMore.setText(faildText());
                 }

@@ -5,8 +5,8 @@ import org.aisen.wen.support.paging.IPaging;
 import org.aisen.wen.ui.model.IPagingModel;
 import org.aisen.wen.ui.model.listener.ModelListenerParam;
 import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
-import org.aisen.wen.ui.presenter.impl.AContentPresenter;
-import org.aisen.wen.ui.presenter.impl.APagingPresenter;
+import org.aisen.wen.ui.presenter.IContentPresenter;
+import org.aisen.wen.ui.presenter.IPagingPresenter;
 
 import java.io.Serializable;
 
@@ -20,11 +20,11 @@ public abstract class APagingModel<Item extends Serializable,
 
     @Override
     public void execute() {
-        execute(APagingPresenter.RefreshMode.reset, null);
+        execute(IPagingPresenter.RefreshMode.reset, null);
     }
 
     @Override
-    public void execute(APagingPresenter.RefreshMode mode, IPaging<Item, Result> paging) {
+    public void execute(IPagingPresenter.RefreshMode mode, IPaging<Item, Result> paging) {
         new PagingTask(mode, paging).execute();
     }
 
@@ -35,10 +35,10 @@ public abstract class APagingModel<Item extends Serializable,
 
     class PagingTask extends ContentModelTask {
 
-        APagingPresenter.RefreshMode mode;
+        IPagingPresenter.RefreshMode mode;
         IPaging<Item, Result> paging;
 
-        public PagingTask(APagingPresenter.RefreshMode mode, IPaging<Item, Result> paging) {
+        public PagingTask(IPagingPresenter.RefreshMode mode, IPaging<Item, Result> paging) {
             super();
 
             this.mode = mode;
@@ -51,7 +51,7 @@ public abstract class APagingModel<Item extends Serializable,
         }
 
         @Override
-        ModelListenerParam getListenerParam(AContentPresenter.TaskState taskState, TaskException exception, Result result) {
+        ModelListenerParam getListenerParam(IContentPresenter.TaskState taskState, TaskException exception, Result result) {
             return new PagingModelListenerParam(taskState, result, exception, mode);
         }
     }
@@ -64,6 +64,6 @@ public abstract class APagingModel<Item extends Serializable,
      * @return
      * @throws TaskException
      */
-    abstract protected Result workInBackground(APagingPresenter.RefreshMode mode, IPaging<Item, Result> paging) throws TaskException;
+    abstract protected Result workInBackground(IPagingPresenter.RefreshMode mode, IPaging<Item, Result> paging) throws TaskException;
 
 }

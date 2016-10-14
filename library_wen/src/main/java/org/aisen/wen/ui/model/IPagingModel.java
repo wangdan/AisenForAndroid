@@ -1,7 +1,7 @@
 package org.aisen.wen.ui.model;
 
 import org.aisen.wen.support.paging.IPaging;
-import org.aisen.wen.ui.presenter.impl.APagingPresenter;
+import org.aisen.wen.ui.presenter.IPagingPresenter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,7 +13,7 @@ public interface IPagingModel<Item extends Serializable,
                               Result extends Serializable>
                         extends IModel<Result> {
 
-    void execute(APagingPresenter.RefreshMode mode, IPaging<Item, Result> paging);
+    void execute(IPagingPresenter.RefreshMode mode, IPaging<Item, Result> paging);
 
     /**
      * 将Ts转换成List(T)

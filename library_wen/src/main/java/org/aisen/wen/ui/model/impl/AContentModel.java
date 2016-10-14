@@ -6,7 +6,7 @@ import org.aisen.wen.component.network.task.WorkTask;
 import org.aisen.wen.ui.model.IModel;
 import org.aisen.wen.ui.model.listener.IModelListener;
 import org.aisen.wen.ui.model.listener.ModelListenerParam;
-import org.aisen.wen.ui.presenter.impl.AContentPresenter;
+import org.aisen.wen.ui.presenter.IContentPresenter;
 
 import java.io.Serializable;
 
@@ -59,7 +59,7 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onPrepare() {
             super.onPrepare();
 
-            getCallback().onPrepare(getListenerParam(AContentPresenter.TaskState.prepare, null, null));
+            getCallback().onPrepare(getListenerParam(IContentPresenter.TaskState.prepare, null, null));
         }
 
         @Override
@@ -71,26 +71,26 @@ public abstract class AContentModel<Result extends Serializable> implements IMod
         protected void onSuccess(final Result result) {
             super.onSuccess(result);
 
-            getCallback().onSuccess(getListenerParam(AContentPresenter.TaskState.success, null, result));
+            getCallback().onSuccess(getListenerParam(IContentPresenter.TaskState.success, null, result));
         }
 
         @Override
         protected void onFailure(final TaskException exception) {
             super.onFailure(exception);
 
-            getCallback().onFailure(getListenerParam(AContentPresenter.TaskState.falid, exception, null));
+            getCallback().onFailure(getListenerParam(IContentPresenter.TaskState.falid, exception, null));
         }
 
         @Override
         protected void onFinished() {
             super.onFinished();
 
-            getCallback().onFinished(getListenerParam(AContentPresenter.TaskState.finished, null, null));
+            getCallback().onFinished(getListenerParam(IContentPresenter.TaskState.finished, null, null));
 
             mTask = null;
         }
 
-        ModelListenerParam<Result> getListenerParam(AContentPresenter.TaskState taskState, TaskException exception, Result result) {
+        ModelListenerParam<Result> getListenerParam(IContentPresenter.TaskState taskState, TaskException exception, Result result) {
             return new ModelListenerParam(taskState, result, exception);
         }
 

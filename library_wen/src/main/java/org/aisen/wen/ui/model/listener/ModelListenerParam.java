@@ -1,7 +1,7 @@
 package org.aisen.wen.ui.model.listener;
 
 import org.aisen.wen.component.network.task.TaskException;
-import org.aisen.wen.ui.presenter.impl.AContentPresenter;
+import org.aisen.wen.ui.presenter.IContentPresenter;
 
 import java.io.Serializable;
 
@@ -10,19 +10,19 @@ import java.io.Serializable;
  */
 public class ModelListenerParam<Result extends Serializable> {
 
-    private final AContentPresenter.TaskState taskState;
+    private final IContentPresenter.TaskState taskState;
 
     private final TaskException exception;
 
     private final Result result;
 
-    public ModelListenerParam(AContentPresenter.TaskState taskState, Result result, TaskException exception) {
+    public ModelListenerParam(IContentPresenter.TaskState taskState, Result result, TaskException exception) {
         this.taskState = taskState;
         this.exception = exception;
         this.result = result;
     }
 
-    public AContentPresenter.TaskState getTaskState() {
+    public IContentPresenter.TaskState getTaskState() {
         return taskState;
     }
 

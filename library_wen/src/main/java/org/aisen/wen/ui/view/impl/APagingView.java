@@ -19,7 +19,7 @@ import org.aisen.wen.ui.itemview.BasicFooterView;
 import org.aisen.wen.ui.itemview.IITemView;
 import org.aisen.wen.ui.itemview.IItemViewCreator;
 import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
-import org.aisen.wen.ui.presenter.impl.APagingPresenter;
+import org.aisen.wen.ui.presenter.IPagingPresenter;
 import org.aisen.wen.ui.view.IPaingView;
 
 import java.io.Serializable;
@@ -28,7 +28,10 @@ import java.util.ArrayList;
 /**
  * Created by wangdan on 16/10/12.
  */
-public abstract class APagingView<Item extends Serializable, Result extends Serializable, Header extends Serializable, V extends ViewGroup>
+public abstract class APagingView<Item extends Serializable,
+                                  Result extends Serializable,
+                                  Header extends Serializable,
+                                  V extends ViewGroup>
                             extends AContentView implements IPaingView<Item, Result, Header, V>,
                                                             AFooterItemView.OnFooterViewCallback,
                                                             IPaingView.IPagingViewCallback {
@@ -142,7 +145,7 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
     /**
      * 设置列表控件状态为刷新结束
      */
-    public void onRefreshViewFinished(APagingPresenter.RefreshMode mode) {
+    public void onRefreshViewFinished(IPagingPresenter.RefreshMode mode) {
 
     }
 
@@ -250,7 +253,7 @@ public abstract class APagingView<Item extends Serializable, Result extends Seri
      * 设置列表控件状态为刷新结束
      */
     @Override
-    public void setRefreshViewFinished(APagingPresenter.RefreshMode mode) {
+    public void setRefreshViewFinished(IPagingPresenter.RefreshMode mode) {
 
     }
 

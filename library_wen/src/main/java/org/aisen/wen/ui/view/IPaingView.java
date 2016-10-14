@@ -6,7 +6,7 @@ import org.aisen.wen.ui.adapter.IPagingAdapter;
 import org.aisen.wen.ui.itemview.AHeaderItemViewCreator;
 import org.aisen.wen.ui.itemview.IItemViewCreator;
 import org.aisen.wen.ui.model.listener.PagingModelListenerParam;
-import org.aisen.wen.ui.presenter.impl.APagingPresenter;
+import org.aisen.wen.ui.presenter.IPagingPresenter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -131,7 +131,7 @@ public interface IPaingView<Item extends Serializable,
      *
      * @param mode
      */
-    void setRefreshViewFinished(APagingPresenter.RefreshMode mode);
+    void setRefreshViewFinished(IPagingPresenter.RefreshMode mode);
 
     /**
      * 根据RefreshConfig刷新RefreshView
@@ -147,10 +147,10 @@ public interface IPaingView<Item extends Serializable,
      *            当次拉取数据的类型
      * @param datas
      *            当次拉取的数据
-     * @return <tt>false</tt> 如果mode={@link APagingPresenter.RefreshMode#reset}
+     * @return <tt>false</tt> 如果mode={@link IPagingPresenter.RefreshMode#reset}
      *         默认清空adapter中的数据
      */
-    boolean handleResult(APagingPresenter.RefreshMode mode, List<Item> datas);
+    boolean handleResult(IPagingPresenter.RefreshMode mode, List<Item> datas);
 
     /**
      * 生成一个新的ItemViewCreator
