@@ -5,11 +5,13 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.aisen.wen.component.bitmaploader.core.BitmapOwner;
+import org.aisen.wen.support.utils.ViewUtils;
 import org.aisen.wen.ui.activity.BaseActivity;
 import org.aisen.wen.ui.view.IView;
 
@@ -104,6 +106,25 @@ public abstract class ABaseFragment extends Fragment implements BitmapOwner, IVi
     @Override
     public boolean canDisplay() {
         return true;
+    }
+
+    public void showMessage(CharSequence msg) {
+        if (!TextUtils.isEmpty(msg) && getActivity() != null)
+            ViewUtils.showMessage(getActivity(), msg.toString());
+    }
+
+    public void showMessage(int msgId) {
+        if (getActivity() != null)
+            showMessage(getString(msgId));
+    }
+
+    /**
+     * 指定Activity的ContentViewID
+     *
+     * @return
+     */
+    public int setActivityLayoutId() {
+        return -1;
     }
 
     public int setLayoutId() {

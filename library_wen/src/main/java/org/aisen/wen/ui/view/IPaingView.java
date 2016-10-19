@@ -145,12 +145,14 @@ public interface IPaingView<Item extends Serializable,
      *
      * @param mode
      *            当次拉取数据的类型
-     * @param datas
+     * @param list
+     *            当次拉取的数据
+     * @param result
      *            当次拉取的数据
      * @return <tt>false</tt> 如果mode={@link IPagingPresenter.RefreshMode#reset}
      *         默认清空adapter中的数据
      */
-    boolean handleResult(IPagingPresenter.RefreshMode mode, List<Item> datas);
+    boolean handleResult(IPagingPresenter.RefreshMode mode, List<Item> list, Result result);
 
     /**
      * 生成一个新的ItemViewCreator

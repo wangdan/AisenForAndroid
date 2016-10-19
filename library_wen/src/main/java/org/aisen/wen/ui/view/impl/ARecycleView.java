@@ -119,7 +119,7 @@ public abstract class ARecycleView<Item extends Serializable, Result extends Ser
     }
 
     @Override
-    public boolean handleResult(IPagingPresenter.RefreshMode mode, List<Item> datas) {
+    public boolean handleResult(IPagingPresenter.RefreshMode mode, List<Item> list, Result result) {
         return false;
     }
 

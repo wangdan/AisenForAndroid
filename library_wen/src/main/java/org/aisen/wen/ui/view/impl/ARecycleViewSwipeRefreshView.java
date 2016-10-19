@@ -5,7 +5,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 
 import org.aisen.wen.R;
 import org.aisen.wen.R2;
-import org.aisen.wen.ui.itemview.IItemViewCreator;
 import org.aisen.wen.ui.presenter.IPagingPresenter;
 
 import java.io.Serializable;
@@ -15,7 +14,7 @@ import butterknife.BindView;
 /**
  * Created by wangdan on 16/10/13.
  */
-public class ARecycleViewSwipeRefreshView<Item extends Serializable,
+public abstract class ARecycleViewSwipeRefreshView<Item extends Serializable,
                                           Result extends Serializable,
                                           Header extends Serializable>
                                     extends ARecycleView<Item, Result, Header>
@@ -42,11 +41,6 @@ public class ARecycleViewSwipeRefreshView<Item extends Serializable,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-    }
-
-    @Override
-    public IItemViewCreator<Item> newItemViewCreator() {
-        return null;
     }
 
     @Override

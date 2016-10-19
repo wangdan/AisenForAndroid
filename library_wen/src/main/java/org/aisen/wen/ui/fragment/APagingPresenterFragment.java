@@ -124,7 +124,7 @@ public abstract class APagingPresenterFragment<Item extends Serializable,
         }
 
         // 如果子类没有处理新获取的数据刷新UI，默认替换所有数据
-        if (!getPView().handleResult(mode, resultList)) {
+        if (!getPView().handleResult(mode, resultList, result)) {
             if (mode == RefreshMode.reset) {
                 getPView().getAdapter().getDatas().clear();
                 getPView().getAdapter().getDatas().addAll(new ArrayList<Item>());

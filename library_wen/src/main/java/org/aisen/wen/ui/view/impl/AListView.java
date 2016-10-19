@@ -76,7 +76,7 @@ public abstract class AListView<Item extends Serializable, Result extends Serial
     }
 
     @Override
-    public boolean handleResult(IPagingPresenter.RefreshMode mode, List<Item> datas) {
+    public boolean handleResult(IPagingPresenter.RefreshMode mode, List<Item> list, Result result) {
         return false;
     }
 
