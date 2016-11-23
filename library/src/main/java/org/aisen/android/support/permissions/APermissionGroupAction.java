@@ -10,25 +10,28 @@ import android.support.v4.content.ContextCompat;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.support.action.IAction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 申请一组权限
  *
  * Created by wangdan on 16/2/26.
  */
-public abstract class APermissionsAction extends IAction implements IPermissionsObserver {
+public abstract class APermissionGroupAction extends IAction implements IPermissionsObserver {
 
     public static final String TAG = "Permission";
 
     private IPermissionsSubject subject;
-    private String permission;
+    private String[] permissions;
     private int requestCode;
 
-    public APermissionsAction(Activity context, IAction parent, IPermissionsSubject subject, String permission) {
+    public APermissionGroupAction(Activity context, IAction parent, IPermissionsSubject subject, String[] permissions) {
         super(context, parent);
 
         this.subject = subject;
-        this.permission = permission;
-        requestCode = permission.hashCode();
+        this.permissions = permissions;
+        requestCode = permissions.hashCode();
     }
 
     @Override
@@ -36,22 +39,34 @@ public abstract class APermissionsAction extends IAction implements IPermissions
         boolean interrupt = super.interrupt();
 
         if (requestCode == 0) {
-
+            return interrupt;
         }
         // 低于SDK23
         else if (Build.VERSION.SDK_INT < 23) {
+            return interrupt;
+        }
+
+        List<String> deniedList = new ArrayList<>();
+        for (int i = 0; i < permissions.length; i++) {
+            // 授予了权限
+            if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(getContext(), permissions[i])) {
+                Logger.d(TAG, "已经授予了权限, permission = %s", permissions[i]);
+            }
+            // 没有或者拒绝了权限
+            else if (PackageManager.PERMISSION_DENIED == ContextCompat.checkSelfPermission(getContext(), permissions[i])) {
+                deniedList.add(permissions[i]);
+
+                Logger.d(TAG, "%s permission = %s", "PERMISSION_DENIED", permissions[i]);
+            }
+        }
+        if (deniedList.size() == 0) {
 
         }
-        // 授予了权限
-        else if (PackageManager.PERMISSION_GRANTED == ContextCompat.checkSelfPermission(getContext(), permission)) {
-            Logger.d(TAG, "已经授予了权限, permission = %s", permission);
-        }
-        // 没有或者拒绝了权限
-        else if (PackageManager.PERMISSION_DENIED == ContextCompat.checkSelfPermission(getContext(), permission)) {
+        else {
+            permissions = new String[deniedList.size()];
+            deniedList.toArray(permissions);
+
             interrupt = true;
-
-            Logger.d(TAG, "%s permission = %s", "PERMISSION_DENIED", permission);
-
             doInterrupt();
         }
 
@@ -87,7 +102,7 @@ public abstract class APermissionsAction extends IAction implements IPermissions
      *
      * @return  true:
      */
-    protected void onPermissionDenied(boolean alwaysDenied) {
+    protected void onPermissionDenied(String[] permissions, boolean[] alwaysDenied) {
 
     }
 
@@ -100,14 +115,14 @@ public abstract class APermissionsAction extends IAction implements IPermissions
             subject.attach(this);
         }
 
-        Logger.d(TAG, "requestPermission(%s)", permission);
+        Logger.d(TAG, permissions);
 
         // XT1562(Motorola) 这里会上报一个这样的错误，暂时搞不懂为什么
         // java.lang.IllegalArgumentException:Wake lock not active: android.os.Binder@3e69cbf from uid 1000
         try {
-            getContext().requestPermissions(new String[]{ permission }, requestCode);
+            getContext().requestPermissions(permissions, requestCode);
         } catch (IllegalArgumentException e) {
-            Logger.printExc(APermissionsAction.class, e);
+            Logger.printExc(APermissionGroupAction.class, e);
         }
     }
 
@@ -132,24 +147,36 @@ public abstract class APermissionsAction extends IAction implements IPermissions
             subject.detach(this);
         }
 
-        if (requestCode == this.requestCode) {
-            if (permissions != null && permissions.length > 0 && permission.equals(permissions[0])) {
-                if (grantResults != null && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    run();
+        if (permissions.length != APermissionGroupAction.this.permissions.length ||
+                permissions.length != grantResults.length) {
+            return;
+        }
 
-                    return;
+        if (requestCode == this.requestCode) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (permissions[i].equals(permissions[i])) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        if (i == permissions.length - 1) {
+                            run();
+
+                            return;
+                        }
+                    }
+                    else {
+                        break;
+                    }
                 }
             }
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getContext(), permission)) {
-                Logger.d(TAG, "onPermissionDenied(false)");
-
-                onPermissionDenied(false);
-            } else {
-                Logger.d(TAG, "onPermissionDenied(true)");
-
-                onPermissionDenied(true);
+            boolean[] alwaysDenied = new boolean[permissions.length];
+            for (int i = 0; i < permissions.length; i++) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getContext(), permissions[i])) {
+                    alwaysDenied[i] = false;
+                } else {
+                    alwaysDenied[i] = true;
+                }
             }
+            onPermissionDenied(permissions, alwaysDenied);
         }
     }
 

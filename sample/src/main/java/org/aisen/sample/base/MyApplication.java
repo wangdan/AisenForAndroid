@@ -1,6 +1,7 @@
 package org.aisen.sample.base;
 
 import org.aisen.android.common.context.GlobalContext;
+import org.aisen.android.ui.activity.basic.BaseActivity;
 
 
 /**
@@ -12,6 +13,7 @@ public class MyApplication extends GlobalContext {
     public void onCreate() {
         super.onCreate();
 
+        BaseActivity.setHelper(SampleActivityHelper.class);
     }
 
 }
