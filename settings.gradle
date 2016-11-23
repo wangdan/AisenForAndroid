@@ -1,1 +1,1 @@
-include ':sample', ':library', ':library_wen', ':sinaweibo'
+include ':sample', ':library'

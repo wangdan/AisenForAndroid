@@ -1,14 +1,14 @@
 package org.aisen.android.network.task;
 
-import android.os.Bundle;
-import android.text.TextUtils;
-
-import org.aisen.android.common.utils.Logger;
-
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Set;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+
+import org.aisen.android.common.utils.Logger;
 
 public class TaskManager implements ITaskManager {
 	
@@ -77,9 +77,8 @@ public class TaskManager implements ITaskManager {
 		
 		return taskCountMap.keySet().contains(taskId) ? taskCountMap.get(taskId) : 0;
 	}
-
-	@Override
-	public void clearTaskCount(String taskId) {
+	
+	public void cleatTaskCount(String taskId) {
 		if(!TextUtils.isEmpty(taskId))
 			taskCountMap.remove(taskId);
 	}

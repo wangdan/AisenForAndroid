@@ -31,3 +31,18 @@ allprojects {
         }
     }
 }
+
+ext {
+    // android build info
+    android = [
+               compileSdkVersion: 24,
+               buildToolsVersion: "24.0.2",
+               minSdkVersion    : 14,
+               targetSdkVersion : 22
+    ]
+
+    // support lib version
+    supportLibVersion = "24.2.0"
+    okhttpLibVersion = "2.6.0"
+    fastjsonLibVersion = "1.2.6"
+}

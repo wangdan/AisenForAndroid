@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.aisen.android.R;
+import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.ViewUtils;
 import org.aisen.android.component.bitmaploader.BitmapLoader;
@@ -497,9 +499,8 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
         return CacheMode.disable;
     }
 
-    @Override
-    public void clearTaskCount(String taskId) {
-        taskManager.clearTaskCount(taskId);
+    public void cleatTaskCount(String taskId) {
+        taskManager.cleatTaskCount(taskId);
     }
 
     protected void setViewOnClick(View v) {

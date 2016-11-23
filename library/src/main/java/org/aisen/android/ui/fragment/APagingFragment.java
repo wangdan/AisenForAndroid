@@ -114,6 +114,8 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 
         onSaveDatas(outState);
 
+//        outState.putSerializable(SAVED_CONFIG, refreshConfig);
+
         super.onSaveInstanceState(outState);
     }
 

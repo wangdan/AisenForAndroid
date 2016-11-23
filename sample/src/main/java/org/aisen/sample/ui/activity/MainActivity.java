@@ -16,12 +16,12 @@ import android.widget.TextView;
 
 import com.example.aisensample.R;
 
+import org.aisen.android.common.utils.SystemUtils;
+import org.aisen.android.ui.activity.basic.BaseActivity;
+import org.aisen.android.ui.widget.FitWindowsFrameLayout;
 import org.aisen.sample.support.bean.MenuBean;
 import org.aisen.sample.support.utils.SystemBarUtils;
 import org.aisen.sample.ui.fragment.BaseFragmentSample;
-import org.aisen.wen.support.utils.SystemUtils;
-import org.aisen.wen.ui.activity.BaseActivity;
-import org.aisen.wen.ui.widget.FitWindowsFrameLayout;
 
 import butterknife.BindView;
 
