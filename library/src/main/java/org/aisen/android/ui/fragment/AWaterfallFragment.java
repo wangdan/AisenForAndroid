@@ -1,10 +1,11 @@
 package org.aisen.android.ui.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import org.aisen.android.R;
-import org.aisen.android.support.inject.ViewInject;
+import org.aisen.android.R2;
 import org.aisen.android.ui.fragment.adapter.BasicListAdapter;
 import org.aisen.android.ui.fragment.adapter.IPagingAdapter;
 import org.aisen.android.ui.fragment.itemview.AFooterItemView;
@@ -16,6 +17,9 @@ import org.aisen.android.ui.widget.pla.PLAMultiColumnListView;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * 维护一个瀑布流
  *
@@ -24,12 +28,19 @@ public abstract class AWaterfallFragment<T extends Serializable, Ts extends Seri
                                 extends APagingFragment<T, Ts, Header, PLAMultiColumnListView>
                                 implements PLAAbsListView.OnScrollListener, PLAMultiColumnListView.OnItemClickListener {
 
-    @ViewInject(idStr = "plaMultiColumnList")
+    @BindView(R2.id.plaMultiColumnList)
     PLAMultiColumnListView mPlaMultiColumnList;
 
     @Override
     public int inflateContentView() {
         return R.layout.comm_ui_waterfall;
+    }
+
+    @Override
+    void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
+        ButterKnife.bind(this, getContentView());
+
+        super._layoutInit(inflater, savedInstanceSate);
     }
 
     @Override

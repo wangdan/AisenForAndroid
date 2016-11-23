@@ -4,10 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
-import org.aisen.android.support.inject.InjectUtility;
 import org.aisen.android.ui.fragment.itemview.IITemView;
 
 import java.io.Serializable;
+
+import butterknife.ButterKnife;
 
 /**
  * Created by wangdan on 16/1/5.
@@ -29,7 +30,7 @@ public abstract class ABasicItemView<T extends Serializable> implements IITemVie
 
     @Override
     public void onBindView(View convertView) {
-        InjectUtility.initInjectedView(context, this, convertView);
+        ButterKnife.bind(this, convertView);
     }
 
     @Override

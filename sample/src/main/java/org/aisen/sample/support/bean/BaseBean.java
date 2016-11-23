@@ -1,6 +1,7 @@
 package org.aisen.sample.support.bean;
 
-import org.aisen.wen.component.network.biz.IResult;
+
+import org.aisen.android.network.biz.IResult;
 
 import java.io.Serializable;
 

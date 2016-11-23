@@ -11,7 +11,6 @@ import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
 import org.aisen.android.R;
-import org.aisen.android.common.utils.Logger;
 
 /**
  * Created by wangdan on 15/8/18.
@@ -63,8 +62,6 @@ public class FitWindowsFrameLayout extends FrameLayout {
 
             // 默认全部填充
             mInsertType = a.getInt(R.styleable.FitWindowsFrameLayout_fitType, INSERT_BOTH);
-
-            Logger.d(TAG, "mInsertType = " + mInsertType);
 
             int statusBarColor = a.getColor(R.styleable.FitWindowsFrameLayout_statusBarColor, 0);
             if (statusBarColor > 0) {
@@ -140,18 +137,12 @@ public class FitWindowsFrameLayout extends FrameLayout {
      * @param insets
      */
     public void setFitWindowns(Rect insets) {
-        Logger.e(TAG, "setFitWindowns");
-        Logger.e(TAG, insets);
-
         if (insets != null)
             fitSystemWindows(insets);
     }
 
     @Override
     protected boolean fitSystemWindows(Rect insets) {
-        Logger.e(TAG, "fitSystemWindows");
-        Logger.e(TAG, insets);
-
         if (onFitSystemWindowsListener != null)
             onFitSystemWindowsListener.onFitSystemWindows(insets);
 
@@ -180,8 +171,6 @@ public class FitWindowsFrameLayout extends FrameLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        Logger.d(TAG, "onDraw()");
 
         if (mInserts != null) {
             if (mInsertType == INSERT_BOTTOM) {

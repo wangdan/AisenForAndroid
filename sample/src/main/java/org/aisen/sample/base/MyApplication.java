@@ -1,19 +1,17 @@
 package org.aisen.sample.base;
 
-import android.app.Application;
+import org.aisen.android.common.context.GlobalContext;
 
-import org.aisen.wen.base.GlobalContext;
 
 /**
  * Created by wangdan on 15/4/23.
  */
-public class MyApplication extends Application {
+public class MyApplication extends GlobalContext {
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        GlobalContext.onCreate(this);
     }
 
 }

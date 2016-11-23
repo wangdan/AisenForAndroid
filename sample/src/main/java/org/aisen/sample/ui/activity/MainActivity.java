@@ -21,7 +21,7 @@ import org.aisen.android.ui.activity.basic.BaseActivity;
 import org.aisen.android.ui.widget.FitWindowsFrameLayout;
 import org.aisen.sample.support.bean.MenuBean;
 import org.aisen.sample.support.utils.SystemBarUtils;
-import org.aisen.sample.ui.fragment.BaseFragmentSample;
+import org.aisen.sample.ui.fragment.MenuFragment;
 
 import butterknife.BindView;
 
@@ -75,8 +75,8 @@ public class MainActivity extends BaseActivity {
 
 //        menuFragment = MenuFragment.newInstance();
 //        getFragmentManager().beginTransaction().add(R.id.menu_frame, menuFragment, "MenuFragment").commit();
-        if (savedInstanceState == null)
-            onMenuSelected(new MenuBean(0, R.string.a_base_fragment, R.string.a_base_fragment, "0"));
+//        if (savedInstanceState == null)
+//            onMenuSelected(new MenuBean(0, R.string.a_base_fragment, R.string.a_base_fragment, "0"));
     }
 
     public void onMenuSelected(MenuBean bean) {
@@ -84,7 +84,7 @@ public class MainActivity extends BaseActivity {
 
         switch (Integer.parseInt(bean.getType())) {
         case 0:
-            fragment = BaseFragmentSample.newInstance();
+            fragment = MenuFragment.newInstance();
             break;
         }
 

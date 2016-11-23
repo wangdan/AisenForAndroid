@@ -4,11 +4,12 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 
 import org.aisen.android.R;
-import org.aisen.android.support.inject.ViewInject;
+import org.aisen.android.R2;
 import org.aisen.android.ui.fragment.adapter.BasicRecycleViewAdapter;
 import org.aisen.android.ui.fragment.adapter.IPagingAdapter;
 import org.aisen.android.ui.fragment.itemview.AFooterItemView;
@@ -16,6 +17,9 @@ import org.aisen.android.ui.fragment.itemview.AHeaderItemViewCreator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 维护RecycleView
@@ -26,7 +30,7 @@ public abstract class ARecycleViewFragment<T extends Serializable, Ts extends Se
                             extends APagingFragment<T, Ts, Header, RecyclerView>
                             implements AdapterView.OnItemClickListener {
 
-    @ViewInject(idStr = "recycleview")
+    @BindView(R2.id.recycleview)
     RecyclerView mRecycleView;
 
     @Override
@@ -37,6 +41,13 @@ public abstract class ARecycleViewFragment<T extends Serializable, Ts extends Se
     @Override
     public RecyclerView getRefreshView() {
         return mRecycleView;
+    }
+
+    @Override
+    void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
+        ButterKnife.bind(this, getContentView());
+
+        super._layoutInit(inflater, savedInstanceSate);
     }
 
     @Override

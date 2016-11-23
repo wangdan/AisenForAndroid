@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.aisen.android.R;
-import org.aisen.android.common.context.GlobalContext;
+import org.aisen.android.R2;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.ViewUtils;
 import org.aisen.android.component.bitmaploader.BitmapLoader;
@@ -24,11 +24,12 @@ import org.aisen.android.network.task.ITaskManager;
 import org.aisen.android.network.task.TaskException;
 import org.aisen.android.network.task.TaskManager;
 import org.aisen.android.network.task.WorkTask;
-import org.aisen.android.support.inject.InjectUtility;
-import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.activity.basic.BaseActivity;
 
 import java.text.SimpleDateFormat;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 基于ABaseFragment，维护与Activity之间的生命周期绑定，管理WorkTask线程，支持四种个基本视图之间的自动切换<br/>
@@ -48,13 +49,17 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
     private TaskManager taskManager;// 管理线程
 
     ViewGroup rootView;// 根视图
-    @ViewInject(idStr = "layoutLoading")
+    @Nullable
+    @BindView(R2.id.layoutLoading)
     View loadingLayout;// 加载中视图
-    @ViewInject(idStr = "layoutLoadFailed")
+    @Nullable
+    @BindView(R2.id.layoutLoadFailed)
     View loadFailureLayout;// 加载失败视图
-    @ViewInject(idStr = "layoutContent")
+    @Nullable
+    @BindView(R2.id.layoutContent)
     View contentLayout;// 内容视图
-    @ViewInject(idStr = "layoutEmpty")
+    @Nullable
+    @BindView(R2.id.layoutEmpty)
     View emptyLayout;// 空视图
 
     // 标志是否ContentView是否为空
@@ -194,7 +199,7 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
      * @param savedInstanceSate
      */
     void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
-        InjectUtility.initInjectedView(getActivity(), this, getContentView());
+        ButterKnife.bind(this, getContentView());
 
         if (emptyLayout != null) {
             View reloadView = emptyLayout.findViewById(R.id.layoutReload);

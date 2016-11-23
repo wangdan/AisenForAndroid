@@ -1,20 +1,24 @@
 package org.aisen.android.ui.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.aisen.android.R;
+import org.aisen.android.R2;
 import org.aisen.android.ui.fragment.adapter.BasicListAdapter;
 import org.aisen.android.ui.fragment.adapter.IPagingAdapter;
-import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.fragment.itemview.AFooterItemView;
 import org.aisen.android.ui.fragment.itemview.AHeaderItemViewCreator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 维护ListView
@@ -23,12 +27,19 @@ import java.util.ArrayList;
 public abstract class AListFragment<T extends Serializable, Ts extends Serializable, Header extends Serializable>
                                 extends APagingFragment<T, Ts, Header, ListView> implements AdapterView.OnItemClickListener, AbsListView.OnScrollListener {
 
-    @ViewInject(idStr = "listView")
+    @BindView(R2.id.listView)
     ListView mListView;
 
     @Override
     public int inflateContentView() {
         return R.layout.comm_ui_list;
+    }
+
+    @Override
+    void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
+        ButterKnife.bind(this, getContentView());
+
+        super._layoutInit(inflater, savedInstanceSate);
     }
 
     @Override
@@ -113,11 +124,11 @@ public abstract class AListFragment<T extends Serializable, Ts extends Serializa
             setViewVisiable(contentLayout, View.VISIBLE);
         }
         setAdapterItems(items);
-        if (mListView.getAdapter() == null) {
+        if (getRefreshView().getAdapter() == null) {
             bindAdapter(getAdapter());
         }
         else {
-            mListView.setSelectionFromTop(0, 0);
+            getRefreshView().setSelectionFromTop(0, 0);
             getAdapter().notifyDataSetChanged();
         }
     }

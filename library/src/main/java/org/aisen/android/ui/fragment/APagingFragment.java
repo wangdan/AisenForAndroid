@@ -29,6 +29,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+
 /**
  * 基于APagingFragment，可以扩展支持BaseAdapter的UI控件，并处理上、下拉的交互逻辑<br/>
  *
@@ -133,6 +135,8 @@ public abstract class APagingFragment<T extends Serializable, Ts extends Seriali
 	@Override
 	void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
 		super._layoutInit(inflater, savedInstanceSate);
+
+		ButterKnife.bind(this, getContentView());
 
 		setupRefreshConfig(refreshConfig);
 

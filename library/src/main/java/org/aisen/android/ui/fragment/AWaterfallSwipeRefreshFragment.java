@@ -2,11 +2,15 @@ package org.aisen.android.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.LayoutInflater;
 
 import org.aisen.android.R;
-import org.aisen.android.support.inject.ViewInject;
+import org.aisen.android.R2;
 
 import java.io.Serializable;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 维护瀑布流的SwipeRefreshLayout控件
@@ -16,12 +20,19 @@ public abstract class AWaterfallSwipeRefreshFragment<T extends Serializable, Ts 
                                     extends AWaterfallFragment<T, Ts, Header>
                                     implements SwipeRefreshLayout.OnRefreshListener {
 
-    @ViewInject(idStr = "swipeRefreshLayout")
+    @BindView(R2.id.swipeRefreshLayout)
     SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public int inflateContentView() {
         return R.layout.comm_ui_waterfall_swiperefresh;
+    }
+
+    @Override
+    void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
+        ButterKnife.bind(this, getContentView());
+
+        super._layoutInit(inflater, savedInstanceSate);
     }
 
     @Override

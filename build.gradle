@@ -38,7 +38,7 @@ ext {
                compileSdkVersion: 24,
                buildToolsVersion: "24.0.2",
                minSdkVersion    : 14,
-               targetSdkVersion : 22
+               targetSdkVersion : 24
     ]
 
     // support lib version

@@ -1,15 +1,19 @@
 package org.aisen.android.ui.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import org.aisen.android.R;
+import org.aisen.android.R2;
 import org.aisen.android.network.task.TaskException;
-import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.widget.swipyrefresh.SwipyRefreshLayout;
 import org.aisen.android.ui.widget.swipyrefresh.SwipyRefreshLayoutDirection;
 
 import java.io.Serializable;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 维护SwipyRefresh刷新的GridView
@@ -20,12 +24,19 @@ public abstract class AGridSwipyRefreshFragment<T extends Serializable, Ts exten
                                             extends AGridFragment<T, Ts, Header>
                                             implements SwipyRefreshLayout.OnRefreshListener  {
 
-    @ViewInject(idStr = "swipyRefreshLayout")
+    @BindView(R2.id.swipyRefreshLayout)
     protected SwipyRefreshLayout swipyRefreshLayout;
 
     @Override
     public int inflateContentView() {
         return R.layout.comm_ui_swipy_grid;
+    }
+
+    @Override
+    void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
+        ButterKnife.bind(this, getContentView());
+
+        super._layoutInit(inflater, savedInstanceSate);
     }
 
     @Override

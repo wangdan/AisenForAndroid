@@ -4,7 +4,8 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.KeyEvent;
@@ -14,6 +15,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
 import org.aisen.android.R;
+import org.aisen.android.R2;
 import org.aisen.android.common.setting.SettingUtility;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.ViewUtils;
@@ -22,7 +24,6 @@ import org.aisen.android.component.bitmaploader.core.BitmapOwner;
 import org.aisen.android.network.task.ITaskManager;
 import org.aisen.android.network.task.TaskManager;
 import org.aisen.android.network.task.WorkTask;
-import org.aisen.android.support.inject.InjectUtility;
 import org.aisen.android.ui.fragment.ABaseFragment;
 import org.aisen.android.ui.widget.AsToolbar;
 
@@ -33,10 +34,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by wangdan on 15-1-16.
  */
-public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITaskManager, AsToolbar.OnToolbarDoubleClick {
+public class BaseActivity extends AppCompatActivity implements BitmapOwner, ITaskManager, AsToolbar.OnToolbarDoubleClick {
 
     static final String TAG = "Activity-Base";
 
@@ -58,7 +62,9 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
 
     private View rootView;
 
-    private Toolbar mToolbar;
+    @Nullable
+    @BindView(R2.id.toolbar)
+    Toolbar mToolbar;
 
     public static BaseActivity getRunningActivity() {
         return runningActivity;
@@ -98,7 +104,7 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         if (mHelper != null)
             mHelper.onCreate(savedInstanceState);
 
-        fragmentRefs = new HashMap<String, WeakReference<ABaseFragment>>();
+        fragmentRefs = new HashMap<>();
 
         if (savedInstanceState == null) {
             theme = configTheme();
@@ -118,15 +124,15 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
 
         taskManager = new TaskManager();
 
-        // 如果设备有实体MENU按键，overflow菜单不会再显示
-        ViewConfiguration viewConfiguration = ViewConfiguration.get(this);
-        if (viewConfiguration.hasPermanentMenuKey()) {
-            try {
+        try {
+            // 如果设备有实体MENU按键，overflow菜单不会再显示
+            ViewConfiguration viewConfiguration = ViewConfiguration.get(this);
+            if (viewConfiguration.hasPermanentMenuKey()) {
                 Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
                 menuKeyField.setAccessible(true);
                 menuKeyField.setBoolean(viewConfiguration, false);
-            } catch (Exception e) {
             }
+        } catch (Throwable e) {
         }
 
         super.onCreate(savedInstanceState);
@@ -160,13 +166,13 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
         return mToolbar;
     }
 
+    public View getRootView() {
+        return rootView;
+    }
+
     @Override
     public void setContentView(int layoutResID) {
         setContentView(View.inflate(this, layoutResID, null));
-    }
-
-    public View getRootView() {
-        return rootView;
     }
 
     @Override
@@ -175,7 +181,11 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
 
         rootView = view;
 
-        InjectUtility.initInjectedView(this);
+        ButterKnife.bind(this, rootView);
+
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        if (mToolbar != null)
+            setSupportActionBar(mToolbar);
     }
 
     @Override
@@ -184,8 +194,8 @@ public class BaseActivity extends ActionBarActivity implements BitmapOwner, ITas
 
         rootView = view;
 
-        InjectUtility.initInjectedView(this);
-        
+        ButterKnife.bind(this, rootView);
+
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         if (mToolbar != null)
             setSupportActionBar(mToolbar);

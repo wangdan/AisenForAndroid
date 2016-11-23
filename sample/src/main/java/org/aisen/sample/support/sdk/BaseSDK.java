@@ -1,9 +1,10 @@
 package org.aisen.sample.support.sdk;
 
-import org.aisen.wen.component.network.biz.ABizLogic;
-import org.aisen.wen.component.network.http.HttpConfig;
-import org.aisen.wen.component.network.http.Params;
-import org.aisen.wen.component.network.task.TaskException;
+
+import org.aisen.android.network.biz.ABizLogic;
+import org.aisen.android.network.http.HttpConfig;
+import org.aisen.android.network.http.Params;
+import org.aisen.android.network.task.TaskException;
 
 /**
  * Created by wangdan on 16/10/7.
@@ -38,22 +39,22 @@ class BaseSDK extends ABizLogic {
         // device_type=TCL+950&os=android&os_api=23&os_version=6.0.1&uuid=860846030054717&
         // tz_offset=28800&tz_name=Asia%2FShanghai&sys_language=zh&sys_region=CN&
         // language=en&region=US&sim_region=cn&youtube=0&original_channel=gp
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
-        params.add("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
+        params.addParameter("", "");
 
         return params;
     }

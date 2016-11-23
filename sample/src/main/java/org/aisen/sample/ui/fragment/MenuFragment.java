@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.example.aisensample.R;
 
-import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.fragment.AListFragment;
 import org.aisen.android.ui.fragment.adapter.ARecycleViewItemView;
 import org.aisen.android.ui.fragment.itemview.IITemView;
@@ -19,6 +18,8 @@ import org.aisen.sample.ui.activity.MainActivity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import butterknife.BindView;
 
 /**
  * Created by wangdan on 15/4/23.
@@ -75,7 +76,7 @@ public class MenuFragment extends AListFragment<MenuBean, ArrayList<MenuBean>, S
 
     class MainItemView extends ARecycleViewItemView<MenuBean> {
 
-        @ViewInject(id = R.id.txtTitle)
+        @BindView(R.id.txtTitle)
         TextView txtTitle;
 
         public MainItemView(Activity context, View itemView) {
