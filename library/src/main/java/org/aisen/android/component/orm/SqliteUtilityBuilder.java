@@ -44,20 +44,24 @@ public class SqliteUtilityBuilder {
 	}
 	
 	public SqliteUtility build(Context context) {
-		SQLiteDatabase db = null;
+		SQLiteDatabase writableDB = null;
+		SQLiteDatabase readableDB = null;
 		
 		if (sdcardDb) {
-			db = openSdcardDb(path, dbName, version);
+			writableDB = openSdcardDb(path, dbName, version);
+			readableDB = writableDB;
 
-            Logger.d(TAG, String.format(String.format("打开app库 %s, version = %d", dbName, db.getVersion())));
+            Logger.d(TAG, String.format(String.format("打开app库 %s, version = %d", dbName, readableDB.getVersion())));
 		}
 		else {
-			db = new SqliteDbHelper(context, dbName, version).getWritableDatabase();
+			SqliteDbHelper dbHelper = new SqliteDbHelper(context, dbName, version);
+			writableDB = dbHelper.getWritableDatabase();
+			readableDB = dbHelper.getReadableDatabase();
 
-            Logger.d(TAG, String.format(String.format("打开sdcard库 %s, version = %d", dbName, db.getVersion())));
+            Logger.d(TAG, String.format(String.format("打开sdcard库 %s, version = %d", dbName, readableDB.getVersion())));
 		}
 
-		return new SqliteUtility(dbName, db);
+		return new SqliteUtility(dbName, writableDB, readableDB);
 	}
 
 	static SQLiteDatabase openSdcardDb(String path, String dbName, int version) {

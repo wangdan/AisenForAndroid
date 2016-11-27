@@ -39,10 +39,12 @@ public class SqliteUtility {
     private static Hashtable<String, SqliteUtility> dbCache = new Hashtable<String, SqliteUtility>();
 
     private String dbName;
-	private SQLiteDatabase db;
-	
-	SqliteUtility(String dbName, SQLiteDatabase db) {
-		this.db = db;
+    private SQLiteDatabase writableDB;
+    private SQLiteDatabase readableDB;
+
+	SqliteUtility(String dbName, SQLiteDatabase writableDB, SQLiteDatabase readableDB) {
+        this.writableDB = writableDB;
+        this.readableDB = readableDB;
         this.dbName = dbName;
 		
 		dbCache.put(dbName, this);
@@ -116,7 +118,7 @@ public class SqliteUtility {
             columnList.add(tableColumn.getColumn());
 
         long start = System.currentTimeMillis();
-        Cursor cursor = db.query(tableInfo.getTableName(), columnList.toArray(new String[0]),
+        Cursor cursor = getReadableDB().query(tableInfo.getTableName(), columnList.toArray(new String[0]),
                                     selection, selectionArgs, groupBy, having, orderBy, limit);
         Logger.d(TAG, "table[%s] 查询数据结束，耗时 %s ms", tableInfo.getTableName(), String.valueOf(System.currentTimeMillis() - start));
 
@@ -212,13 +214,13 @@ public class SqliteUtility {
 
         synchronized (tableInfo) {
             long start = System.currentTimeMillis();
-            db.beginTransaction();
+            getWritableDB().beginTransaction();
             try {
                 String sql = SqlUtils.createSqlInsert(insertInto, tableInfo);
 
                 Logger.v(TAG, insertInto + " sql = %s", sql);
 
-                SQLiteStatement insertStatement = db.compileStatement(sql);
+                SQLiteStatement insertStatement = getWritableDB().compileStatement(sql);
                 long bindTime = 0;
                 long startTime = System.currentTimeMillis();
                 for (T entity : entityList) {
@@ -229,9 +231,9 @@ public class SqliteUtility {
                 }
                 Logger.d(TAG, "bindvalues 耗时 %s ms", bindTime + "");
 
-                db.setTransactionSuccessful();
+                getWritableDB().setTransactionSuccessful();
             } finally {
-                db.endTransaction();
+                getWritableDB().endTransaction();
             }
             Logger.d(TAG, "表 %s %s 数据 %d 条， 执行时间 %s ms",
                     tableInfo.getTableName(),
@@ -243,7 +245,7 @@ public class SqliteUtility {
             if (entityList.size() == 1 && tableInfo.getPrimaryKey() instanceof AutoIncrementTableColumn) {
                 Cursor cursor = null;
                 try {
-                    cursor = db.rawQuery("select last_insert_rowid() from " + tableInfo.getTableName(), null);
+                    cursor = getWritableDB().rawQuery("select last_insert_rowid() from " + tableInfo.getTableName(), null);
                     if(cursor.moveToFirst()) {
                         int newId = cursor.getInt(0);
 
@@ -305,7 +307,7 @@ public class SqliteUtility {
                         bindValue(values, colunm, t);
                     }
 
-                    int rowId = db.update(tableInfo.getTableName(), values, whereClause, whereArgs);
+                    int rowId = getWritableDB().update(tableInfo.getTableName(), values, whereClause, whereArgs);
                     if (Logger.DEBUG) {
                         Logger.d(TAG, " method[update], table[%s], whereClause[%s], whereArgs[%s], rowId[%d]",
                                 tableInfo.getTableName(), whereClause, JSON.toJSON(whereArgs), rowId);
@@ -324,7 +326,7 @@ public class SqliteUtility {
         try {
             TableInfo tableInfo = checkTable(clazz);
 
-            return db.update(tableInfo.getTableName(), values, whereClause, whereArgs);
+            return getWritableDB().update(tableInfo.getTableName(), values, whereClause, whereArgs);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -346,7 +348,7 @@ public class SqliteUtility {
             Logger.d(TAG, "method[delete] table[%s], sql[%s]", tableInfo.getTableName(), sql);
 
             long start = System.currentTimeMillis();
-            db.execSQL(sql);
+            getWritableDB().execSQL(sql);
             Logger.d(TAG, "表 %s 清空数据, 耗时 %s ms", tableInfo.getTableName(), String.valueOf(System.currentTimeMillis() - start));
         } catch (Exception e) {
             e.printStackTrace();
@@ -375,7 +377,7 @@ public class SqliteUtility {
             }
 
             long start = System.currentTimeMillis();
-            int rowCount = db.delete(tableInfo.getTableName(), whereClause, whereArgs);
+            int rowCount = getWritableDB().delete(tableInfo.getTableName(), whereClause, whereArgs);
 
             Logger.d(TAG, "表 %s 删除数据 %d 条, 耗时 %s ms", tableInfo.getTableName(), rowCount, String.valueOf(System.currentTimeMillis() - start));
         } catch (Exception e) {
@@ -388,7 +390,7 @@ public class SqliteUtility {
             TableInfo tableInfo = checkTable(clazz);
 
             long start = System.currentTimeMillis();
-            int rowCount = db.delete(tableInfo.getTableName(), whereClause, whereArgs);
+            int rowCount = getWritableDB().delete(tableInfo.getTableName(), whereClause, whereArgs);
 
             if (Logger.DEBUG) {
                 Logger.d(TAG, "method[delete], table[%s], whereClause[%s], whereArgs%s ",
@@ -422,7 +424,7 @@ public class SqliteUtility {
 
         try {
             long time = System.currentTimeMillis();
-            Cursor cursor = db.rawQuery(sql, whereArgs);
+            Cursor cursor = getReadableDB().rawQuery(sql, whereArgs);
             if (cursor.moveToFirst()) {
                 long sum = cursor.getLong(cursor.getColumnIndex("_sum_"));
                 Logger.d(TAG, "sum = %s 耗时%sms", String.valueOf(sum) ,String.valueOf(System.currentTimeMillis() - time));
@@ -452,7 +454,7 @@ public class SqliteUtility {
 
         try {
             long time = System.currentTimeMillis();
-            Cursor cursor = db.rawQuery(sql, whereArgs);
+            Cursor cursor = getReadableDB().rawQuery(sql, whereArgs);
             if (cursor.moveToFirst()) {
                 long count = cursor.getLong(cursor.getColumnIndex("_count_"));
                 Logger.d(TAG, "count = %s 耗时%sms", String.valueOf(count) ,String.valueOf(System.currentTimeMillis() - time));
@@ -639,10 +641,18 @@ public class SqliteUtility {
 			;
 		}
 		else {
-            tableInfo = TableInfoUtils.newTable(dbName, db, clazz);
+            tableInfo = TableInfoUtils.newTable(dbName, writableDB, clazz);
 		}
 
         return tableInfo;
 	}
+
+    public SQLiteDatabase getReadableDB() {
+        return readableDB;
+    }
+
+    public SQLiteDatabase getWritableDB() {
+        return writableDB;
+    }
 	
 }
