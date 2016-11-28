@@ -4,11 +4,10 @@ import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import org.aisen.android.support.inject.InjectUtility;
 import org.aisen.android.ui.fragment.itemview.IITemView;
 
 import java.io.Serializable;
-
-import butterknife.ButterKnife;
 
 /**
  * Created by wangdan on 16/1/5.
@@ -32,7 +31,7 @@ public abstract class ARecycleViewItemView<T extends Serializable> extends Recyc
 
     @Override
     public void onBindView(View convertView) {
-        ButterKnife.bind(this, convertView);
+        InjectUtility.initInjectedView(getContext(), this, convertView);
     }
 
     @Override

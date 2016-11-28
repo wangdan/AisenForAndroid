@@ -3,6 +3,7 @@ package org.aisen.sample.ui.activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,24 +18,23 @@ import android.widget.TextView;
 import com.example.aisensample.R;
 
 import org.aisen.android.common.utils.SystemUtils;
+import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.activity.basic.BaseActivity;
 import org.aisen.android.ui.widget.FitWindowsFrameLayout;
 import org.aisen.sample.support.bean.MenuBean;
 import org.aisen.sample.support.utils.SystemBarUtils;
 import org.aisen.sample.ui.fragment.MenuFragment;
 
-import butterknife.BindView;
-
 /**
  * Created by wangdan on 15/4/23.
  */
 public class MainActivity extends BaseActivity {
 
-    @BindView(R.id.drawer)
+    @ViewInject(id = R.id.drawer)
     DrawerLayout mDrawerLayout;
-    @BindView(R.id.layMainContent)
+    @ViewInject(id = R.id.layMainContent)
     FitWindowsFrameLayout mainContent;
-    @BindView(R.id.layMainRoot)
+    @ViewInject(id = R.id.layMainRoot)
     FitWindowsFrameLayout mainRoot;
 
     private ActionBarDrawerToggle mDrawerToggle;
@@ -46,6 +46,12 @@ public class MainActivity extends BaseActivity {
         SystemBarUtils.setStatusBar(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ui_main);
+
+        startActivity(new Intent(this, TestActivity.class));
+
+        if (true) {
+            return;
+        }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(false);

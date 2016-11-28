@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.aisen.android.R;
-import org.aisen.android.R2;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.common.utils.ViewUtils;
 import org.aisen.android.component.bitmaploader.BitmapLoader;
@@ -24,12 +23,12 @@ import org.aisen.android.network.task.ITaskManager;
 import org.aisen.android.network.task.TaskException;
 import org.aisen.android.network.task.TaskManager;
 import org.aisen.android.network.task.WorkTask;
+import org.aisen.android.support.inject.InjectUtility;
+import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.activity.basic.BaseActivity;
 
 import java.text.SimpleDateFormat;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * 基于ABaseFragment，维护与Activity之间的生命周期绑定，管理WorkTask线程，支持四种个基本视图之间的自动切换<br/>
@@ -50,16 +49,16 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
 
     ViewGroup rootView;// 根视图
     @Nullable
-    @BindView(R2.id.layoutLoading)
+    @ViewInject(idStr = "layoutLoading")
     View loadingLayout;// 加载中视图
     @Nullable
-    @BindView(R2.id.layoutLoadFailed)
+    @ViewInject(idStr = "layoutLoadFailed")
     View loadFailureLayout;// 加载失败视图
     @Nullable
-    @BindView(R2.id.layoutContent)
+    @ViewInject(idStr = "layoutContent")
     View contentLayout;// 内容视图
     @Nullable
-    @BindView(R2.id.layoutEmpty)
+    @ViewInject(idStr = "layoutEmpty")
     View emptyLayout;// 空视图
 
     // 标志是否ContentView是否为空
@@ -199,23 +198,23 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
      * @param savedInstanceSate
      */
     void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
-        ButterKnife.bind(this, getContentView());
+        InjectUtility.initInjectedView(getActivity(), this, getContentView());
 
-        if (emptyLayout != null) {
-            View reloadView = emptyLayout.findViewById(R.id.layoutReload);
+        if (getEmptyLayout() != null) {
+            View reloadView = getEmptyLayout().findViewById(R.id.layoutReload);
             if (reloadView != null)
                 setViewOnClick(reloadView);
         }
 
-        if (loadFailureLayout != null) {
-            View reloadView = loadFailureLayout.findViewById(R.id.layoutReload);
+        if (getLoadFailureLayout() != null) {
+            View reloadView = getLoadFailureLayout().findViewById(R.id.layoutReload);
             if (reloadView != null)
                 setViewOnClick(reloadView);
         }
 
-        setViewVisiable(loadingLayout, View.GONE);
-        setViewVisiable(loadFailureLayout, View.GONE);
-        setViewVisiable(emptyLayout, View.GONE);
+        setViewVisiable(getLoadingLayout(), View.GONE);
+        setViewVisiable(getLoadFailureLayout(), View.GONE);
+        setViewVisiable(getEmptyLayout(), View.GONE);
 
         if (isContentEmpty()) {
             // 如果视图为空，就开始加载数据
@@ -223,12 +222,12 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
                 requestData();
             }
             else {
-                setViewVisiable(emptyLayout, View.VISIBLE);
-                setViewVisiable(contentLayout, View.GONE);
+                setViewVisiable(getEmptyLayout(), View.VISIBLE);
+                setViewVisiable(getContentLayout(), View.GONE);
             }
         }
         else {
-            setViewVisiable(contentLayout, View.VISIBLE);
+            setViewVisiable(getContentLayout(), View.VISIBLE);
         }
     }
 
@@ -263,60 +262,60 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
         // 开始Task
         if (state == ABaseTaskState.prepare) {
             if (isContentEmpty()) {
-                setViewVisiable(loadingLayout, View.VISIBLE);
+                setViewVisiable(getLoadingLayout(), View.VISIBLE);
 
-                setViewVisiable(contentLayout, View.GONE);
+                setViewVisiable(getContentLayout(), View.GONE);
             }
             else {
-                setViewVisiable(loadingLayout, View.GONE);
+                setViewVisiable(getLoadingLayout(), View.GONE);
 
-                setViewVisiable(contentLayout, View.VISIBLE);
+                setViewVisiable(getContentLayout(), View.VISIBLE);
             }
 
-            setViewVisiable(emptyLayout, View.GONE);
-            if (isContentEmpty() && loadingLayout == null) {
-                setViewVisiable(contentLayout, View.VISIBLE);
+            setViewVisiable(getEmptyLayout(), View.GONE);
+            if (isContentEmpty() && getLoadingLayout() == null) {
+                setViewVisiable(getContentLayout(), View.VISIBLE);
             }
 
-            setViewVisiable(loadFailureLayout, View.GONE);
+            setViewVisiable(getLoadFailureLayout(), View.GONE);
         }
         // Task成功
         else if (state == ABaseTaskState.success) {
-            setViewVisiable(loadingLayout, View.GONE);
+            setViewVisiable(getLoadingLayout(), View.GONE);
 
             if (isContentEmpty()) {
-                setViewVisiable(emptyLayout, View.VISIBLE);
-                setViewVisiable(contentLayout, View.GONE);
+                setViewVisiable(getEmptyLayout(), View.VISIBLE);
+                setViewVisiable(getContentLayout(), View.GONE);
             }
             else {
-                setViewVisiable(contentLayout, View.VISIBLE);
-                setViewVisiable(emptyLayout, View.GONE);
+                setViewVisiable(getContentLayout(), View.VISIBLE);
+                setViewVisiable(getEmptyLayout(), View.GONE);
             }
         }
         // 取消Task
         else if (state == ABaseTaskState.canceled) {
             if (isContentEmpty()) {
-                setViewVisiable(loadingLayout, View.GONE);
-                setViewVisiable(emptyLayout, View.VISIBLE);
+                setViewVisiable(getLoadingLayout(), View.GONE);
+                setViewVisiable(getEmptyLayout(), View.VISIBLE);
             }
         }
         // Task失败
         else if (state == ABaseTaskState.falid) {
             if (isContentEmpty()) {
-                if (loadFailureLayout != null) {
-                    setViewVisiable(loadFailureLayout, View.VISIBLE);
+                if (getLoadFailureLayout() != null) {
+                    setViewVisiable(getLoadFailureLayout(), View.VISIBLE);
 
                     if (exception != null) {
-                        TextView txtLoadFailed = (TextView) loadFailureLayout.findViewById(R.id.txtLoadFailed);
+                        TextView txtLoadFailed = (TextView) getLoadFailureLayout().findViewById(R.id.txtLoadFailed);
                         if (txtLoadFailed != null)
                             txtLoadFailed.setText(exception.getMessage());
                     }
 
-                    setViewVisiable(emptyLayout, View.GONE);
+                    setViewVisiable(getEmptyLayout(), View.GONE);
                 } else {
-                    setViewVisiable(emptyLayout, View.VISIBLE);
+                    setViewVisiable(getEmptyLayout(), View.VISIBLE);
                 }
-                setViewVisiable(loadingLayout, View.GONE);
+                setViewVisiable(getLoadingLayout(), View.GONE);
             }
         }
         // Task结束

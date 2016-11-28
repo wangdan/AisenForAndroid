@@ -1,13 +1,12 @@
 package org.aisen.android.ui.fragment;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
 import org.aisen.android.R;
-import org.aisen.android.R2;
+import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.fragment.adapter.BasicListAdapter;
 import org.aisen.android.ui.fragment.adapter.IPagingAdapter;
 import org.aisen.android.ui.fragment.itemview.AFooterItemView;
@@ -15,9 +14,6 @@ import org.aisen.android.ui.fragment.itemview.AHeaderItemViewCreator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * 维护GridView
@@ -28,19 +24,12 @@ public abstract class AGridFragment<T extends Serializable, Ts extends Serializa
                         extends APagingFragment<T, Ts, Header, GridView>
                         implements AdapterView.OnItemClickListener {
 
-    @BindView(R2.id.gridview)
+    @ViewInject(idStr = "gridview")
     GridView gridView;
 
     @Override
     public int inflateContentView() {
         return R.layout.comm_ui_gridview;
-    }
-
-    @Override
-    void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
-        ButterKnife.bind(this, getContentView());
-
-        super._layoutInit(inflater, savedInstanceSate);
     }
 
     @Override

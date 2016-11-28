@@ -3,16 +3,11 @@ package org.aisen.android.ui.fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.view.LayoutInflater;
 
 import org.aisen.android.R;
-import org.aisen.android.R2;
 import org.aisen.android.support.bean.TabItem;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import org.aisen.android.support.inject.ViewInject;
 
 /**
  * 对TabLayout的封装
@@ -21,8 +16,7 @@ import butterknife.ButterKnife;
  */
 public abstract class ATabsTabLayoutFragment<T extends TabItem> extends ATabsFragment<T> {
 
-    @Nullable
-    @BindView(R2.id.tabLayout)
+    @ViewInject(idStr = "tabLayout")
     TabLayout mTabLayout;
 
     @Override
@@ -31,28 +25,21 @@ public abstract class ATabsTabLayoutFragment<T extends TabItem> extends ATabsFra
     }
 
     @Override
-    void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
-        ButterKnife.bind(this, getContentView());
-
-        super._layoutInit(inflater, savedInstanceSate);
-    }
-
-    @Override
     final protected void setupViewPager(Bundle savedInstanceSate) {
-        setupTabLayout(savedInstanceSate, getTablayout());
+        setupTabLayout(savedInstanceSate);
     }
 
-    protected void setupTabLayout(Bundle savedInstanceSate, final TabLayout tabLayout) {
+    protected void setupTabLayout(Bundle savedInstanceSate) {
         super.setupViewPager(savedInstanceSate);
 
-        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
-        tabLayout.setTabTextColors(Color.parseColor("#b3ffffff"), Color.WHITE);
-        tabLayout.setupWithViewPager(getViewPager());
+        getTablayout().setTabMode(TabLayout.MODE_SCROLLABLE);
+        getTablayout().setTabTextColors(Color.parseColor("#b3ffffff"), Color.WHITE);
+        getTablayout().setupWithViewPager(getViewPager());
         new Handler().postDelayed(new Runnable() {
 
             @Override
             public void run() {
-                tabLayout.setScrollPosition(mCurrentPosition, 0, true);
+                getTablayout().setScrollPosition(mCurrentPosition, 0, true);
             }
 
         }, 150);
@@ -60,10 +47,6 @@ public abstract class ATabsTabLayoutFragment<T extends TabItem> extends ATabsFra
 
     public TabLayout getTablayout() {
         return mTabLayout;
-    }
-
-    protected void setTabLayout(TabLayout tabLayout) {
-        mTabLayout = tabLayout;
     }
 
 }

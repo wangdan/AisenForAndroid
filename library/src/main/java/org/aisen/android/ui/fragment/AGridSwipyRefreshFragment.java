@@ -1,19 +1,15 @@
 package org.aisen.android.ui.fragment;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import org.aisen.android.R;
-import org.aisen.android.R2;
 import org.aisen.android.network.task.TaskException;
+import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.widget.swipyrefresh.SwipyRefreshLayout;
 import org.aisen.android.ui.widget.swipyrefresh.SwipyRefreshLayoutDirection;
 
 import java.io.Serializable;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * 维护SwipyRefresh刷新的GridView
@@ -24,7 +20,7 @@ public abstract class AGridSwipyRefreshFragment<T extends Serializable, Ts exten
                                             extends AGridFragment<T, Ts, Header>
                                             implements SwipyRefreshLayout.OnRefreshListener  {
 
-    @BindView(R2.id.swipyRefreshLayout)
+    @ViewInject(idStr = "swipyRefreshLayout")
     protected SwipyRefreshLayout swipyRefreshLayout;
 
     @Override
@@ -33,27 +29,20 @@ public abstract class AGridSwipyRefreshFragment<T extends Serializable, Ts exten
     }
 
     @Override
-    void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
-        ButterKnife.bind(this, getContentView());
-
-        super._layoutInit(inflater, savedInstanceSate);
-    }
-
-    @Override
     final protected void setupRefreshView(Bundle savedInstanceSate) {
         super.setupRefreshView(savedInstanceSate);
 
-        setupSwipyRefreshLayout(swipyRefreshLayout);
+        setupSwipyRefreshLayout();
     }
 
-    protected void setupSwipyRefreshLayout(SwipyRefreshLayout swipyRefreshLayout) {
-        swipyRefreshLayout.setOnRefreshListener(this);
-        swipyRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+    protected void setupSwipyRefreshLayout() {
+        getSwipyRefreshLayout().setOnRefreshListener(this);
+        getSwipyRefreshLayout().setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        swipyRefreshLayout.setVisibility(View.VISIBLE);
+        getSwipyRefreshLayout().setVisibility(View.VISIBLE);
         setSwipyDirection(SwipyRefreshLayoutDirection.BOTH);
     }
 
@@ -66,7 +55,7 @@ public abstract class AGridSwipyRefreshFragment<T extends Serializable, Ts exten
     }
 
     protected void setSwipyDirection(SwipyRefreshLayoutDirection direction) {
-        swipyRefreshLayout.setDirection(direction);
+        getSwipyRefreshLayout().setDirection(direction);
     }
 
     @Override
@@ -79,14 +68,14 @@ public abstract class AGridSwipyRefreshFragment<T extends Serializable, Ts exten
 
     @Override
     public boolean setRefreshViewToLoading() {
-        swipyRefreshLayout.setRefreshing(true);
+        getSwipyRefreshLayout().setRefreshing(true);
 
         return false;
     }
 
     @Override
     public void onRefreshViewFinished(RefreshMode mode) {
-        swipyRefreshLayout.setRefreshing(false);
+        getSwipyRefreshLayout().setRefreshing(false);
     }
 
     @Override
@@ -94,14 +83,18 @@ public abstract class AGridSwipyRefreshFragment<T extends Serializable, Ts exten
         super.onTaskStateChanged(state, exception, mode);
 
         if (state == ABaseTaskState.finished) {
-            if (swipyRefreshLayout != null && swipyRefreshLayout.isRefreshing())
+            if (getSwipyRefreshLayout() != null && getSwipyRefreshLayout().isRefreshing())
                 onRefreshViewFinished(mode);
 
         } else if (state == ABaseTaskState.prepare) {
-            if (loadingLayout != null && loadingLayout.getVisibility() != View.VISIBLE && swipyRefreshLayout != null) {
+            if (loadingLayout != null && loadingLayout.getVisibility() != View.VISIBLE && getSwipyRefreshLayout() != null) {
                 setRefreshViewToLoading();
             }
         }
+    }
+
+    public SwipyRefreshLayout getSwipyRefreshLayout() {
+        return swipyRefreshLayout;
     }
 
 }

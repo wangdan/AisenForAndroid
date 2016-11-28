@@ -5,18 +5,17 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 
 import org.aisen.android.R;
-import org.aisen.android.R2;
 import org.aisen.android.common.context.GlobalContext;
 import org.aisen.android.common.utils.ActivityHelper;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.support.bean.TabItem;
+import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.activity.basic.BaseActivity;
 import org.aisen.android.ui.fragment.adapter.FragmentPagerAdapter;
 
@@ -25,9 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * 维护一个ViewPager的Fragemnt
@@ -41,8 +37,7 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
 
     public static final String SET_INDEX = "org.aisen.android.ui.SET_INDEX";// 默认选择第几个
 
-    @Nullable
-    @BindView(R2.id.viewPager)
+    @ViewInject(idStr = "viewPager")
     ViewPager mViewPager;
 
     FragmentPagerAdapter mInnerAdapter;
@@ -56,13 +51,6 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
     @Override
     public int inflateContentView() {
         return R.layout.comm_ui_tabs;
-    }
-
-    @Override
-    void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
-        ButterKnife.bind(this, getContentView());
-
-        super._layoutInit(inflater, savedInstanceSate);
     }
 
     @Override
@@ -288,10 +276,6 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
 
     public ViewPager getViewPager() {
         return mViewPager;
-    }
-
-    protected void setViewPager(ViewPager viewPager) {
-        mViewPager = viewPager;
     }
 
     class InnerAdapter extends FragmentPagerAdapter {

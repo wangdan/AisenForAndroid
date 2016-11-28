@@ -2,15 +2,11 @@ package org.aisen.android.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.LayoutInflater;
 
 import org.aisen.android.R;
-import org.aisen.android.R2;
+import org.aisen.android.support.inject.ViewInject;
 
 import java.io.Serializable;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by wangdan on 16/1/6.
@@ -19,19 +15,12 @@ public abstract class ARecycleViewSwipeRefreshFragment<T extends Serializable, T
                                                 extends ARecycleViewFragment<T, Ts, Header>
                                                 implements SwipeRefreshLayout.OnRefreshListener {
 
-    @BindView(R2.id.swipeRefreshLayout)
+    @ViewInject(idStr = "swipeRefreshLayout")
     SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public int inflateContentView() {
         return R.layout.comm_ui_recycleview_swiperefresh;
-    }
-
-    @Override
-    void _layoutInit(LayoutInflater inflater, Bundle savedInstanceSate) {
-        ButterKnife.bind(this, getContentView());
-
-        super._layoutInit(inflater, savedInstanceSate);
     }
 
     @Override

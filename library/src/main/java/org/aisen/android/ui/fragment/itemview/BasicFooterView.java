@@ -1,20 +1,17 @@
 package org.aisen.android.ui.fragment.itemview;
 
 import android.app.Activity;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
 import org.aisen.android.R;
-import org.aisen.android.R2;
 import org.aisen.android.network.task.TaskException;
+import org.aisen.android.support.inject.InjectUtility;
+import org.aisen.android.support.inject.ViewInject;
 import org.aisen.android.ui.fragment.ABaseFragment;
 import org.aisen.android.ui.fragment.APagingFragment;
 
 import java.io.Serializable;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by wangdan on 16/1/9.
@@ -25,14 +22,11 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
 
     private View footerView;
 
-    @Nullable
-    @BindView(R2.id.btnMore)
+    @ViewInject(idStr = "btnMore")
     TextView btnMore;
-    @Nullable
-    @BindView(R2.id.layLoading)
+    @ViewInject(idStr = "layLoading")
     View layLoading;
-    @Nullable
-    @BindView(R2.id.txtLoading)
+    @ViewInject(idStr = "txtLoading")
     TextView txtLoading;
 
     public BasicFooterView(Activity context, View itemView, OnFooterViewCallback callback) {
@@ -40,7 +34,7 @@ public class BasicFooterView<T extends Serializable> extends AFooterItemView<T> 
 
         this.footerView = itemView;
 
-        ButterKnife.bind(this, getConvertView());
+        InjectUtility.initInjectedView(context, this, getConvertView());
 
         btnMore.setVisibility(View.VISIBLE);
         layLoading.setVisibility(View.GONE);
