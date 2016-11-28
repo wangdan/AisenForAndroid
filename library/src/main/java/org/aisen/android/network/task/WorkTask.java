@@ -13,7 +13,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -43,20 +42,41 @@ public abstract class WorkTask<Params, Progress, Result> {
 
 	private TaskException exception;
 
-	private boolean cancelByUser;
-
 	private static final ThreadFactory sThreadFactory = new ThreadFactory() {
 		private final AtomicInteger mCount = new AtomicInteger(1);
 
 		public Thread newThread(Runnable r) {
-			return new Thread(r, "AsyncTask #" + mCount.getAndIncrement());
+			return new WorkThread(r, "WorkThread # " + mCount.getAndIncrement());
 		}
 	};
+
+	private static class WorkThread extends Thread {
+
+		static int threadCount;
+
+		WorkThread(Runnable target, String name) {
+			super(target, name);
+
+			threadCount++;
+
+			Logger.v(TAG, "WorkThread count = " + threadCount);
+		}
+
+		@Override
+		protected void finalize() throws Throwable {
+			super.finalize();
+
+			threadCount--;
+
+			Logger.v(TAG, "WorkThread count = " + threadCount);
+		}
+
+	}
 
 	/**
 	 * 执行队列，默认是10个，超过10个后会开启新的线程，如果已运行线程大于 {@link #MAXIMUM_POOL_SIZE}，执行异常策略
 	 */
-	private static final BlockingQueue<Runnable> sPoolWorkQueue = new LinkedBlockingQueue<Runnable>(10);
+	private static final BlockingQueue<Runnable> sPoolWorkQueue = new LinkedBlockingQueue<>(3);
 
 	/**
 	 * 默认线程池，最大执行{@link #CORE_POOL_SIZE}+{@link #MAXIMUM_POOL_SIZE}个线程
@@ -64,11 +84,9 @@ public abstract class WorkTask<Params, Progress, Result> {
 	public static final Executor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE, TimeUnit.SECONDS,
 			sPoolWorkQueue, sThreadFactory);
 
-	/**
-	 * 固定大小为{@link #CORE_IMAGE_POOL_SIZE}的线程池<br/>
-	 * 无界线程池，可以加载无限个线程
-	 */
-	public static final Executor IMAGE_POOL_EXECUTOR = Executors.newFixedThreadPool(CORE_IMAGE_POOL_SIZE, sThreadFactory);
+	static {
+		((ThreadPoolExecutor) THREAD_POOL_EXECUTOR).allowCoreThreadTimeOut(true);
+	}
 
 	/**
 	 * An {@link Executor} that executes tasks one at a time in serial order.
@@ -135,29 +153,26 @@ public abstract class WorkTask<Params, Progress, Result> {
 		sHandler.getLooper();
 	}
 
-	private static void setDefaultExecutor(Executor exec) {
-		sDefaultExecutor = exec;
-	}
-
 	private String taskId;
 
-	public String getTaskId() {
+	public final String getTaskId() {
 		return taskId;
-	}
-
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
 	}
 
 	public WorkTask(String taskId, ITaskManager taskManager) {
 		this();
 		this.taskId = taskId;
-		taskManager.addTask(this);
+		if (taskManager != null) {
+			taskManager.addTask(this);
+		}
 	}
 
 	public WorkTask() {
 		mWorker = new WorkerRunnable<Params, Result>() {
 			public Result call() throws Exception {
+
+				Logger.v(TAG, (!TextUtils.isEmpty(taskId) ? taskId : "") + " call()");
+
 				mTaskInvoked.set(true);
 
 				android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
@@ -169,7 +184,11 @@ public abstract class WorkTask<Params, Progress, Result> {
 			@Override
 			protected void done() {
 				try {
+					Logger.v(TAG, (!TextUtils.isEmpty(taskId) ? taskId : "") + " done()");
+
 					final Result result = get();
+
+					Logger.v(TAG, (!TextUtils.isEmpty(taskId) ? taskId : "") + " done(), result = " + result);
 
 					postResultIfNotInvoked(result);
 				} catch (InterruptedException e) {
@@ -187,6 +206,9 @@ public abstract class WorkTask<Params, Progress, Result> {
 
 	private void postResultIfNotInvoked(Result result) {
 		final boolean wasTaskInvoked = mTaskInvoked.get();
+
+		Logger.v(TAG, (!TextUtils.isEmpty(taskId) ? taskId : "") + " postResultIfNotInvoked(), result = " + result + ", wasTaskInvoked = " + wasTaskInvoked);
+
 		if (!wasTaskInvoked) {
 			postResult(result);
 		}
@@ -257,13 +279,13 @@ public abstract class WorkTask<Params, Progress, Result> {
 	}
 
 	final protected void onPreExecute() {
-		Logger.d(TAG, String.format("%s --->onTaskStarted()", TextUtils.isEmpty(taskId) ? "run " : (taskId + " run ")));
+		Logger.d(TAG, String.format("%s --->onPrepare()", TextUtils.isEmpty(taskId) ? "run " : (taskId + " run ")));
 		onPrepare();
 	}
 
 	final protected void onPostExecute(Result result) {
 		if (exception == null) {
-			Logger.d(TAG, String.format("%s --->onTaskSuccess()", TextUtils.isEmpty(taskId) ? "run " : (taskId + " run ")));
+			Logger.d(TAG, String.format("%s --->onSuccess()", TextUtils.isEmpty(taskId) ? "run " : (taskId + " run ")));
 			onSuccess(result);
 		}
 		else if (exception != null) {
@@ -298,13 +320,7 @@ public abstract class WorkTask<Params, Progress, Result> {
 		return mFuture.isCancelled();
 	}
 
-	public boolean isCancelByUser() {
-		return cancelByUser;
-	}
-
 	public boolean cancel(boolean mayInterruptIfRunning) {
-		cancelByUser = true;
-
 		return mFuture.cancel(mayInterruptIfRunning);
 	}
 
@@ -324,16 +340,6 @@ public abstract class WorkTask<Params, Progress, Result> {
 	 */
 	public final WorkTask<Params, Progress, Result> executeOnSerialExecutor(Params... params) {
 		return executeOnExecutor(SERIAL_EXECUTOR, params);
-	}
-
-	/**
-	 * 加载图片的线程池
-	 * 
-	 * @param params
-	 * @return
-	 */
-	public final WorkTask<Params, Progress, Result> executrOnImageExecutor(Params... params) {
-		return executeOnExecutor(IMAGE_POOL_EXECUTOR, params);
 	}
 
 	/**

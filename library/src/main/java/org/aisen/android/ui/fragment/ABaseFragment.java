@@ -247,19 +247,7 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
         return contentEmpty;
     }
 
-    /**
-     * 视图点击回调，子类重写
-     *
-     * @param view
-     */
-    public void onViewClicked(View view) {
-        if (view.getId() == R.id.layoutReload)
-            requestData();
-        else if (view.getId() == R.id.layoutRefresh)
-            requestData();
-    }
-
-    protected void setViewVisiable(View v, int visibility) {
+    void setViewVisiable(View v, int visibility) {
         if (v != null && v.getVisibility() != visibility)
             v.setVisibility(visibility);
     }
@@ -508,7 +496,7 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
         taskManager.cleatTaskCount(taskId);
     }
 
-    protected void setViewOnClick(View v) {
+    private void setViewOnClick(View v) {
         if (v == null)
             return;
 
@@ -519,7 +507,10 @@ public abstract class ABaseFragment extends Fragment implements ITaskManager, Bi
 
         @Override
         public void onClick(View v) {
-            onViewClicked(v);
+            if (v.getId() == R.id.layoutReload)
+                requestData();
+            else if (v.getId() == R.id.layoutRefresh)
+                requestData();
         }
 
     };
