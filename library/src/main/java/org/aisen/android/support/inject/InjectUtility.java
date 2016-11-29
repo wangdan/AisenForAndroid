@@ -9,6 +9,7 @@ import android.view.View;
 import org.aisen.android.common.utils.Logger;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 public class InjectUtility {
 
@@ -18,9 +19,51 @@ public class InjectUtility {
 		initInjectedView(sourceActivity, sourceActivity, sourceActivity.getWindow().getDecorView());
 	}
 
-    public static void initInjectedView(Context context, Object injectedSource, View sourceView) {
+    public static void initInjectedView(Context context, final Object injectedSource, View sourceView) {
+		long start = System.currentTimeMillis();
+
 		Class<?> clazz = injectedSource.getClass();
 		for (; clazz != Object.class; clazz = clazz.getSuperclass()) {
+			if (clazz.getName().startsWith("android")) {
+				break;
+			}
+
+			Method[] methods = clazz.getDeclaredMethods();
+
+			for (final Method method : methods) {
+				Class<?>[] paramsType = method.getParameterTypes();
+				if (paramsType != null && paramsType.length == 1) {
+					if (paramsType[0].getName().equals(View.class.getName())) {
+						OnClick onClick = method.getAnnotation(OnClick.class);
+
+						if (onClick != null) {
+							int[] ids = onClick.value();
+							for (int id : ids) {
+								if (id != View.NO_ID) {
+									View view = sourceView.findViewById(id);
+									if (view != null) {
+										view.setOnClickListener(new View.OnClickListener() {
+
+											@Override
+											public void onClick(View v) {
+												try {
+													method.setAccessible(true);
+
+													method.invoke(injectedSource, v);
+												} catch (Throwable e) {
+													e.printStackTrace();
+												}
+											}
+
+										});
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
 			Field[] fields = clazz.getDeclaredFields();
 			if (fields != null && fields.length > 0) {
 				for (Field field : fields) {
@@ -54,9 +97,9 @@ public class InjectUtility {
 								if (field.get(injectedSource) == null) {
 									field.set(injectedSource, sourceView.findViewById(viewId));
 
-									if (Logger.DEBUG) {
-										Logger.v(TAG, "id = %d, view = %s", viewId, field.get(injectedSource) + "");
-									}
+//									if (Logger.DEBUG) {
+//										Logger.v(TAG, "id = %d, view = %s", viewId, field.get(injectedSource) + "");
+//									}
 								} else {
 									continue;
 								}
@@ -65,84 +108,14 @@ public class InjectUtility {
 							}
 						}
 
-//						String clickMethod = viewInject.click();
-//						if (!TextUtils.isEmpty(clickMethod))
-//							setViewClickListener(injectedSource, field, clickMethod);
-//
-//						String longClickMethod = viewInject.longClick();
-//						if (!TextUtils.isEmpty(longClickMethod))
-//							setViewLongClickListener(injectedSource, field, longClickMethod);
-//
-//						String itemClickMethod = viewInject.itemClick();
-//						if (!TextUtils.isEmpty(itemClickMethod))
-//							setItemClickListener(injectedSource, field, itemClickMethod);
-//
-//						String itemLongClickMethod = viewInject.itemLongClick();
-//						if (!TextUtils.isEmpty(itemLongClickMethod))
-//							setItemLongClickListener(injectedSource, field, itemLongClickMethod);
-//
-//						Select select = viewInject.select();
-//						if (!TextUtils.isEmpty(select.selected()))
-//							setViewSelectListener(injectedSource, field, select.selected(), select.noSelected());
 					}
 				}
 			}
 		}
+
+		if (Logger.DEBUG)
+			Logger.v(TAG, "耗时 %s ms : " + injectedSource, String.valueOf(System.currentTimeMillis() - start));
 	}
 
-//    public static void setViewClickListener(Object injectedSource, Field field, String clickMethod) {
-//		try {
-//			Object obj = field.get(injectedSource);
-//			if (obj instanceof View) {
-//				((View) obj).setOnClickListener(new EventListener(injectedSource).click(clickMethod));
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-//
-//    public static void setViewLongClickListener(Object injectedSource, Field field, String clickMethod) {
-//		try {
-//			Object obj = field.get(injectedSource);
-//			if (obj instanceof View) {
-//				((View) obj).setOnLongClickListener(new EventListener(injectedSource).longClick(clickMethod));
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-//
-//    public static void setItemClickListener(Object injectedSource, Field field, String itemClickMethod) {
-//		try {
-//			Object obj = field.get(injectedSource);
-//			if (obj instanceof AbsListView) {
-//				((AbsListView) obj).setOnItemClickListener(new EventListener(injectedSource).itemClick(itemClickMethod));
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-//
-//    public static void setItemLongClickListener(Object injectedSource, Field field, String itemClickMethod) {
-//		try {
-//			Object obj = field.get(injectedSource);
-//			if (obj instanceof AbsListView) {
-//				((AbsListView) obj).setOnItemLongClickListener(new EventListener(injectedSource).itemLongClick(itemClickMethod));
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-//
-//    public static void setViewSelectListener(Object injectedSource, Field field, String select, String noSelect) {
-//		try {
-//			Object obj = field.get(injectedSource);
-//			if (obj instanceof View) {
-//				((AbsListView) obj).setOnItemSelectedListener(new EventListener(injectedSource).select(select).noSelect(noSelect));
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 
 }
