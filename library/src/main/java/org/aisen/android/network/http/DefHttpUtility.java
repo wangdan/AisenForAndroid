@@ -58,7 +58,13 @@ public class DefHttpUtility implements IHttpUtility {
 			builder.post(RequestBody.create(MediaType.parse("application/x-www-form-urlencoded;charset=UTF-8"), requestBodyStr));
 		}
 		else if (requestObj != null) {
-			String requestBodyStr = JSON.toJSONString(requestObj);
+			String requestBodyStr;
+			if (requestObj instanceof String) {
+				requestBodyStr = requestObj + "";
+			}
+			else {
+				requestBodyStr = JSON.toJSONString(requestObj);
+			}
 
 			Logger.d(getTag(action, "Post"), requestBodyStr);
 

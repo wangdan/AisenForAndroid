@@ -5,10 +5,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Created by wangdan on 17/2/16.
+ */
 @Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME) 
-public @interface PrimaryKey {
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ColumnField {
 
-	String column() default "primary_key";
+    boolean serialize() default true;
 
 }

@@ -102,7 +102,7 @@ public abstract class APermissionGroupAction extends IAction implements IPermiss
      *
      * @return  true:
      */
-    protected void onPermissionDenied(String[] permissions, boolean[] alwaysDenied) {
+    protected void onPermissionDenied(String[] permissions, int[] grantResults, boolean[] alwaysDenied) {
 
     }
 
@@ -176,7 +176,7 @@ public abstract class APermissionGroupAction extends IAction implements IPermiss
                     alwaysDenied[i] = true;
                 }
             }
-            onPermissionDenied(permissions, alwaysDenied);
+            onPermissionDenied(permissions, grantResults, alwaysDenied);
         }
     }
 

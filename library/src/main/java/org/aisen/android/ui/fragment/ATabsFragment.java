@@ -74,18 +74,22 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
         mCurrentPosition = savedInstanceState == null ? 0
                                                       : savedInstanceState.getInt("current");
 
-        if (delayTabInit() == 0) {
-            setTabInit(savedInstanceState);
+        if (asyncTabInit()) {
         }
         else {
-            new Handler().postDelayed(new Runnable() {
+            if (delayTabInit() == 0) {
+                setTabInit(savedInstanceState);
+            }
+            else {
+                new Handler().postDelayed(new Runnable() {
 
-                @Override
-                public void run() {
-                    setTabInit(savedInstanceState);
-                }
+                    @Override
+                    public void run() {
+                        setTabInit(savedInstanceState);
+                    }
 
-            }, delayTabInit());
+                }, delayTabInit());
+            }
         }
     }
 
@@ -206,6 +210,10 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
         return mItems;
     }
 
+    protected void setTabItems(ArrayList<T> items) {
+        mItems = items;
+    }
+
     public PagerAdapter getPageAdapter() {
         return mInnerAdapter;
     }
@@ -227,6 +235,11 @@ public abstract class ATabsFragment<T extends TabItem> extends ABaseFragment
     // 延迟一点初始化tabs，用于在首页切换菜单的时候，太多的tab页导致有点点卡顿
     protected int delayTabInit() {
         return 0;
+    }
+
+    // 异步加载Tab
+    protected boolean asyncTabInit() {
+        return false;
     }
 
     @Override

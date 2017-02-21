@@ -3,6 +3,7 @@ package org.aisen.android.component.orm.extra;
 import org.aisen.android.common.utils.Logger;
 import org.aisen.android.component.orm.SqliteUtility;
 import org.aisen.android.component.orm.annotation.AutoIncrementPrimaryKey;
+import org.aisen.android.component.orm.annotation.ColumnField;
 import org.aisen.android.component.orm.annotation.PrimaryKey;
 import org.aisen.android.component.orm.utils.TableInfoUtils;
 
@@ -88,6 +89,22 @@ public class TableInfo {
 		Field fields[] = c.getDeclaredFields();
 		
 		for (Field field : fields) {
+
+			// 不包括序列划字段
+			if ("serialVersionUID".equals(field.getName()))
+				continue;
+			// Gradle编译自动产生的字段
+			if ("$change".equals(field.getName()))
+				continue;
+
+			ColumnField columnField = field.getAnnotation(ColumnField.class);
+			if (columnField != null) {
+				// 字段忽略DB存储
+				if (!columnField.serialize()) {
+					continue;
+				}
+			}
+
 			// 设置主键
 			if (primaryKey == null) {
 				PrimaryKey annotationField = field.getAnnotation(PrimaryKey.class);
@@ -107,13 +124,6 @@ public class TableInfo {
 				}
 			}
 		
-			// 不包括序列划字段
-			if ("serialVersionUID".equals(field.getName()))
-				continue;
-			// Gradle编译自动产生的字段
-			if ("$change".equals(field.getName()))
-				continue;
-
 			// 添加到字段集合
 			TableColumn column = new TableColumn();
 			column.setColumn(field.getName());
